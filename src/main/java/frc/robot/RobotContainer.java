@@ -27,16 +27,20 @@ import frc.robot.commands.RotateUp;
 import frc.robot.commands.RotateDown;
 import frc.robot.commands.ElevatorDown;
 import frc.robot.commands.ElevatorUp;
+import frc.robot.commands.PickUpExtend;
 import frc.robot.commands.RollersIn;
 import frc.robot.commands.RollersOut;
 import frc.robot.commands.Spindexter;
+import frc.robot.commands.RevSpindexter;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.DriveToPositionCommand;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
 import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.XboxController;
+import java.util.function.BooleanSupplier;
 
 
 
@@ -63,7 +67,13 @@ public class RobotContainer {
     private AutonomousManager autonomousManager;
     private UpdateManager updateManager;
 
+    //private boolean driverLeftTrigger;
+    //private boolean driverRightTrigger;
+    BooleanSupplier driverLeftTrigger = () -> true;
+    Trigger driveLT = new Trigger(driverLeftTrigger);
 
+    BooleanSupplier driverRightTrigger = () -> true;
+    Trigger driveRT = new Trigger(driverRightTrigger);
 
     // //Rotator
     // private final JoystickButton rotateUpButton = new JoystickButton(driver, XboxController.Button.kA.value);
@@ -93,6 +103,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
+        
         driver.getLeftXAxis().setScale(Constants.SwerveConstants.maxSpeed);
         driver.getLeftYAxis().setScale(Constants.SwerveConstants.maxSpeed);
         driver.getRightXAxis().setScale(Constants.SwerveConstants.maxAngularVelocity);
@@ -103,10 +114,10 @@ public class RobotContainer {
         driver.nameButtonB("Claw Open");
         driver.getButtonX().whileTrue(new ClawClose(arm));
         driver.nameButtonX("Claw Close");
-        driver.getButtonY().whileTrue(new RotateUp(arm));
-        driver.nameButtonY("Rotate Up");
-        driver.getButtonA().whileTrue(new RotateDown(arm));
-        driver.nameButtonA("Rotate Down");
+        driver.getButtonY().whileTrue(new RotateDown(arm));
+        driver.nameButtonY("Rotate Down");
+        driver.getButtonA().whileTrue(new RotateUp(arm));
+        driver.nameButtonA("Rotate Up");
         driver.getRightBumper().whileTrue(new ElevatorUp(arm));
         driver.nameRightBumper("Elevator Up");
         driver.getLeftBumper().whileTrue(new ElevatorDown(arm));
@@ -115,12 +126,14 @@ public class RobotContainer {
         operator.nameLeftBumper("Rollers In");
         operator.getRightBumper().whileTrue(new RollersOut(arm));
         operator.nameRightBumper("Rollers Out");
-        operator.getRightRhombus().whileTrue(new InstantCommand(() -> arm.pickupExtend()));
+        operator.getButtonY().whileTrue(new PickUpExtend(arm));
         operator.nameRightRhombus("extend pickup");
-        operator.getLeftRhombus().whileTrue(new InstantCommand(() -> arm.pickupRetract()));
-        operator.nameLeftRhombus("Retracts pickup");
-        operator.getButtonA().whileTrue(new Spindexter(arm));
-        operator.nameButtonA("rotates cone");
+        operator.getButtonA().whileTrue(new InstantCommand(() -> arm.pickupRetract()));
+        operator.nameButtonA("Retracts pickup");
+        operator.getButtonX().whileTrue(new Spindexter(arm));
+        operator.nameButtonX("rotates cone counterclockwise");
+        operator.getButtonB().whileTrue(new RevSpindexter(arm));
+        operator.nameButtonB("rotates cone clockwise");
         /* Set default commands */
         // lightsSubsystem.setDefaultCommand(lightsSubsystem.defaultCommand());
         swerveDriveSubsystem.setDefaultCommand(swerveDriveSubsystem.driveCommand(
@@ -144,9 +157,9 @@ public class RobotContainer {
 
         // Leveling
         //operator.getButtonA().toggleOnTrue(swerveDriveSubsystem.levelChargeStationCommand());
-        operator.getButtonB().whileTrue(run(swerveDriveSubsystem::lock, swerveDriveSubsystem));
+        // operator.getButtonB().whileTrue(run(swerveDriveSubsystem::lock, swerveDriveSubsystem));
         //operator.nameButtonA("Level Charge Station");
-        operator.nameButtonB("Lock Wheels");
+        // operator.nameButtonB("Lock Wheels");
 
         /* Set right joystick bindings */
         /*operator.getLeftBumper().whileTrue(swerveDriveSubsystem.characterizeCommand(true, true));
@@ -194,9 +207,9 @@ public class RobotContainer {
         //     return targetPose;
         // };
 
-        operator.getButtonX().whileTrue(new DriveToPositionCommand(swerveDriveSubsystem, targetPoseSupplier));
+        //operator.getButtonX().whileTrue(new DriveToPositionCommand(swerveDriveSubsystem, targetPoseSupplier));
         //operator.getButtonY().whileTrue(new AimAtPoseCommand(swerveDriveSubsystem, targetAimPoseSupplier, getDriveForwardAxis(), getDriveStrafeAxis()));
-        operator.nameButtonX("Drive to Pose");
+        //operator.nameButtonX("Drive to Pose");
         //operator.nameButtonY("Aim at Pose");
 
         /* Set operator controller bindings */

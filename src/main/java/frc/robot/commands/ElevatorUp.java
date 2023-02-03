@@ -12,12 +12,11 @@ public class ElevatorUp extends CommandBase{
 
     @Override
     public void execute() {
-        arm.setElevatorSpeed(-0.25);
-        System.out.println("it's working");
+        arm.elevatorMove(-0.5);
     }
 
     @Override
     public void end(boolean interrupted){
-        arm.setElevatorSpeed(0);
+        arm.elevatorMove(0);
     }
 }

@@ -14,6 +14,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Arm extends SubsystemBase{
     // private CANSparkMax elevatorMotor;
@@ -27,6 +31,10 @@ public class Arm extends SubsystemBase{
     private TalonFX toproller;
     private TalonFX bottomroller;
     private VictorSPX spindexter; 
+    private SparkMaxPIDController m_pidController;
+    private RelativeEncoder m_encoder;
+    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+    private double distance;
 
     public Arm(){ 
         elevatorMotor = new CANSparkMax(10, MotorType.kBrushless);
@@ -38,29 +46,29 @@ public class Arm extends SubsystemBase{
 
         m_doubleSolenoid =
             new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 3, 2);
-        
-        // m_pidController = elevatorMotor.getPIDController();
-        // m_encoder = elevatorMotor.getEncoder();
+            m_pidController = elevatorMotor.getPIDController();
 
-    // // PID coefficients
-    // kP = 5e-5; 
-    // kI = 1e-6;
-    // kD = 0; 
-    // kIz = 0; 
-    // kFF = 0.000156; 
-    // kMaxOutput = 1; 
-    // kMinOutput = -1;
-    // maxRPM = 5700;
-    // // Smart Motion Coefficients
-    // maxVel = 2000; // rpm
-    // maxAcc = 1500;
-    // // set PID coefficients
-    // m_pidController.setP(kP);
-    // m_pidController.setI(kI);
-    // m_pidController.setD(kD);
-    // m_pidController.setIZone(kIz);
-    // m_pidController.setFF(kFF);
-    // m_pidController.setOutputRange(kMinOutput, kMaxOutput);
+    // Encoder object created to display position values
+    m_encoder = elevatorMotor.getEncoder();
+
+    // PID coefficients
+    kP = 0.2; 
+    kI = 1e-4;
+    kD = 1; 
+    kIz = 0; 
+    kFF = 0; 
+    kMaxOutput = 0.25; 
+    kMinOutput = -0.25;
+    distance = 0;
+
+    // set PID coefficients
+    m_pidController.setP(kP);
+    m_pidController.setI(kI);
+    m_pidController.setD(kD);
+    m_pidController.setIZone(kIz);
+    m_pidController.setFF(kFF);
+    m_pidController.setOutputRange(kMinOutput, kMaxOutput);
+       
 
     }
 
@@ -70,11 +78,11 @@ public class Arm extends SubsystemBase{
 
     public void pickupOff() {m_doubleSolenoid.set(DoubleSolenoid.Value.kOff);}
 
-    public void rollersin() {toproller.set(ControlMode.PercentOutput,-.75); bottomroller.set(ControlMode.PercentOutput,-.50);}
-    public void rollersout() {toproller.set(ControlMode.PercentOutput,1.0); bottomroller.set(ControlMode.PercentOutput,1.0);}
+    public void rollersin() {toproller.set(ControlMode.PercentOutput,-.40); bottomroller.set(ControlMode.PercentOutput,-.40);}
+    public void rollersout() {toproller.set(ControlMode.PercentOutput,0.40); bottomroller.set(ControlMode.PercentOutput,0.40);}
     public void rollerstop() {toproller.set(ControlMode.PercentOutput,0); bottomroller.set(ControlMode.PercentOutput,0);}
-    public void spindexterCW() {spindexter.set(ControlMode.PercentOutput,-.50);}
-    public void spindexterCCW() {spindexter.set(ControlMode.PercentOutput,.50);}
+    public void spindexterCW() {spindexter.set(ControlMode.PercentOutput,-.30);}
+    public void spindexterCCW() {spindexter.set(ControlMode.PercentOutput,.30);}
     public void spindexterStop() {spindexter.set(ControlMode.PercentOutput,0);}
 
     
@@ -86,7 +94,20 @@ public class Arm extends SubsystemBase{
         rotatorMotor.set(rotateSpeed);
     }
 
-    public void setElevatorSpeed(double elevateSpeed){
-        elevatorMotor.set(elevateSpeed);
+    public void elevatorMove(double elevateSpeed){
+       distance +=elevateSpeed;
+       if(distance>0){
+        distance=0;
+       }
+       if(distance<-88){
+        distance=-88;
+       }
+    }
+
+
+    @Override
+    public void periodic(){
+        SmartDashboard.putNumber("Arm distance", distance);
+        m_pidController.setReference(distance, CANSparkMax.ControlType.kPosition);
     }
 }

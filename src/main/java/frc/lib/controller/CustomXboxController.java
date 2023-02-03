@@ -113,6 +113,10 @@ public class CustomXboxController {
         return leftTrigger;
     }
 
+    public boolean isLeftTriggerPressed () {
+        return joystick.getTrigger(); //Not done
+    }
+
     public Axis getRightTrigger() {
         return rightTrigger;
     }

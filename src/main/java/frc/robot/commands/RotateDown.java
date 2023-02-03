@@ -13,7 +13,6 @@ public class RotateDown extends CommandBase{
     @Override
     public void execute() {
         arm.setRotateSpeed(-0.25);
-        System.out.println("it's working");
     }
 
     @Override

@@ -3,20 +3,20 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 
-public class RotateUp extends CommandBase{
+public class PickUpExtend extends CommandBase{
     private Arm arm;
     
-    public RotateUp(Arm arm){
+    public PickUpExtend(Arm arm){
         this.arm = arm;
     }
 
     @Override
     public void execute() {
-        arm.setRotateSpeed(0.25);
+        arm.pickupExtend();
     }
 
     @Override
     public void end(boolean interrupted){
-        arm.setRotateSpeed(0);
+        arm.pickupOff();
     }
 }
