@@ -9,21 +9,27 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
-
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 
 public class Arm extends SubsystemBase{
     // private CANSparkMax elevatorMotor;
     // private SparkMaxPIDController m_pidController;
-    // private RelativeEncoder m_encoder;
     // public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
+    private ProfiledPIDController elevatorMotorController;
+    private ProfiledPIDController rotatorMotorController;
     private CANSparkMax clawMotor;
     private CANSparkMax elevatorMotor;
     private CANSparkMax rotatorMotor; 
@@ -31,10 +37,21 @@ public class Arm extends SubsystemBase{
     private TalonFX toproller;
     private TalonFX bottomroller;
     private VictorSPX spindexter; 
-    private SparkMaxPIDController m_pidController;
-    private RelativeEncoder m_encoder;
-    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+    //private SparkMaxPIDController m_pidController;
+    private RelativeEncoder m_elevatorEncoder;
+    private RelativeEncoder m_rotatorEncoder;
+    public double elevatorkP, rotatorkP, elevatorkI, rotatorkI, elevatorkD, rotatorkD, kMaxOutput, kMinOutput;
     private double distance;
+    private double angle;
+    private static final TrapezoidProfile.Constraints elevatorConstraints = new TrapezoidProfile.Constraints(84, 84);
+    private static final TrapezoidProfile.Constraints rotatorConstraints = new TrapezoidProfile.Constraints(20, 20);
+    private Mechanism2d mechanism = new Mechanism2d(4, 4);
+    private MechanismRoot2d root = mechanism.getRoot("Arm", 2, 2);
+    private MechanismLigament2d arm1;
+    private MechanismLigament2d arm2;
+    public static final Rotation2d arm1StartingAngle = Rotation2d.fromDegrees(45);
+    public static final Rotation2d arm2StartingAngle = Rotation2d.fromDegrees(-135);
+
 
     public Arm(){ 
         elevatorMotor = new CANSparkMax(10, MotorType.kBrushless);
@@ -43,32 +60,41 @@ public class Arm extends SubsystemBase{
         spindexter = new VictorSPX(10);
         toproller = new TalonFX(25);
         bottomroller = new TalonFX(26);
+        elevatorMotor.setSmartCurrentLimit(20);
 
         m_doubleSolenoid =
             new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 3, 2);
-            m_pidController = elevatorMotor.getPIDController();
+            //m_pidController = elevatorMotor.getPIDController();
+            
 
     // Encoder object created to display position values
-    m_encoder = elevatorMotor.getEncoder();
+    m_elevatorEncoder = elevatorMotor.getEncoder();
+    m_rotatorEncoder = rotatorMotor.getEncoder();
+
+    arm1 = root.append(
+                new MechanismLigament2d("Arm 1", 2.0, arm1StartingAngle.getDegrees()));
+    arm2 = arm1.append(
+                new MechanismLigament2d("Arm 2", 0.5, arm2StartingAngle.getDegrees()));
+
+    arm1.setLineWeight(5);
+    arm2.setLineWeight(5);
 
     // PID coefficients
-    kP = 0.2; 
-    kI = 1e-4;
-    kD = 1; 
-    kIz = 0; 
-    kFF = 0; 
+    elevatorkP = 0.2; 
+    elevatorkI = 0;
+    elevatorkD = 0;
+    rotatorkP = 0.12; 
+    rotatorkI = 0;
+    rotatorkD = 0;
     kMaxOutput = 0.25; 
     kMinOutput = -0.25;
     distance = 0;
+    angle = 0;
 
     // set PID coefficients
-    m_pidController.setP(kP);
-    m_pidController.setI(kI);
-    m_pidController.setD(kD);
-    m_pidController.setIZone(kIz);
-    m_pidController.setFF(kFF);
-    m_pidController.setOutputRange(kMinOutput, kMaxOutput);
-       
+    elevatorMotorController = new ProfiledPIDController(elevatorkP, elevatorkI, elevatorkD, elevatorConstraints);
+    rotatorMotorController = new ProfiledPIDController(rotatorkP, rotatorkI, rotatorkD, rotatorConstraints);
+
 
     }
 
@@ -91,7 +117,7 @@ public class Arm extends SubsystemBase{
     }
 
     public void setRotateSpeed(double rotateSpeed){
-        rotatorMotor.set(rotateSpeed);
+        angle += rotateSpeed;
     }
 
     public void elevatorMove(double elevateSpeed){
@@ -99,8 +125,8 @@ public class Arm extends SubsystemBase{
        if(distance>0){
         distance=0;
        }
-       if(distance<-88){
-        distance=-88;
+       if(distance<-84){
+        distance=-84;
        }
     }
 
@@ -108,6 +134,16 @@ public class Arm extends SubsystemBase{
     @Override
     public void periodic(){
         SmartDashboard.putNumber("Arm distance", distance);
-        m_pidController.setReference(distance, CANSparkMax.ControlType.kPosition);
+        SmartDashboard.putNumber("Arm angle", angle);
+        SmartDashboard.putData("Arm Mechanism", mechanism);
+        SmartDashboard.putNumber("Elevator position", m_elevatorEncoder.getPosition());
+        SmartDashboard.putNumber("Elevator Current", elevatorMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getAppliedOutput());
+
+        elevatorMotorController.setGoal(distance);
+        elevatorMotor.set(elevatorMotorController.calculate(m_elevatorEncoder.getPosition()));
+        rotatorMotorController.setGoal(angle);
+        rotatorMotor.set(rotatorMotorController.calculate(m_rotatorEncoder.getPosition()));
+        //m_pidController.setReference(distance, CANSparkMax.ControlType.kPosition);
     }
 }

@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.BooleanEvent;
+import edu.wpi.first.wpilibj.event.EventLoop;
 
 public class CustomXboxController {
     private final Joystick joystick;
@@ -37,6 +40,10 @@ public class CustomXboxController {
     /**
      * @param port The port the controller is on
      */
+    XboxController theController = new XboxController(port);
+    EventLoop leftTriggerEvent = new EventLoop();
+    EventLoop rightTriggerEvent = new EventLoop();
+
     public CustomXboxController(int port) {
         joystick = new Joystick(port);
         this.port = port;
@@ -113,8 +120,12 @@ public class CustomXboxController {
         return leftTrigger;
     }
 
-    public boolean isLeftTriggerPressed () {
-        return joystick.getTrigger(); //Not done
+    public BooleanEvent isLeftTriggerPressed () {
+        return theController.leftTrigger(leftTriggerEvent);
+    }
+
+    public BooleanEvent isRightTriggerPressed () {
+        return theController.rightTrigger(rightTriggerEvent);
     }
 
     public Axis getRightTrigger() {

@@ -12,7 +12,7 @@ public class ElevatorDown extends CommandBase{
 
     @Override
     public void execute() {
-        arm.elevatorMove(0.5);
+        arm.elevatorMove(2);
     }
 
     @Override

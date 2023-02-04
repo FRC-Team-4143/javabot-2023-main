@@ -27,6 +27,9 @@ import frc.robot.commands.RotateUp;
 import frc.robot.commands.RotateDown;
 import frc.robot.commands.ElevatorDown;
 import frc.robot.commands.ElevatorUp;
+import frc.robot.commands.LEDPorpor;
+
+import frc.robot.commands.LEDYel;
 import frc.robot.commands.PickUpExtend;
 import frc.robot.commands.RollersIn;
 import frc.robot.commands.RollersOut;
@@ -41,6 +44,8 @@ import frc.robot.subsystems.ArmSubsystem.ArmState;
 import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.XboxController;
 import java.util.function.BooleanSupplier;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
 
 
@@ -64,16 +69,15 @@ public class RobotContainer {
     //private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
     private final Arm arm = new Arm();
+    private AddressableLED m_led = new AddressableLED(8);
+    private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(14);
+
+
     private AutonomousManager autonomousManager;
     private UpdateManager updateManager;
-
-    //private boolean driverLeftTrigger;
-    //private boolean driverRightTrigger;
-    BooleanSupplier driverLeftTrigger = () -> true;
-    Trigger driveLT = new Trigger(driverLeftTrigger);
-
-    BooleanSupplier driverRightTrigger = () -> true;
-    Trigger driveRT = new Trigger(driverRightTrigger);
+    
+    Trigger driveLT = new Trigger(operator.isLeftTriggerPressed());
+    Trigger driveRT = new Trigger(operator.isRightTriggerPressed());
 
     // //Rotator
     // private final JoystickButton rotateUpButton = new JoystickButton(driver, XboxController.Button.kA.value);
@@ -95,7 +99,9 @@ public class RobotContainer {
     public RobotContainer(TimesliceRobot robot) {
         updateManager = new UpdateManager(robot);
         autonomousManager = new AutonomousManager(this);
-
+        m_led.setLength(m_ledBuffer.getLength());
+        m_led.setData(m_ledBuffer);
+        m_led.start();
         // Allocate timeslices
         updateManager.schedule(swerveDriveSubsystem, TimesliceConstants.DRIVETRAIN_PERIOD);
 
@@ -118,9 +124,12 @@ public class RobotContainer {
         driver.nameButtonY("Rotate Down");
         driver.getButtonA().whileTrue(new RotateUp(arm));
         driver.nameButtonA("Rotate Up");
-        driver.getRightBumper().whileTrue(new ElevatorUp(arm));
-        driver.nameRightBumper("Elevator Up");
-        driver.getLeftBumper().whileTrue(new ElevatorDown(arm));
+        //driver.getLeftBumper().whileTrue(new ElevatorDown(arm));
+        //driver.getRightBumper().whileTrue(new ElevatorUp(arm));
+        driveLT.whileTrue(new ElevatorUp(arm));
+        driveRT.whileTrue(new ElevatorDown(arm));
+        driver.nameLeftTrigger("Elevator Up");
+        driver.nameRightTrigger("Elevator Down");
         driver.nameLeftBumper("Elevator Down");
         operator.getLeftBumper().whileTrue(new RollersIn(arm));
         operator.nameLeftBumper("Rollers In");
@@ -134,6 +143,10 @@ public class RobotContainer {
         operator.nameButtonX("rotates cone counterclockwise");
         operator.getButtonB().whileTrue(new RevSpindexter(arm));
         operator.nameButtonB("rotates cone clockwise");
+        operator.getLeftRhombus().whileTrue(new LEDPorpor(m_led, m_ledBuffer));
+        operator.nameLeftRhombus("turn lights purple");
+        operator.getRightRhombus().whileTrue(new LEDYel(m_led, m_ledBuffer));
+        operator.nameRightRhombus("turn lights yellow");
         /* Set default commands */
         // lightsSubsystem.setDefaultCommand(lightsSubsystem.defaultCommand());
         swerveDriveSubsystem.setDefaultCommand(swerveDriveSubsystem.driveCommand(
