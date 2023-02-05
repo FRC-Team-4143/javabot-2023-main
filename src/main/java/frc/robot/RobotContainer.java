@@ -76,8 +76,11 @@ public class RobotContainer {
     private AutonomousManager autonomousManager;
     private UpdateManager updateManager;
     
-    Trigger driveLT = new Trigger(operator.isLeftTriggerPressed());
-    Trigger driveRT = new Trigger(operator.isRightTriggerPressed());
+    Trigger driveLT = new Trigger(driver.isLeftTriggerPressed());
+    Trigger driveRT = new Trigger(driver.isRightTriggerPressed());
+
+    Trigger operatorLT = new Trigger(operator.isLeftTriggerPressed());
+    Trigger operatorRT = new Trigger(operator.isRightTriggerPressed());
 
     // //Rotator
     // private final JoystickButton rotateUpButton = new JoystickButton(driver, XboxController.Button.kA.value);
@@ -155,24 +158,24 @@ public class RobotContainer {
         /* Set non-button, multi-subsystem triggers */
 
         /* Set left joystick bindings */
-        driver.getRightRhombus().onTrue(runOnce(swerveDriveSubsystem::zeroRotation, swerveDriveSubsystem));
-        driver
-                .getLeftRhombus()
-                .onTrue(runOnce(() -> swerveDriveSubsystem.setPose(new Pose2d()), swerveDriveSubsystem));
+        //driver.getRightRhombus().onTrue(runOnce(swerveDriveSubsystem::zeroRotation, swerveDriveSubsystem));
+        //driver
+        //        .getLeftRhombus()
+        //        .onTrue(runOnce(() -> swerveDriveSubsystem.setPose(new Pose2d()), swerveDriveSubsystem));
        /*  operator
                 .getRightRhombus()
                 .whileTrue(swerveDriveSubsystem.preciseDriveCommand(
                         getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), true));*/
-        driver.nameRightRhombus("Reset Gyro Angle");
-        driver.nameLeftRhombus("Reset Pose");
+        //driver.nameRightRhombus("Reset Gyro Angle");
+        //driver.nameLeftRhombus("Reset Pose");
         //operator.nameRightRhombus("Precise Driving");
 
 
         // Leveling
-        //operator.getButtonA().toggleOnTrue(swerveDriveSubsystem.levelChargeStationCommand());
-        // operator.getButtonB().whileTrue(run(swerveDriveSubsystem::lock, swerveDriveSubsystem));
-        //operator.nameButtonA("Level Charge Station");
-        // operator.nameButtonB("Lock Wheels");
+        driver.getLeftRhombus().toggleOnTrue(swerveDriveSubsystem.levelChargeStationCommand());
+        //operator.getButtonB().whileTrue(run(swerveDriveSubsystem::lock, swerveDriveSubsystem));
+        driver.nameLeftRhombus("Level Charge Station");
+        //operator.nameButtonB("Lock Wheels");
 
         /* Set right joystick bindings */
         /*operator.getLeftBumper().whileTrue(swerveDriveSubsystem.characterizeCommand(true, true));

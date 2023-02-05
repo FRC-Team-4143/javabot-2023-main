@@ -16,6 +16,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.controller.Axis;
@@ -35,6 +37,7 @@ import java.util.stream.DoubleStream;
 
 public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
     private final SwerveDrivePoseEstimator swervePoseEstimator;
+    private final Field2d m_field = new Field2d();
 
     private Pose2d pose = new Pose2d();
     private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(15);
@@ -68,6 +71,8 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
                 new Pose2d(),
                 VecBuilder.fill(0.01, 0.01, 0.01),
                 VecBuilder.fill(0.8, 0.8, 0.8));
+
+        SmartDashboard.putData("Field", m_field);
     }
 
     public Command driveCommand(Axis forward, Axis strafe, Axis rotation, boolean isFieldOriented) {
@@ -100,7 +105,8 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
         tiltController.setTolerance(4, 0.1);
 
         return run(() -> {
-                    double pitch = getTiltAmount();
+            System.out.println("Tryng to elevate!");
+                    double pitch = -getTiltAmount();
 
                     // Negative pitch -> drive forward, Positive pitch -> drive backward
 
@@ -170,7 +176,13 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
     }
 
     public void addVisionPoseEstimate(Pose2d pose, double timestamp) {
-        swervePoseEstimator.addVisionMeasurement(pose, timestamp);
+        if(pose.getY() > 0 && 
+        !(pose.getY() > 4 && pose.getY() < 4.02) && 
+        pose.getY() < 7.9248 && 
+        !(pose.getX() > 8.25 && pose.getX() < 8.29) 
+        && pose.getX() > 0 && pose.getX() < 16.4592) { 
+            swervePoseEstimator.addVisionMeasurement(pose, timestamp);
+        }
     }
 
     /**
@@ -282,6 +294,8 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
         velocityEstimator.add(velocity);
 
         pose = swervePoseEstimator.update(getGyroRotation(), modulePositions);
+        
+        m_field.setRobotPose(pose);
     }
 
     private void updateModules(SwerveDriveSignal driveSignal) {
