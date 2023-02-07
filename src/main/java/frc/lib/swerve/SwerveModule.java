@@ -12,6 +12,7 @@ import frc.lib.math.Conversions;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.Preferences;
 
 public class SwerveModule {
     public int moduleNumber;
@@ -21,7 +22,7 @@ public class SwerveModule {
     //private WPI_CANCoder angleEncoder;
     private AnalogEncoder analogEncoder;
     private double lastAngle;
-
+    
     SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(
             Constants.SwerveConstants.driveKS, Constants.SwerveConstants.driveKV, Constants.SwerveConstants.driveKA);
 
@@ -30,8 +31,9 @@ public class SwerveModule {
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
         this.moduleNumber = moduleNumber;
-        angleOffset = moduleConstants.angleOffset;
-
+        angleOffset = Preferences.getDouble("Module"+moduleNumber, moduleConstants.angleOffset);
+        
+       
         /* Angle Encoder Config */
         // angleEncoder = moduleConstants.canivoreName.isEmpty()
         //         ? new WPI_CANCoder(moduleConstants.cancoderID)
@@ -54,7 +56,11 @@ public class SwerveModule {
 
         lastAngle = getState().angle.getDegrees();
     }
-
+    public void setWheelOffsets(){
+        angleOffset = analogEncoder.getAbsolutePosition()*360.0;
+        Preferences.setDouble("Module"+moduleNumber, angleOffset);
+        resetToAbsolute();
+    }
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         setDesiredState(desiredState, isOpenLoop, false);
     }
@@ -132,15 +138,15 @@ public class SwerveModule {
         driveMotor.set(ControlMode.PercentOutput, 1.1 * Constants.SwerveConstants.driveKS);
     }
 
-    public Rotation2d getAnalogCoder(){
+    public Rotation2d getAnalogEncoder(){
         return Rotation2d.fromDegrees(analogEncoder.getAbsolutePosition()*360.0);
     }
 
     public void resetToAbsolute() {
-        double absolutePosition = Conversions.degreesToFalcon(getAnalogCoder().getDegrees() - angleOffset, Constants.SwerveConstants.angleGearRatio);
+        double absolutePosition = Conversions.degreesToFalcon(getAnalogEncoder().getDegrees() - angleOffset, Constants.SwerveConstants.angleGearRatio);
         angleMotor.setSelectedSensorPosition(absolutePosition);
 
-        System.out.println("Analog encoder value: " + getAnalogCoder().getDegrees() + " ID: " + moduleNumber);
+        System.out.println("Analog encoder value: " + getAnalogEncoder().getDegrees() + " ID: " + moduleNumber);
     }
 
     // private void configAngleEncoder() {

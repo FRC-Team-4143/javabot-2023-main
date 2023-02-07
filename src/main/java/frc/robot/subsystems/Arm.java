@@ -5,6 +5,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -107,9 +108,15 @@ public class Arm extends SubsystemBase{
     public void rollersin() {toproller.set(ControlMode.PercentOutput,-.40); bottomroller.set(ControlMode.PercentOutput,-.40);}
     public void rollersout() {toproller.set(ControlMode.PercentOutput,0.40); bottomroller.set(ControlMode.PercentOutput,0.40);}
     public void rollerstop() {toproller.set(ControlMode.PercentOutput,0); bottomroller.set(ControlMode.PercentOutput,0);}
-    public void spindexterCW() {spindexter.set(ControlMode.PercentOutput,-.30);}
-    public void spindexterCCW() {spindexter.set(ControlMode.PercentOutput,.30);}
-    public void spindexterStop() {spindexter.set(ControlMode.PercentOutput,0);}
+    public CommandBase spindexterCW() {
+        return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,-.30);}, 
+        () -> spindexter.set(ControlMode.PercentOutput, 0.0));}
+    public CommandBase spindexterCCW() {
+        return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,.30);},
+        () -> spindexter.set(ControlMode.PercentOutput, 0.0));} 
+    public void spindexterStop() {
+        spindexter.set(ControlMode.PercentOutput, 0.0);
+    }
 
     
     public void setClawSpeed(double clawSpeed){

@@ -2,7 +2,6 @@ package frc.robot;
 
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -12,7 +11,6 @@ import edu.wpi.first.wpilibj.TimesliceRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.controller.Axis;
 import frc.lib.controller.CustomXboxController;
-import frc.lib.controller.LogitechController;
 import frc.lib.controller.ThrustmasterJoystick;
 import frc.lib.logging.Logger;
 import frc.lib.loops.UpdateManager;
@@ -33,16 +31,18 @@ import frc.robot.commands.LEDYel;
 import frc.robot.commands.PickUpExtend;
 import frc.robot.commands.RollersIn;
 import frc.robot.commands.RollersOut;
-import frc.robot.commands.Spindexter;
-import frc.robot.commands.RevSpindexter;
+// import frc.robot.commands.Spindexter;
+// import frc.robot.commands.RevSpindexter;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.DriveToPositionCommand;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.ArmSubsystem.ArmState;
+// import frc.robot.subsystems.ArmSubsystem.ArmState;
 import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -69,6 +69,7 @@ public class RobotContainer {
     //private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
     private final Arm arm = new Arm();
+    private final PickupSubsystem pickupSubsystem = new PickupSubsystem();
     private AddressableLED m_led = new AddressableLED(8);
     private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(14);
 
@@ -107,7 +108,7 @@ public class RobotContainer {
         m_led.start();
         // Allocate timeslices
         updateManager.schedule(swerveDriveSubsystem, TimesliceConstants.DRIVETRAIN_PERIOD);
-
+        SmartDashboard.putData("Set Wheel Offset", swerveDriveSubsystem.setWheelOffsets());
         configureBindings();
     }
 
@@ -142,9 +143,9 @@ public class RobotContainer {
         operator.nameRightRhombus("extend pickup");
         operator.getButtonA().whileTrue(new InstantCommand(() -> arm.pickupRetract()));
         operator.nameButtonA("Retracts pickup");
-        operator.getButtonX().whileTrue(new Spindexter(arm));
+        operator.getButtonX().whileTrue(arm.spindexterCW());
         operator.nameButtonX("rotates cone counterclockwise");
-        operator.getButtonB().whileTrue(new RevSpindexter(arm));
+        operator.getButtonB().whileTrue(arm.spindexterCCW());
         operator.nameButtonB("rotates cone clockwise");
         operator.getLeftRhombus().whileTrue(new LEDPorpor(m_led, m_ledBuffer));
         operator.nameLeftRhombus("turn lights purple");
@@ -154,7 +155,8 @@ public class RobotContainer {
         // lightsSubsystem.setDefaultCommand(lightsSubsystem.defaultCommand());
         swerveDriveSubsystem.setDefaultCommand(swerveDriveSubsystem.driveCommand(
                 getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), true));
-
+        driver.getRightThumb().whileTrue(swerveDriveSubsystem.driveCommand(
+            getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), false));
         /* Set non-button, multi-subsystem triggers */
 
         /* Set left joystick bindings */
