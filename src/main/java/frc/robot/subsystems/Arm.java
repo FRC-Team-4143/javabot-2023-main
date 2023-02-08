@@ -17,6 +17,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -25,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 
-public class Arm extends SubsystemBase{
+public class Arm extends SubsystemBase {
     // private CANSparkMax elevatorMotor;
     // private SparkMaxPIDController m_pidController;
     // public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
@@ -125,6 +126,74 @@ public class Arm extends SubsystemBase{
 
     public void setRotateSpeed(double rotateSpeed){
         angle += rotateSpeed;
+        if(angle>0){
+            angle=0;
+           }
+           if(angle<-42){
+            angle=-42;
+           }
+    }
+
+    public CommandBase setHighPosition() {
+        return new FunctionalCommand(() -> {}, 
+        () -> {
+            if(m_elevatorEncoder.getPosition() > -39 ){
+                distance = -80;
+            } else {
+                distance = -80;
+                angle = -42;
+            }
+        }, interrupted -> {}, ()-> {
+            if(angle == -42 && distance == -80){
+                return true;
+            }else{
+                return false;
+            }
+        });
+    }
+
+    public CommandBase setMidPosition() {
+        return new FunctionalCommand(() -> {}, 
+        () -> {
+            if(m_elevatorEncoder.getPosition() > -39 ){
+                distance = -50;
+            } else {
+                distance = -50;
+                angle = -34;
+            }
+        }, interrupted -> {}, ()-> {
+            if(angle == -34 && distance == -50){
+                return true;
+            }else{
+                return false;
+            }
+        });
+    }
+
+    public CommandBase setHomePosition() {
+        return new FunctionalCommand(() -> {}, 
+        () -> {
+            if(m_rotatorEncoder.getPosition() < -1.5 ){
+                angle = -1;
+            } else {
+                distance = -1;
+                angle = -1;
+            }
+        }, interrupted -> {}, ()-> {
+            if(angle == -1 && distance == -1){
+                return true;
+            }else{
+                return false;
+            }
+            
+        });
+    }
+
+    public CommandBase set0Arm() {
+        return runOnce(() -> {
+            m_elevatorEncoder.setPosition(0);
+            m_rotatorEncoder.setPosition(0);
+        }).ignoringDisable(true);
     }
 
     public void elevatorMove(double elevateSpeed){
@@ -137,13 +206,20 @@ public class Arm extends SubsystemBase{
        }
     }
 
+    public void setPosition(){
+        distance = m_elevatorEncoder.getPosition();
+        angle = m_rotatorEncoder.getPosition();
+        elevatorMotorController.setGoal(distance);
+        rotatorMotorController.setGoal(angle);
+    }
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Arm distance", distance);
-        SmartDashboard.putNumber("Arm angle", angle);
+        SmartDashboard.putNumber("Arm distance", m_elevatorEncoder.getPosition());
+        SmartDashboard.putNumber("Arm angle", m_rotatorEncoder.getPosition());
         SmartDashboard.putData("Arm Mechanism", mechanism);
-        SmartDashboard.putNumber("Elevator position", m_elevatorEncoder.getPosition());
+        SmartDashboard.putNumber("Distance Setpoint", distance);
+        SmartDashboard.putNumber("Angle Setpoint", angle);
         SmartDashboard.putNumber("Elevator Current", elevatorMotor.getOutputCurrent());
         SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getAppliedOutput());
 

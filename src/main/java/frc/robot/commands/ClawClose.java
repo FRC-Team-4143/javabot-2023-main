@@ -31,4 +31,9 @@ public class ClawClose extends CommandBase{
             arm.setClawSpeed(0);
         }
     }
+
+    @Override
+    public boolean isFinished(){
+        return false;
+    }
 }

@@ -32,7 +32,7 @@ public class Robot extends TimesliceRobot {
         }
 
         robotContainer = new RobotContainer(this);
-
+        robotContainer.init();
         // Prevents the logging of many errors with our controllers
         DriverStation.silenceJoystickConnectionWarning(true);
     }
@@ -48,7 +48,7 @@ public class Robot extends TimesliceRobot {
     public void autonomousInit() {
         // Set april tags to use the correct origin (red or blue corner)
         FieldConstants.setAprilTagOrigin();
-
+        robotContainer.init();
         autonomousCommand = robotContainer.getAutonomousCommand();
 
         // Schedule the chosen autonomous command
@@ -62,7 +62,7 @@ public class Robot extends TimesliceRobot {
     public void teleopInit() {
         // Set april tags to use the correct origin (red or blue corner)
         FieldConstants.setAprilTagOrigin();
-
+        robotContainer.init();
         // Prevent any autonomous code from overrunning into teleop
         if (autonomousCommand != null) autonomousCommand.cancel();
     }
@@ -74,7 +74,14 @@ public class Robot extends TimesliceRobot {
     public void disabledInit() {}
 
     @Override
-    public void testInit() {}
+    public void disabledPeriodic() {
+        robotContainer.init();
+    }
+
+    @Override
+    public void testInit() {
+        robotContainer.init();
+    }
 
     @Override
     public void testPeriodic() {}

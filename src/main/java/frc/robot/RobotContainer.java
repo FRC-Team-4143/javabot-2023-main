@@ -109,6 +109,10 @@ public class RobotContainer {
         // Allocate timeslices
         updateManager.schedule(swerveDriveSubsystem, TimesliceConstants.DRIVETRAIN_PERIOD);
         SmartDashboard.putData("Set Wheel Offset", swerveDriveSubsystem.setWheelOffsets());
+        SmartDashboard.putData("Set High Position", arm.setHighPosition());
+        SmartDashboard.putData("Set Middle Position", arm.setMidPosition());
+        SmartDashboard.putData("Set Home Position", arm.setHomePosition());
+        SmartDashboard.putData("0Arm", arm.set0Arm());
         configureBindings();
     }
 
@@ -276,4 +280,8 @@ public class RobotContainer {
     // public ArmSubsystem getArmSubsystem() {
     //     return armSubsystem;
     // }
+
+    public void init(){
+        arm.setPosition();
+    }
 }

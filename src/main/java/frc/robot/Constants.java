@@ -330,8 +330,8 @@ public final class Constants {
         public static final double preciseDrivingModeSpeedMultiplier = 0.2;
 
         /* Neutral Modes */
-        public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
-        public static final NeutralMode driveNeutralMode = NeutralMode.Coast;
+        public static final NeutralMode angleNeutralMode = NeutralMode.Brake;
+        public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
 
         /* Drive Motor Inverts */
         public static final boolean driveMotorInvert = false;
