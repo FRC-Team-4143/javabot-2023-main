@@ -19,7 +19,7 @@ public class ClawClose extends CommandBase{
 
     @Override
     public void execute() {
-        arm.setClawSpeed(-0.25);
+        arm.setClawSpeed(-0.5);
         count+=1;
 
     }
@@ -29,6 +29,9 @@ public class ClawClose extends CommandBase{
         //arm.setClawSpeed(0);
         if(count<50){
             arm.setClawSpeed(0);
+        }
+        else {
+            arm.setClawSpeed(-0.25);
         }
     }
 

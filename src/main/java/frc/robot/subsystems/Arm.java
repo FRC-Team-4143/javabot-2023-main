@@ -4,17 +4,9 @@ package frc.robot.subsystems;
 // import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -27,7 +19,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 
 public class Arm extends SubsystemBase {
-    // private CANSparkMax elevatorMotor;
     // private SparkMaxPIDController m_pidController;
     // public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
     private ProfiledPIDController elevatorMotorController;
@@ -35,10 +26,6 @@ public class Arm extends SubsystemBase {
     private CANSparkMax clawMotor;
     private CANSparkMax elevatorMotor;
     private CANSparkMax rotatorMotor; 
-    private DoubleSolenoid m_doubleSolenoid;
-    private TalonFX toproller;
-    private TalonFX bottomroller;
-    private VictorSPX spindexter; 
     //private SparkMaxPIDController m_pidController;
     private RelativeEncoder m_elevatorEncoder;
     private RelativeEncoder m_rotatorEncoder;
@@ -56,22 +43,19 @@ public class Arm extends SubsystemBase {
 
 
     public Arm(){ 
-        elevatorMotor = new CANSparkMax(10, MotorType.kBrushless);
         clawMotor = new CANSparkMax(3, MotorType.kBrushed);
+        elevatorMotor = new CANSparkMax(10, MotorType.kBrushless);
         rotatorMotor = new CANSparkMax(5, MotorType.kBrushless);
-        spindexter = new VictorSPX(10);
-        toproller = new TalonFX(25);
-        bottomroller = new TalonFX(26);
+        clawMotor.setSmartCurrentLimit(10);
         elevatorMotor.setSmartCurrentLimit(20);
-
-        m_doubleSolenoid =
-            new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 3, 2);
-            //m_pidController = elevatorMotor.getPIDController();
-            
+        rotatorMotor.setSmartCurrentLimit(20);
+        
 
     // Encoder object created to display position values
     m_elevatorEncoder = elevatorMotor.getEncoder();
     m_rotatorEncoder = rotatorMotor.getEncoder();
+    m_elevatorEncoder.setPositionConversionFactor(22*0.25/(22/16*3*3)*(25.4/1000)); //Conversion from revolutions to meters, 0.01129
+    m_rotatorEncoder.setPosition(360/100); //Conversion from revolutions to degrees, 3.6
 
     arm1 = root.append(
                 new MechanismLigament2d("Arm 1", 2.0, arm1StartingAngle.getDegrees()));
@@ -82,10 +66,10 @@ public class Arm extends SubsystemBase {
     arm2.setLineWeight(5);
 
     // PID coefficients
-    elevatorkP = 0.2; 
+    elevatorkP = 18; 
     elevatorkI = 0;
     elevatorkD = 0;
-    rotatorkP = 0.12; 
+    rotatorkP = 0.03; 
     rotatorkI = 0;
     rotatorkD = 0;
     kMaxOutput = 0.25; 
@@ -100,51 +84,34 @@ public class Arm extends SubsystemBase {
 
     }
 
-    public void pickupRetract() {m_doubleSolenoid.set(DoubleSolenoid.Value.kForward);}
-
-    public void pickupExtend() {m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);}
-
-    public void pickupOff() {m_doubleSolenoid.set(DoubleSolenoid.Value.kOff);}
-
-    public void rollersin() {toproller.set(ControlMode.PercentOutput,-.40); bottomroller.set(ControlMode.PercentOutput,-.40);}
-    public void rollersout() {toproller.set(ControlMode.PercentOutput,0.40); bottomroller.set(ControlMode.PercentOutput,0.40);}
-    public void rollerstop() {toproller.set(ControlMode.PercentOutput,0); bottomroller.set(ControlMode.PercentOutput,0);}
-    public CommandBase spindexterCW() {
-        return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,-.30);}, 
-        () -> spindexter.set(ControlMode.PercentOutput, 0.0));}
-    public CommandBase spindexterCCW() {
-        return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,.30);},
-        () -> spindexter.set(ControlMode.PercentOutput, 0.0));} 
-    public void spindexterStop() {
-        spindexter.set(ControlMode.PercentOutput, 0.0);
-    }
-
     
     public void setClawSpeed(double clawSpeed){
         clawMotor.set(clawSpeed);
     }
 
-    public void setRotateSpeed(double rotateSpeed){
+    public void setRotateSpeed(double rotateSpeed){ //Make this two functional
         angle += rotateSpeed;
         if(angle>0){
             angle=0;
            }
-           if(angle<-42){
-            angle=-42;
+           if(angle<-151){
+            angle=-151;
            }
     }
+
+
 
     public CommandBase setHighPosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
-            if(m_elevatorEncoder.getPosition() > -39 ){
-                distance = -80;
+            if(m_elevatorEncoder.getPosition() > -0.44 ){
+                distance = -0.9;
             } else {
-                distance = -80;
-                angle = -42;
+                distance = -0.9;
+                angle = -151;
             }
         }, interrupted -> {}, ()-> {
-            if(angle == -42 && distance == -80){
+            if(angle == -151 && distance == -0.9){
                 return true;
             }else{
                 return false;
@@ -155,14 +122,14 @@ public class Arm extends SubsystemBase {
     public CommandBase setMidPosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
-            if(m_elevatorEncoder.getPosition() > -39 ){
-                distance = -50;
+            if(m_elevatorEncoder.getPosition() > -0.44 ){
+                distance = -0.56;
             } else {
-                distance = -50;
-                angle = -34;
+                distance = -0.56;
+                angle = -122;
             }
         }, interrupted -> {}, ()-> {
-            if(angle == -34 && distance == -50){
+            if(angle == -122 && distance == -0.56){
                 return true;
             }else{
                 return false;
@@ -173,14 +140,14 @@ public class Arm extends SubsystemBase {
     public CommandBase setHomePosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
-            if(m_rotatorEncoder.getPosition() < -1.5 ){
-                angle = -1;
+            if(m_rotatorEncoder.getPosition() < -5.4 ){
+                angle = -3.6;
             } else {
-                distance = -1;
-                angle = -1;
+                distance = -0.01129;
+                angle = -3.6;
             }
         }, interrupted -> {}, ()-> {
-            if(angle == -1 && distance == -1){
+            if(angle == -3.6 && distance == -0.01129){
                 return true;
             }else{
                 return false;
@@ -201,8 +168,8 @@ public class Arm extends SubsystemBase {
        if(distance>0){
         distance=0;
        }
-       if(distance<-84){
-        distance=-84;
+       if(distance<-0.95){
+        distance=-0.95;
        }
     }
 

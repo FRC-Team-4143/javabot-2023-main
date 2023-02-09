@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 
 public class PickupSubsystem extends SubsystemBase {
     private DoubleSolenoid m_doubleSolenoid;
@@ -14,7 +15,7 @@ public class PickupSubsystem extends SubsystemBase {
     private VictorSPX spindexter; 
 
 
-    public void PickupSubsystem () {
+    public PickupSubsystem () {
         spindexter = new VictorSPX(10);
         toproller = new TalonFX(25);
         bottomroller = new TalonFX(26);
@@ -22,15 +23,37 @@ public class PickupSubsystem extends SubsystemBase {
         m_doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 3, 2);
     }
 
-    public void pickupRetract() {m_doubleSolenoid.set(DoubleSolenoid.Value.kForward);}
+    //public void pickupRetract() {m_doubleSolenoid.set(DoubleSolenoid.Value.kForward);}
+    //public void pickupExtend() {m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);}
+    //public void pickupOff() {m_doubleSolenoid.set(DoubleSolenoid.Value.kOff);}
 
-    public void pickupExtend() {m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);}
+    public CommandBase pickupExtend() {
+        return new FunctionalCommand (
+            () -> {m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);}, () -> {},
+            interrupted ->  {m_doubleSolenoid.set(DoubleSolenoid.Value.kOff);}, () -> false);
+    }
 
-    public void pickupOff() {m_doubleSolenoid.set(DoubleSolenoid.Value.kOff);}
+    public CommandBase pickupRetract() {
+        return new FunctionalCommand(() -> {m_doubleSolenoid.set(DoubleSolenoid.Value.kForward);}, () -> {},interrupted ->  {}, () -> false);
+    }
 
-    public void rollersin() {toproller.set(ControlMode.PercentOutput,-.40); bottomroller.set(ControlMode.PercentOutput,-.40);}
-    public void rollersout() {toproller.set(ControlMode.PercentOutput,0.40); bottomroller.set(ControlMode.PercentOutput,0.40);}
-    public void rollerstop() {toproller.set(ControlMode.PercentOutput,0); bottomroller.set(ControlMode.PercentOutput,0);}
+
+    public CommandBase rollIn() {
+        return new FunctionalCommand(() -> {toproller.set(ControlMode.PercentOutput,-.40); 
+                        bottomroller.set(ControlMode.PercentOutput,-.40);}, () -> {},
+                      interrupted -> {toproller.set(ControlMode.PercentOutput,0); 
+                        bottomroller.set(ControlMode.PercentOutput,0);}, () -> false
+        );
+    }
+
+    public CommandBase rollOut() {
+        return new FunctionalCommand(() -> {toproller.set(ControlMode.PercentOutput,.40); 
+                        bottomroller.set(ControlMode.PercentOutput,.40);}, () -> {},
+                      interrupted -> {toproller.set(ControlMode.PercentOutput,0); 
+                        bottomroller.set(ControlMode.PercentOutput,0);}, () -> false
+        );
+    }
+
     public CommandBase spindexterCW() {
         return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,-.30);}, 
         () -> spindexter.set(ControlMode.PercentOutput, 0.0));}
