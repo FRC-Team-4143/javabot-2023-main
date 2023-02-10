@@ -137,7 +137,7 @@ public class RobotContainer {
         operator.getRightBumper().whileTrue(pickupSubsystem.rollOut());
         operator.nameRightBumper("Rollers Out");
         operator.getButtonY().whileTrue(pickupSubsystem.pickupExtend());
-        operator.nameRightRhombus("extend pickup");
+        operator.nameButtonY("extend pickup");
         operator.getButtonA().whileTrue(pickupSubsystem.pickupRetract());
         operator.nameButtonA("Retracts pickup");
         operator.getButtonX().whileTrue(pickupSubsystem.spindexterCW());
@@ -151,9 +151,10 @@ public class RobotContainer {
         /* Set default commands */
         // lightsSubsystem.setDefaultCommand(lightsSubsystem.defaultCommand());
         swerveDriveSubsystem.setDefaultCommand(swerveDriveSubsystem.driveCommand(
-                getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), true));
-        driver.getRightThumb().whileTrue(swerveDriveSubsystem.driveCommand(
+            getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), true));
+        driver.getRightBumper().toggleOnTrue(swerveDriveSubsystem.driveCommand(
             getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), false));
+        driver.nameRightBumper("Field Centric Toggle");
         /* Set non-button, multi-subsystem triggers */
 
         /* Set left joystick bindings */
@@ -260,6 +261,10 @@ public class RobotContainer {
 
     public SwerveDriveSubsystem getSwerveDriveSubsystem() {
         return swerveDriveSubsystem;
+    }
+
+    public Arm getArm(){
+        return arm;
     }
 
     // public LightsSubsystem getLightsSubsystem() {

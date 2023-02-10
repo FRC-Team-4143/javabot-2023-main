@@ -9,9 +9,12 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.logging.LoggedReceiver;
 import frc.lib.logging.Logger;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import java.util.HashMap;
@@ -23,21 +26,35 @@ public class AutonomousManager {
 
     private SwerveAutoBuilder autoBuilder;
 
-    private final AutonomousOption defaultAuto = AutonomousOption.DEMO;
-
+    private final AutonomousOption defaultAuto = AutonomousOption.AUTOCLIMB;
+    private static final SendableChooser<String> autoChooser = new SendableChooser<>();
+    
     SwerveDriveSubsystem swerveDriveSubsystem;
 
     public AutonomousManager(RobotContainer container) {
         swerveDriveSubsystem = container.getSwerveDriveSubsystem();
         //ArmSubsystem armSubsystem = container.getArmSubsystem();
+        Arm armSubsystem = container.getArm();
+        
 
         // Allow the custom driver station to select an auto
         initializeNetworkTablesValues();
 
         // Create an event map for use in all autos
         HashMap<String, Command> eventMap = new HashMap<>();
+        autoChooser.setDefaultOption("AUTOCLIMB", "AUTOCLIMB");
+        autoChooser.addOption("FIVEPIECE", "FIVEPIECE");
+        SmartDashboard.putData("Autonomous Mode", autoChooser);
+
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
         eventMap.put("levelChargeStation", swerveDriveSubsystem.levelChargeStationCommand());
+        eventMap.put("SetHighPosition", armSubsystem.setHighPosition());
+        eventMap.put("SetMidPosition", armSubsystem.setMidPosition());
+        eventMap.put("SetHomePosition", armSubsystem.setHomePosition());
+        /// add more events
+
+
+
         // //eventMap.put(
         //         "placeHigh",
         //         sequence(
@@ -81,7 +98,8 @@ public class AutonomousManager {
     }
 
     public Command getAutonomousCommand() {
-        String nameOfSelectedAuto = selectedAuto.getString();
+        // String nameOfSelectedAuto = selectedAuto.getString();
+        String nameOfSelectedAuto = autoChooser.getSelected();
 
         Command autonomousCommand;
 
