@@ -178,6 +178,12 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
         return pose;
     }
 
+    public CommandBase resetPose() {
+        return runOnce(() -> {
+            swervePoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), new Pose2d()); 
+        }).ignoringDisable(true);
+    }
+
     public void setPose(Pose2d pose) {
         this.pose = pose;
         swervePoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);

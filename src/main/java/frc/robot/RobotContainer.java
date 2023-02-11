@@ -33,7 +33,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 // import frc.robot.subsystems.ArmSubsystem.ArmState;
 import java.util.function.Supplier;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.function.BooleanSupplier;
@@ -63,6 +62,8 @@ public class RobotContainer {
 
     private final Arm arm = new Arm();
     private final PickupSubsystem pickupSubsystem = new PickupSubsystem();
+    private FieldPositionSubsystem fieldPositionSubsystem = new FieldPositionSubsystem();
+
     private AddressableLED m_led = new AddressableLED(8);
     private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(14);
 
@@ -106,6 +107,12 @@ public class RobotContainer {
         SmartDashboard.putData("Set Middle Position", arm.setMidPosition());
         SmartDashboard.putData("Set Home Position", arm.setHomePosition());
         SmartDashboard.putData("0Arm", arm.set0Arm());
+        SmartDashboard.putData("Reset pose", swerveDriveSubsystem.resetPose());
+        Supplier<Pose2d> testPoseSupplier = () -> {
+            var targetPose = new Pose2d(1, 1, new Rotation2d(0));
+            return targetPose;
+        };
+        SmartDashboard.putData("Drive to default position", new DriveToPositionCommand(swerveDriveSubsystem, testPoseSupplier));
         configureBindings();
     }
 
@@ -114,9 +121,9 @@ public class RobotContainer {
         driver.getLeftXAxis().setScale(Constants.SwerveConstants.maxSpeed);
         driver.getLeftYAxis().setScale(Constants.SwerveConstants.maxSpeed);
         driver.getRightXAxis().setScale(Constants.SwerveConstants.maxAngularVelocity);
-        driver.getLeftXAxis().setInverted(true);
-        driver.getLeftYAxis().setInverted(true);
-        driver.getRightXAxis().setInverted(true);
+        driver.getLeftXAxis().setInverted(false);
+        driver.getLeftYAxis().setInverted(false);
+        driver.getRightXAxis().setInverted(false);
         driver.getButtonB().whileTrue(new ClawOpen(arm));
         driver.nameButtonB("Claw Open");
         driver.getButtonX().whileTrue(new ClawClose(arm));
@@ -132,6 +139,8 @@ public class RobotContainer {
         driver.nameLeftTrigger("Elevator Up");
         driver.nameRightTrigger("Elevator Down");
         driver.nameLeftBumper("Elevator Down");
+        driver.getRightRhombus().onTrue(runOnce(swerveDriveSubsystem::zeroRotation, swerveDriveSubsystem));
+        driver.nameRightRhombus("Reset Gyro Angle");
         operator.getLeftBumper().whileTrue(pickupSubsystem.rollIn());
         operator.nameLeftBumper("Rollers In");
         operator.getRightBumper().whileTrue(pickupSubsystem.rollOut());
@@ -158,15 +167,14 @@ public class RobotContainer {
         /* Set non-button, multi-subsystem triggers */
 
         /* Set left joystick bindings */
-        //driver.getRightRhombus().onTrue(runOnce(swerveDriveSubsystem::zeroRotation, swerveDriveSubsystem));
         //driver
         //        .getLeftRhombus()
         //        .onTrue(runOnce(() -> swerveDriveSubsystem.setPose(new Pose2d()), swerveDriveSubsystem));
        /*  operator
-                .getRightRhombus()
+                .getRightRhombus()swz
                 .whileTrue(swerveDriveSubsystem.preciseDriveCommand(
                         getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), true));*/
-        //driver.nameRightRhombus("Reset Gyro Angle");
+        
         //driver.nameLeftRhombus("Reset Pose");
         //operator.nameRightRhombus("Precise Driving");
 
@@ -177,19 +185,13 @@ public class RobotContainer {
         driver.nameLeftRhombus("Level Charge Station");
         //operator.nameButtonB("Lock Wheels");
 
-        /* Set right joystick bindings */
-        /*operator.getLeftBumper().whileTrue(swerveDriveSubsystem.characterizeCommand(true, true));
-        operator.getRightBumper().whileTrue(swerveDriveSubsystem.characterizeCommand(true, false));
-        operator.nameLeftBumper("Characterize Forwards");
-        operator.nameRightBumper("Characterize Backwards");*/
-
         Supplier<Pose2d> targetPoseSupplier = () -> {
             PlacementLocation targetLocation =
                     FieldConstants.getNearestPlacementLocation(swerveDriveSubsystem.getPose());
 
             var targetPose = targetLocation.robotPlacementPose;
 
-            Logger.log("/SwerveDriveSubsystem/TargetPose", targetPose);
+            //Logger.log("/SwerveDriveSubsystem/TargetPose", targetPose);
             return targetPose;
         };
 
@@ -223,9 +225,9 @@ public class RobotContainer {
         //     return targetPose;
         // };
 
-        //operator.getButtonX().whileTrue(new DriveToPositionCommand(swerveDriveSubsystem, targetPoseSupplier));
+        //operator.getRightRhombus().whileTrue(new DriveToPositionCommand(swerveDriveSubsystem, targetPoseSupplier));
+        //operator.nameRightRhombus("Drive to Pose");
         //operator.getButtonY().whileTrue(new AimAtPoseCommand(swerveDriveSubsystem, targetAimPoseSupplier, getDriveForwardAxis(), getDriveStrafeAxis()));
-        //operator.nameButtonX("Drive to Pose");
         //operator.nameButtonY("Aim at Pose");
 
         /* Set operator controller bindings */

@@ -182,6 +182,14 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic(){
+        arm1.setLength(2.0 - m_elevatorEncoder.getPosition());
+        arm2.setAngle(m_rotatorEncoder.getPosition());
+        elevatorMotorController.setGoal(distance);
+        elevatorMotor.set(elevatorMotorController.calculate(m_elevatorEncoder.getPosition()));
+        rotatorMotorController.setGoal(angle);
+        rotatorMotor.set(rotatorMotorController.calculate(m_rotatorEncoder.getPosition()));
+        //m_pidController.setReference(distance, CANSparkMax.ControlType.kPosition);
+
         SmartDashboard.putNumber("Arm distance", m_elevatorEncoder.getPosition());
         SmartDashboard.putNumber("Arm angle", m_rotatorEncoder.getPosition());
         SmartDashboard.putData("Arm Mechanism", mechanism);
@@ -189,11 +197,5 @@ public class Arm extends SubsystemBase {
         SmartDashboard.putNumber("Angle Setpoint", angle);
         SmartDashboard.putNumber("Elevator Current", elevatorMotor.getOutputCurrent());
         SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getAppliedOutput());
-
-        elevatorMotorController.setGoal(distance);
-        elevatorMotor.set(elevatorMotorController.calculate(m_elevatorEncoder.getPosition()));
-        rotatorMotorController.setGoal(angle);
-        rotatorMotor.set(rotatorMotorController.calculate(m_rotatorEncoder.getPosition()));
-        //m_pidController.setReference(distance, CANSparkMax.ControlType.kPosition);
     }
 }
