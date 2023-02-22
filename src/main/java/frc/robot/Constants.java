@@ -25,14 +25,15 @@ public final class Constants {
     public static final boolean competitionMode = false;
 
     public static final class GlobalConstants {
-        public static final String CANIVORE_NAME = "CANivore";
-        public static final int PCM_ID = 19;
+        //public static final String CANIVORE_NAME = "CANivore";
+        public static final String CANIVORE_NAME = "";
+        public static final int PCM_ID = 1;
         public static final double targetVoltage = 12.0; // Used for voltage compensation
 
         public static final double batteryVoltageThreshold = 12.5;
 
-        public static final double minimumPressure = 100; // PSI
-        public static final double maximumPressure = 120; // try 120
+        public static final double minimumPressure = 80; // PSI
+        public static final double maximumPressure = 110;
     }
 
     public static final class ControllerConstants {
@@ -45,7 +46,7 @@ public final class Constants {
         public static final double fieldLength = Units.inchesToMeters(651.25);
         public static final double fieldWidth = Units.inchesToMeters(315.5);
 
-        public static final double robotLengthWithBumpers = Units.inchesToMeters(30 + 8);
+        public static final double robotLengthWithBumpers = Units.inchesToMeters(46);
 
         /* X Placement constants from 6328 */
         public static final double outerX = Units.inchesToMeters(54.25);
@@ -240,6 +241,8 @@ public final class Constants {
         public static final double stallCurrent = 257;
         public static final double freeSpeed = 6380;
 
+        public static boolean isClawOpen = false;
+
         public static final Transform3d robotToArm =
                 new Transform3d(new Translation3d(0, 0, Units.inchesToMeters(8)), new Rotation3d());
 
@@ -321,17 +324,168 @@ public final class Constants {
 
         public static final Transform3d photonRobotToCamera = photonCameraToRobot.inverse();
 
-        public static final double limelightHeight = Units.inchesToMeters(10);
-        public static final double retroreflectiveHeight = Units.inchesToMeters(30);
+        //public static final double limelightHeight = Units.inchesToMeters(54);
+        //public static final double retroreflectiveHeight = Units.inchesToMeters(54);
 
         public static final Transform3d limelightCameraToRobot = new Transform3d(
-                new Translation3d(Units.inchesToMeters(3), Units.inchesToMeters(6), Units.inchesToMeters(-4)),
+                new Translation3d(Units.inchesToMeters(19), Units.inchesToMeters(-3), Units.inchesToMeters(54)),
                 new Rotation3d(0, 0, 0));
 
         public static final Transform3d limelightRobotToCamera = limelightCameraToRobot.inverse();
     }
 
-    public static final class SwerveConstants extends CompBotConstants {}
+    public static final class SwerveConstants extends Alpha4143SwerveConstants {}
+
+    public static class Alpha4143SwerveConstants {
+        // See https://github.com/Team364/BaseFalconSwerve for getting these values.
+
+        public static final boolean hasPigeon = true;
+        public static final int PIGEON_PORT = 0;
+
+        public static final double trackWidth = Units.inchesToMeters(18.25); 
+        public static final double wheelBase = Units.inchesToMeters(30.25);
+        public static final double wheelDiameter = 0.10033;
+        public static final double wheelCircumference = wheelDiameter * Math.PI;
+
+        // robot size
+        public static final double widthWithBumpers = Units.inchesToMeters(24. + 3.5 * 2);
+        public static final double lengthWithBumpers = Units.inchesToMeters(35.5 + 3.5 * 2);
+
+        public static final double openLoopRamp = 0.0; // 0.25
+        public static final double closedLoopRamp = 0.0;
+
+        public static final double driveGearRatio = (6.12 / 1.0); 
+        public static final double angleGearRatio = ((150.0 / 7.0) / 1.0); 
+
+        public static final Translation2d[] moduleTranslations = new Translation2d[] {
+                new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
+                new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
+                new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
+                new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0)
+            };
+    
+            public static final SecondOrderSwerveKinematics swerveKinematics =
+                    new SecondOrderSwerveKinematics(moduleTranslations);
+    
+        /* Swerve Current Limiting */
+        public static final int angleContinuousCurrentLimit = 25;
+        public static final int anglePeakCurrentLimit = 40;
+        public static final double anglePeakCurrentDuration = 0.1;
+        public static final boolean angleEnableCurrentLimit = true;
+
+        public static final int driveContinuousCurrentLimit = 35;
+        public static final int drivePeakCurrentLimit = 60;
+        public static final double drivePeakCurrentDuration = 0.1;
+        public static final boolean driveEnableCurrentLimit = true;
+
+        /* Motor Information */
+        public static final double driveMotorFreeSpeed = 6380; // RPM of Falcon 500
+        public static final double angleMotorFreeSpeed = 6380; // RPM of Falcon 500
+        
+        /* Angle Motor PID Values */
+        public static final double angleKP = 0.2;
+        public static final double angleKI = 0.0;
+        public static final double angleKD = 0.0;
+        public static final double angleKF = 0.0;
+
+        /* Drive Motor PID Values */
+        public static final double driveKP = 0.10;
+        public static final double driveKI = 0.0;
+        public static final double driveKD = 0.0;
+        public static final double driveKF = 0.0;
+
+        /* Drive Motor Characterization Values */
+        public static final double driveKS =
+                (0.667 / 12); // divide by 12 to convert from volts to percent output for CTRE
+        public static final double driveKV = (2.44 / 12);
+        public static final double driveKA = (0.27 / 12);
+
+        /* Angle Motor Characterization Values */
+        public static final double angleKS = 0;
+        // (0.368 / 12); // divide by 12 to convert from volts to percent output for CTRE
+        public static final double angleKV = (0.234 / 12);
+        public static final double angleKA = (0.003 / 12);
+
+        /* Swerve Profiling Values */
+        public static final double maxSpeed = 6.52; // meters per second
+        public static final double maxAcceleration = 16.52; // meters per second^2
+        public static final double maxAngularVelocity = maxSpeed // rad/s
+                / Arrays.stream(moduleTranslations)
+                        .map(translation -> translation.getNorm())
+                        .max(Double::compare)
+                        .get();
+
+        /* Calculated Characterization Values */
+        public static final double calculatedDriveKS = 0;
+        public static final double calculatedDriveKV = (12 / maxSpeed) / GlobalConstants.targetVoltage;
+        public static final double calculatedDriveKA = (12 / maxAcceleration) / GlobalConstants.targetVoltage;
+        public static final double calculatedAngleKV =
+                (12 * 60) / (angleMotorFreeSpeed * Math.toRadians(360 / angleGearRatio));
+
+        /* Precise Driving Mode Values */
+        public static final double preciseDrivingModeSpeedMultiplier = 0.2;
+
+        /* Neutral Modes */
+        public static final NeutralMode angleNeutralMode = NeutralMode.Brake;
+        public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
+
+        /* Drive Motor Inverts */
+        public static final boolean driveMotorInvert = false;
+
+        /* Drive Encoder Inverts */
+        public static final boolean driveEncoderInvert = false;
+
+        /* Angle Motor Inverts */
+        public static final boolean angleMotorInvert = true;
+
+        /* Angle Encoder Invert */
+        public static final boolean canCoderInvert = false;
+
+        /* Module Specific Constants */
+        /* Front Left Module - Module 0 */
+        public static final class Mod0 { 
+            public static final String canivoreName = "CANivore";
+            public static final int driveMotorID = 1;
+            public static final int angleMotorID = 2;
+            public static final int canCoderID = 0;
+            public static final double angleOffset = 340;
+            public static final SwerveModuleConstants constants = 
+                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+        }
+
+        /* Front Right Module - Module 1 */
+        public static final class Mod1 { 
+            public static final String canivoreName = "CANivore";
+            public static final int driveMotorID = 3;
+            public static final int angleMotorID = 4;
+            public static final int canCoderID = 1;
+            public static final double angleOffset = 151;
+            public static final SwerveModuleConstants constants = 
+            new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+        }
+        
+        /* Back Left Module - Module 2 */
+        public static final class Mod2 {    
+            public static final String canivoreName = "CANivore";
+            public static final int driveMotorID = 5;
+            public static final int angleMotorID = 6;
+            public static final int canCoderID = 2;
+            public static final double angleOffset = 76;
+            public static final SwerveModuleConstants constants = 
+            new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+        }
+
+        /* Back Right Module - Module 3 */
+        public static final class Mod3 { 
+            public static final String canivoreName = "CANivore";
+            public static final int driveMotorID = 7;
+            public static final int angleMotorID = 8;
+            public static final int canCoderID = 3;
+            public static final double angleOffset = 275;
+            public static final SwerveModuleConstants constants = 
+            new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+        }
+    }
 
     public static class DevelopmentBotConstants {
         // See https://github.com/Team364/BaseFalconSwerve for getting these values.

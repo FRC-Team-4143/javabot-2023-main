@@ -77,7 +77,8 @@ public class DriveToPositionCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return xController.atGoal() && yController.atGoal() && omegaController.atGoal();
+        return false;
+        //return xController.atGoal() && yController.atGoal() && omegaController.atGoal();
     }
 
     @Override

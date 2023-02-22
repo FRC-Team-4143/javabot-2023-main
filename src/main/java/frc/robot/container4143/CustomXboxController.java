@@ -1,0 +1,260 @@
+package frc.robot.container4143;
+
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import frc.lib.controller.Axis;
+import frc.lib.controller.JoystickAxis;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.BooleanEvent;
+import edu.wpi.first.wpilibj.event.EventLoop;
+
+public class CustomXboxController {
+    private final Joystick joystick;
+
+    private int port;
+    private final Trigger buttonA;
+    private final Trigger buttonB;
+    private final Trigger buttonX;
+    private final Trigger buttonY;
+    private final Trigger leftBumper;
+    private final Trigger rightBumper;
+    private final Trigger leftRhombus;
+    private final Trigger rightRhombus;
+    private final Trigger leftThumbButton;
+    private final Trigger rightThumbButton;
+
+    private final Axis leftXAxis;
+    private final Axis leftYAxis;
+    private final Axis leftTrigger;
+    private final Axis rightTrigger;
+    private final Axis rightXAxis;
+    private final Axis rightYAxis;
+
+    private final Trigger dPadUp;
+    private final Trigger dPadRight;
+    private final Trigger dPadDown;
+    private final Trigger dPadLeft;
+
+    
+    private HashMap<String, String> buttonPurposeHashMap = new HashMap<String, String>();
+
+    /**
+     * @param port The port the controller is on
+     */
+    XboxController theController = new XboxController(port);
+    EventLoop leftTriggerEvent = new EventLoop();
+    EventLoop rightTriggerEvent = new EventLoop();
+
+    public CustomXboxController(int port) {
+        joystick = new Joystick(port);
+        this.port = port;
+        buttonA = new JoystickButton(joystick, 1);
+        buttonB = new JoystickButton(joystick, 2);
+        buttonX = new JoystickButton(joystick, 3);
+        buttonY = new JoystickButton(joystick, 4);
+        leftBumper = new JoystickButton(joystick, 5);
+        rightBumper = new JoystickButton(joystick, 6);
+        leftRhombus = new JoystickButton(joystick, 7);
+        rightRhombus = new JoystickButton(joystick, 8);
+        leftThumbButton = new JoystickButton(joystick, 9);
+        rightThumbButton = new JoystickButton(joystick, 10);
+
+        dPadUp = new POVButton(joystick, 0);
+        dPadRight = new POVButton(joystick, 90);
+        dPadDown = new POVButton(joystick, 180);
+        dPadLeft = new POVButton(joystick, 270);
+
+        leftXAxis = new JoystickAxis(joystick, 0);
+        leftYAxis = new JoystickAxis(joystick, 1);
+        leftTrigger = new JoystickAxis(joystick, 2);
+        rightTrigger = new JoystickAxis(joystick, 3);
+        rightXAxis = new JoystickAxis(joystick, 4);
+        rightYAxis = new JoystickAxis(joystick, 5);
+
+        buttonPurposeHashMap.put("type", "CustomXboxController");
+    }
+
+    public Trigger getButtonA() {
+        return buttonA;
+    }
+
+    public Trigger getButtonB() {
+        return buttonB;
+    }
+
+    public Trigger getButtonX() {
+        return buttonX;
+    }
+
+    public Trigger getButtonY() {
+        return buttonY;
+    }
+
+    public Trigger getLeftBumper() {
+        return leftBumper;
+    }
+
+    public Trigger getRightBumper() {
+        return rightBumper;
+    }
+
+    public Trigger getLeftRhombus() {
+        return leftRhombus;
+    }
+
+    public Trigger getRightRhombus() {
+        return rightRhombus;
+    }
+
+    public Trigger getLeftThumb() {
+        return leftThumbButton;
+    }
+
+    public Trigger getRightThumb() {
+        return rightThumbButton;
+    }
+
+    public Trigger getDPadUp() {
+        return dPadUp;
+    }
+
+    public Trigger getDPadRight() {
+        return dPadRight;
+    }
+
+    public Trigger getDPadDown() {
+        return dPadDown;
+    }
+
+    public Trigger getDPadLeft() {
+        return dPadLeft;
+    }
+
+    public Axis getLeftXAxis() {
+        return leftXAxis;
+    }
+
+    public Axis getLeftYAxis() {
+        return leftYAxis;
+    }
+
+    public Axis getLeftTrigger() {
+        return leftTrigger;
+    }
+
+    public BooleanEvent isLeftTriggerPressed () {
+        return theController.leftTrigger(leftTriggerEvent);
+    }
+
+    public BooleanEvent isRightTriggerPressed () {
+        return theController.rightTrigger(rightTriggerEvent);
+    }
+
+    public Axis getRightTrigger() {
+        return rightTrigger;
+    }
+
+    public Axis getRightXAxis() {
+        return rightXAxis;
+    }
+
+    public Axis getRightYAxis() {
+        return rightYAxis;
+    }
+
+    public void setLeftRumble(double rumbleValue) {
+        joystick.setRumble(RumbleType.kLeftRumble, rumbleValue);
+    }
+
+    public void setRightRumble(double rumbleValue) {
+        joystick.setRumble(RumbleType.kRightRumble, rumbleValue);
+    }
+
+    public void nameButtonA(String purpose) {
+        buttonPurposeHashMap.put("buttonA", purpose);
+    }
+
+    public void nameButtonB(String purpose) {
+        buttonPurposeHashMap.put("buttonA", purpose);
+    }
+
+    public void nameButtonX(String purpose) {
+        buttonPurposeHashMap.put("buttonX", purpose);
+    }
+
+    public void nameButtonY(String purpose) {
+        buttonPurposeHashMap.put("buttonY", purpose);
+    }
+
+    public void nameLeftBumper(String purpose) {
+        buttonPurposeHashMap.put("leftBumper", purpose);
+    }
+
+    public void nameRightBumper(String purpose) {
+        buttonPurposeHashMap.put("rightBumper", purpose);
+    }
+
+    public void sendButtonNamesToNT() {
+        NetworkTableInstance.getDefault()
+                .getTable("Controllers")
+                .getEntry(port + "")
+                .setString(toJSON());
+    }
+
+    public String toJSON() {
+        return buttonPurposeHashMap.entrySet().stream()
+                .map((Map.Entry<String, String> buttonEntry) -> stringifyButtonName(buttonEntry))
+                .collect(Collectors.joining(", ", "{", "}"));
+    }
+
+    private String stringifyButtonName(Map.Entry<String, String> buttonEntry) {
+        return "\"" + buttonEntry.getKey() + "\": " + "\"" + buttonEntry.getValue() + "\"";
+    }
+
+    public void nameLeftRhombus(String purpose) {
+        buttonPurposeHashMap.put("leftRhombus", purpose);
+    }
+
+    public void nameRightRhombus(String purpose) {
+        buttonPurposeHashMap.put("rightRhombus", purpose);
+    }
+
+    public void nameLeftThumb(String purpose) {
+        buttonPurposeHashMap.put("leftThumbButton", purpose);
+    }
+
+    public void nameRightThumb(String purpose) {
+        buttonPurposeHashMap.put("rightThumbButton", purpose);
+    }
+
+    public void nameLeftXAxis(String purpose) {
+        buttonPurposeHashMap.put("leftXAxis", purpose);
+    }
+
+    public void nameLeftYAxis(String purpose) {
+        buttonPurposeHashMap.put("leftYAxis", purpose);
+    }
+
+    public void nameLeftTrigger(String purpose) {
+        buttonPurposeHashMap.put("leftTrigger", purpose);
+    }
+
+    public void nameRightTrigger(String purpose) {
+        buttonPurposeHashMap.put("rightTrigger", purpose);
+    }
+
+    public void nameRightXAxis(String purpose) {
+        buttonPurposeHashMap.put("rightXAxis", purpose);
+    }
+
+    public void nameRightYAxis(String purpose) {
+        buttonPurposeHashMap.put("rightYAxis", purpose);
+    }
+}

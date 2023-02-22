@@ -20,11 +20,11 @@ public class Robot extends TimedRobot {
 
     public static Compressor compressor = new Compressor(GlobalConstants.PCM_ID, PneumaticsModuleType.REVPH);
 
-    private RobotContainer robotContainer;
+    private RobotContainer4143 robotContainer;
 
     private Command autonomousCommand;
 
-    public Robot() {}
+    public Robot() {System.out.println("start of robot ");}
 
     @Override
     public void robotInit() {
@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
             DriverStation.startDataLog(DataLogManager.getLog());
         }
 
-        robotContainer = new RobotContainer(this);
+        robotContainer = new RobotContainer4143(this);
 
         // Prevents the logging of many errors with our controllers
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
 
         Logger.log("/Robot/Battery Voltage", RobotController.getBatteryVoltage());
-        Logger.log("/Robot/Pressure", compressor.getPressure());
+        //Logger.log("/Robot/Pressure", compressor.getPressure());
 
         Logger.update();
     }
@@ -88,30 +88,30 @@ public class Robot extends TimedRobot {
         robotContainer.autonomousManager.update();
 
         // Indicate if the battery is at voltage
-        if (RobotController.getBatteryVoltage() > GlobalConstants.batteryVoltageThreshold)
-            LEDSegment.BatteryIndicator.setColor(LightsSubsystem.green.dim(4));
-        else LEDSegment.BatteryIndicator.setFadeAnimation(LightsSubsystem.green.dim(4), 1);
+        // if (RobotController.getBatteryVoltage() > GlobalConstants.batteryVoltageThreshold)
+        //     LEDSegment.BatteryIndicator.setColor(LightsSubsystem.green.dim(4));
+        // else LEDSegment.BatteryIndicator.setFadeAnimation(LightsSubsystem.green.dim(4), 1);
 
         // Indicate if there is enough pressure in the pneumatic system
-        if (compressor.getPressure() > GlobalConstants.minimumPressure)
-            LEDSegment.PressureIndicator.setColor(LightsSubsystem.purple.dim(4));
-        else LEDSegment.PressureIndicator.setFadeAnimation(LightsSubsystem.purple.dim(4), 1);
+        // if (compressor.getPressure() > GlobalConstants.minimumPressure)
+        //     LEDSegment.PressureIndicator.setColor(LightsSubsystem.purple.dim(4));
+        // else LEDSegment.PressureIndicator.setFadeAnimation(LightsSubsystem.purple.dim(4), 1);
 
         // Verify that all absolute encoders are connected
-        if (robotContainer.getArmSubsystem().isMastThroughBoreConnected())
-            LEDSegment.MastEncoderIndicator.setColor(LightsSubsystem.white.dim(4));
-        else LEDSegment.MastEncoderIndicator.fullClear();
+        //if (robotContainer.getArmSubsystem().isMastThroughBoreConnected())
+        //    LEDSegment.MastEncoderIndicator.setColor(LightsSubsystem.white.dim(4));
+        //else LEDSegment.MastEncoderIndicator.fullClear();
 
-        if (robotContainer.getArmSubsystem().isBoomThroughBoreConnected())
-            LEDSegment.BoomEncoderIndicator.setColor(LightsSubsystem.white.dim(4));
-        else LEDSegment.BoomEncoderIndicator.fullClear();
+        //if (robotContainer.getArmSubsystem().isBoomThroughBoreConnected())
+        //    LEDSegment.BoomEncoderIndicator.setColor(LightsSubsystem.white.dim(4));
+        //else LEDSegment.BoomEncoderIndicator.fullClear();
 
-        if (robotContainer.getArmSubsystem().isWristThroughBoreConnected())
-            LEDSegment.WristEncoderIndicator.setColor(LightsSubsystem.white.dim(4));
-        else LEDSegment.WristEncoderIndicator.fullClear();
+        //if (robotContainer.getArmSubsystem().isWristThroughBoreConnected())
+        //    LEDSegment.WristEncoderIndicator.setColor(LightsSubsystem.white.dim(4));
+        //else LEDSegment.WristEncoderIndicator.fullClear();
 
         // Passive Main LED Mode
-        LEDSegment.MainStrip.setFadeAnimation(LightsSubsystem.orange, 0.5);
+        // LEDSegment.MainStrip.setFadeAnimation(LightsSubsystem.orange, 0.5);
         // LightsSubsystem.runDefaultMainStripAnimation();
     }
 

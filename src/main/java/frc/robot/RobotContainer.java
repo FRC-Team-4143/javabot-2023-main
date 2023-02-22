@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.controller.Axis;
 import frc.lib.controller.LogitechController;
 import frc.lib.controller.ThrustmasterJoystick;
@@ -56,7 +57,7 @@ public class RobotContainer {
 
         /* Set default commands */
         swerveDriveSubsystem.setDefaultCommand(swerveDriveSubsystem.driveCommand(
-                getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), true));
+                getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), true, new Trigger(null)));
 
         /* Set non-button, multi-subsystem triggers */
 

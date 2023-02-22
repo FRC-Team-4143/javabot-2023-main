@@ -1,11 +1,13 @@
-package frc.robot;
+package frc.robot.container4143;
+
+import frc.robot.RobotContainer4143;
+import frc.robot.Constants;
 
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.server.PathPlannerServer;
@@ -15,8 +17,6 @@ import frc.lib.logging.LoggedReceiver;
 import frc.lib.logging.Logger;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
@@ -33,15 +33,15 @@ public class AutonomousManager {
     private String previousStartPosition = defaultAuto.startPosition.name();
     private int previousGamePieces = defaultAuto.gamePieces;
 
-    private SwerveAutoBuilder autoBuilder;
+    public SwerveAutoBuilder autoBuilder;
 
     private List<PathPlannerTrajectory> chosenAuto = defaultAuto.getPath();
 
     SwerveDriveSubsystem swerveDriveSubsystem;
 
-    public AutonomousManager(RobotContainer container) {
+    public AutonomousManager(RobotContainer4143 container) {
         swerveDriveSubsystem = container.getSwerveDriveSubsystem();
-        ArmSubsystem armSubsystem = container.getArmSubsystem();
+        //ArmSubsystem armSubsystem = container.getArmSubsystem();
 
         initializeNetworkTables();
 
@@ -55,9 +55,10 @@ public class AutonomousManager {
         eventMap.put(
                 "placeHigh",
                 sequence(
-                        runOnce(armSubsystem::setHigh, armSubsystem),
-                        waitSeconds(2),
-                        runOnce(armSubsystem::setAwaitingPiece, armSubsystem)));
+                        //runOnce(armSubsystem::setHigh, armSubsystem),
+                        waitSeconds(2)//,
+                        //runOnce(armSubsystem::setAwaitingPiece, armSubsystem)
+                        ));
 
         autoBuilder = new SwerveAutoBuilder(
                 swerveDriveSubsystem::getPose,
@@ -74,7 +75,7 @@ public class AutonomousManager {
             PathPlannerServer.startServer(5811);
         }
     }
-    
+
     public void update() {
         var newStartPosition = startPosition.getString();
         var newGamePieces = gamePieces.getInteger();
@@ -173,3 +174,4 @@ public class AutonomousManager {
         return Stream.of(AutonomousOption.values()).map(AutonomousOption::name).toArray(String[]::new);
     }
 }
+

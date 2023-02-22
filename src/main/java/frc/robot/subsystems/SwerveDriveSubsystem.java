@@ -6,6 +6,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -15,7 +16,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.controller.Axis;
 import frc.lib.gyro.GenericGyro;
 import frc.lib.gyro.NavXGyro;
@@ -23,9 +26,11 @@ import frc.lib.gyro.PigeonGyro;
 import frc.lib.interpolation.MovingAverageVelocity;
 import frc.lib.logging.LoggedReceiver;
 import frc.lib.logging.Logger;
+import frc.lib.loops.Updatable;
 import frc.lib.math.MathUtils;
 import frc.lib.swerve.SwerveDriveSignal;
-import frc.lib.swerve.SwerveModule;
+//import frc.lib.swerve.SwerveModule;  //4143
+import frc.robot.subsystems4143.SwerveModule;  //4143
 import frc.robot.Constants;
 import frc.robot.Constants.GlobalConstants;
 import frc.robot.Constants.SwerveConstants;
@@ -34,9 +39,13 @@ import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizatio
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.DoubleStream;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d; //4143
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard; //4143
 
-public class SwerveDriveSubsystem extends SubsystemBase {
+public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
     private final SwerveDrivePoseEstimator swervePoseEstimator;
+    private final Field2d m_field = new Field2d(); //4143
+    private boolean dpadR;
 
     private Pose2d pose = new Pose2d();
     private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(3);
@@ -53,7 +62,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     public SwerveDriveSubsystem() {
         if (SwerveConstants.hasPigeon)
-            gyro = new PigeonGyro(SwerveConstants.PIGEON_PORT, GlobalConstants.CANIVORE_NAME);
+            gyro = new PigeonGyro(SwerveConstants.PIGEON_PORT, "CANivore");
         else gyro = new NavXGyro();
 
         modules = new SwerveModule[] {
@@ -79,12 +88,26 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
         // Allow us to toggle on second order kinematics
         isSecondOrder = Logger.tunable("/SwerveDriveSubsystem/isSecondOrder", false);
+
+        SmartDashboard.putData("Field", m_field); //4143
     }
 
-    public Command driveCommand(Axis forward, Axis strafe, Axis rotation, boolean isFieldOriented) {
+
+    //4143
+    public CommandBase setWheelOffsets() {
+        return runOnce(() -> {
+            for (SwerveModule module : modules) {
+                module.setWheelOffsets();
+            }
+            System.out.println("Set wheel offset has been enabled");
+        }).ignoringDisable(true);
+    }
+
+    public Command driveCommand(Axis forward, Axis strafe, Axis rotation, boolean isFieldOriented, Trigger dpadR) {
         return run(() -> {
             setVelocity(new ChassisSpeeds(forward.get(true), strafe.get(true), rotation.get(true)), isFieldOriented);
-        });
+            this.dpadR = dpadR.getAsBoolean();
+           });
     }
 
     public Command preciseDriveCommand(Axis forward, Axis strafe, Axis rotation, boolean isFieldOriented) {
@@ -101,7 +124,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     public Command levelChargeStationCommand() {
-        var constraints = new TrapezoidProfile.Constraints(0.5, 0.3);
+        var constraints = new TrapezoidProfile.Constraints(0.3, 0.3);
         var tiltController = new ProfiledPIDController(0.2, 0, 0, constraints);
 
         // End with no pitch and stationary
@@ -184,8 +207,23 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         swervePoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
     }
 
-    public void addVisionPoseEstimate(Pose2d pose, double timestamp) {
-        swervePoseEstimator.addVisionMeasurement(pose, timestamp);
+    public void addVisionPoseEstimate(Pose2d visionPose, double timestamp) { //4143
+
+        double dist = visionPose.getTranslation().getDistance(pose.getTranslation());
+        Transform2d vector = pose.minus(visionPose);
+        Logger.log("/SwerveDriveSubsystem/VisionError", dist);
+        if(/*dpadR && */ visionPose.getY() > 0 && 
+        !(visionPose.getY() > 4 && visionPose.getY() < 4.02) && 
+        visionPose.getY() < 7.9248 && 
+        !(visionPose.getX() > 8.25 && visionPose.getX() < 8.29) 
+        && visionPose.getX() > 0 && visionPose.getX() < 16.4592) 
+        { 
+             //if(dist < 1.1) {
+                swervePoseEstimator.addVisionMeasurement(visionPose, timestamp);
+             //} else {
+             //   swervePoseEstimator.addVisionMeasurement(pose.transformBy(vector.div(-dist)), timestamp);
+            //}
+        }
     }
 
     /**
@@ -284,6 +322,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         velocityEstimator.add(velocity);
 
         pose = swervePoseEstimator.update(getGyroRotation(), modulePositions);
+        m_field.setRobotPose(pose); //4143
     }
 
     private void updateModules(SwerveDriveSignal driveSignal) {
