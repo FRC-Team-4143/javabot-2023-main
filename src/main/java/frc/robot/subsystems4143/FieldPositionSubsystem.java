@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class FieldPositionSubsystem extends SubsystemBase{
-    private int xPosition = 0;
-    private int yPosition = 0;
+    private int xPosition = 1;
+    private int yPosition = 1;
     private int count = 0;
     public FieldPositionSubsystem(){
     }
@@ -23,19 +23,19 @@ public class FieldPositionSubsystem extends SubsystemBase{
 
     public Command scoreSelectCommand(Axis forward, Axis strafe) {
         return run(() -> {
-            if(count > 1) count -= 1;
+            if(count > 0) count -= 1;
             if(count == 0) {
-                if(forward.get() > .25 && xPosition < 3) { xPosition+=1; count = 20;}
-                if(forward.get() < -.25 && xPosition > 1) { xPosition-=1; count = 20;}
-                if(strafe.get() > .25 && yPosition < 9) { yPosition+=1; count = 20;}
-                if(strafe.get() < -.25 && yPosition > 1) { yPosition-=1; count = 20;}
+                if(forward.get() > .5 && xPosition < 3) { xPosition+=1; count = 10;}
+                if(forward.get() < -.5 && xPosition > 1) { xPosition-=1; count = 10;}
+                if(strafe.get() > .5 && yPosition < 9) { yPosition+=1; count = 10;}
+                if(strafe.get() < -.5 && yPosition > 1) { yPosition-=1; count = 10;}
             }
-           });
+           }).ignoringDisable(true);
     }
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("xposition", xPosition);
+        SmartDashboard.putNumber("xPosition", xPosition);
         SmartDashboard.putNumber("yPosition", yPosition);
         SmartDashboard.putBoolean("loc1,1", xPosition == 1 && yPosition == 1);
         SmartDashboard.putBoolean("loc1,2", xPosition == 1 && yPosition == 2);

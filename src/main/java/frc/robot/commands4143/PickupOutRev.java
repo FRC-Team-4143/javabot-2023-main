@@ -2,14 +2,20 @@ package frc.robot.commands4143;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems4143.PickupSubsystem;
+import frc.robot.Constants;
+import frc.robot.RobotContainer4143;
+import frc.robot.Constants.gamePiece;
 import frc.robot.subsystems4143.Arm;
+
 
 public class PickupOutRev extends CommandBase{
     private PickupSubsystem pickupSubsystem;
     private Arm arm;
     private int count;
+    public RobotContainer4143 container;
 
-    public PickupOutRev(PickupSubsystem pickupSubsystem, Arm arm){
+    public PickupOutRev(PickupSubsystem pickupSubsystem, Arm arm, RobotContainer4143 container){
+        this.container = container;
         this.pickupSubsystem = pickupSubsystem;
         this.arm = arm;
         count=0;
@@ -23,8 +29,14 @@ public class PickupOutRev extends CommandBase{
 
     @Override
     public void execute() {
-        pickupSubsystem.solenoidExtend();
-        pickupSubsystem.rollersSet(0.5);
+        if(container.currentMode == gamePiece.Cube) {
+            pickupSubsystem.solenoidExtend();
+            pickupSubsystem.rollersSet(0.35);
+        } else {
+            pickupSubsystem.solenoidExtend();
+            pickupSubsystem.rollersSet(1);
+        }
+        
         count+=1;
 
     }

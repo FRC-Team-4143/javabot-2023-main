@@ -39,6 +39,8 @@ import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizatio
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.DoubleStream;
+
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d; //4143
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard; //4143
 
@@ -72,10 +74,8 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
             new SwerveModule(3, Constants.SwerveConstants.Mod3.constants)
         };
 
-        // Reset each module using its absolute encoder to avoid having modules fail to align
-        for (SwerveModule module : modules) {
-            module.resetToAbsolute();
-        }
+        Timer.delay(.1);
+        resetToAbsolute();
 
         // Initialize the swerve drive pose estimator with access to the module positions.
         swervePoseEstimator = new SwerveDrivePoseEstimator(
@@ -92,6 +92,12 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
         SmartDashboard.putData("Field", m_field); //4143
     }
 
+    public void resetToAbsolute() {
+            // Reset each module using its absolute encoder to avoid having modules fail to align
+            for (SwerveModule module : modules) {
+                module.resetToAbsolute();
+            }
+    }
 
     //4143
     public CommandBase setWheelOffsets() {

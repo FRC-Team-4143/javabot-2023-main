@@ -22,6 +22,10 @@ import java.util.List;
 import java.util.TreeMap;
 
 public final class Constants {
+    public static enum gamePiece {
+        Cube,
+        Cone
+    }
     public static final boolean competitionMode = false;
 
     public static final class GlobalConstants {
@@ -426,7 +430,7 @@ public final class Constants {
         public static final double preciseDrivingModeSpeedMultiplier = 0.2;
 
         /* Neutral Modes */
-        public static final NeutralMode angleNeutralMode = NeutralMode.Brake;
+        public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
         public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
 
         /* Drive Motor Inverts */

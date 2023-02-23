@@ -6,12 +6,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.logging.Logger;
 import frc.lib.swerve.CTREConfigs;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.GlobalConstants;
+import frc.robot.Constants.gamePiece;
 import frc.robot.subsystems.LightsSubsystem;
 import frc.robot.subsystems.LightsSubsystem.LEDSegment;
 
@@ -50,7 +52,13 @@ public class Robot extends TimedRobot {
 
         Logger.log("/Robot/Battery Voltage", RobotController.getBatteryVoltage());
         //Logger.log("/Robot/Pressure", compressor.getPressure());
-
+        
+        if(robotContainer.currentMode == gamePiece.Cone){
+            SmartDashboard.putString("Current Mode ", "Cone");
+        }
+        else{
+            SmartDashboard.putString("Current Mode ", "Cube");
+        }
         Logger.update();
     }
 
@@ -58,6 +66,8 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         // Set april tags to use the correct origin (red or blue corner)
         FieldConstants.setAprilTagOrigin();
+        robotContainer.swerveDriveSubsystem.resetToAbsolute();
+
 
         autonomousCommand = robotContainer.getAutonomousCommand();
 
@@ -72,6 +82,7 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         // Set april tags to use the correct origin (red or blue corner)
         FieldConstants.setAprilTagOrigin();
+        robotContainer.swerveDriveSubsystem.resetToAbsolute();
 
         // Prevent any autonomous code from overrunning into teleop
         if (autonomousCommand != null) autonomousCommand.cancel();

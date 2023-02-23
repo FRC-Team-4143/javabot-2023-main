@@ -1,5 +1,6 @@
 package frc.robot.subsystems4143;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -35,7 +36,7 @@ public class Arm extends SubsystemBase {
     private WPI_CANCoder m_rotatorEncoder; 
     //private SparkMaxPIDController m_pidController;
     private RelativeEncoder m_elevatorEncoder;
-    //private RelativeEncoder m_rotatorEncoder;
+    private RelativeEncoder m_rotatorEncoderMotor;
     public double elevatorkP, rotatorkP, elevatorkI, rotatorkI, elevatorkD, rotatorkD, kMaxOutput, kMinOutput;
     private double distance;
     private double angle;
@@ -58,16 +59,19 @@ public class Arm extends SubsystemBase {
         elevatorMotor.setSmartCurrentLimit(20);
         rotatorMotor.setSmartCurrentLimit(20);
         m_rotatorEncoder = new WPI_CANCoder(1);
+        m_rotatorEncoder.configFactoryDefault();
     elevatorMotor2.follow(elevatorMotor, true);
 
-    clawMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
+    if (clawMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute) != ErrorCode.OK) {
+        System.out.println("Claw encoder error");
+    }
     clawMotor.setNeutralMode(NeutralMode.Brake);
         
     // Encoder object created to display position values
     m_elevatorEncoder = elevatorMotor.getEncoder();
-    //m_rotatorEncoder = rotatorMotor.getEncoder();
+    m_rotatorEncoderMotor = rotatorMotor.getEncoder();
     m_elevatorEncoder.setPositionConversionFactor(22*0.25/(3*3)*(25.4/1000)); //Conversion from revolutions to meters, 0.01129
-    //m_rotatorEncoder.setPositionConversionFactor(360/100); //Conversion from revolutions to degrees, 3.6
+    m_rotatorEncoderMotor.setPositionConversionFactor(360/100); //Conversion from revolutions to degrees, 3.6
 
     arm1 = root.append(
                 new MechanismLigament2d("Arm 1", 2.0, arm1StartingAngle.getDegrees()));
@@ -81,7 +85,7 @@ public class Arm extends SubsystemBase {
     elevatorkP = 1; //18; 
     elevatorkI = 0;
     elevatorkD = 0;
-    rotatorkP = 0.1; 
+    rotatorkP = 0.05; 
     rotatorkI = 0;
     rotatorkD = 0;
     kMaxOutput = 0.25; 
@@ -97,6 +101,11 @@ public class Arm extends SubsystemBase {
     
     public void setClawSpeed(double clawSpeed){
         clawMotor.set(ControlMode.PercentOutput, clawSpeed);
+    }
+
+    public double readRotateEncoder() {
+        //return m_rotatorEncoder.getAbsolutePosition() + 106 - 360;
+        return m_rotatorEncoderMotor.getPosition();
     }
 
     public void setRotateSpeed(double rotateSpeed){ //Make this two functional
@@ -150,10 +159,10 @@ public class Arm extends SubsystemBase {
     public CommandBase setHomePosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
-            if(m_rotatorEncoder.getAbsolutePosition() < -5.4 ){
+            if(readRotateEncoder() < -5.4 ){
                 angle = -3.6;
             } else {
-                distance = -0.01129;
+                distance = -0.1;
                 angle = -3.6;
             }
         }, interrupted -> {}, ()-> {
@@ -169,7 +178,7 @@ public class Arm extends SubsystemBase {
     public CommandBase set0Arm() {
         return runOnce(() -> {
             m_elevatorEncoder.setPosition(0);
-            //m_rotatorEncoder.setPosition(0);
+            m_rotatorEncoderMotor.setPosition(0);
             distance=0;
             angle=0;
 
@@ -192,7 +201,7 @@ public class Arm extends SubsystemBase {
     }
     public void setPosition(){
         distance = m_elevatorEncoder.getPosition();
-        angle = m_rotatorEncoder.getAbsolutePosition();
+        angle = readRotateEncoder();
         elevatorMotorController.setGoal(distance);
         rotatorMotorController.setGoal(angle);
     }
@@ -200,20 +209,22 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic(){
         arm1.setLength(2.0 - m_elevatorEncoder.getPosition());
-        arm2.setAngle(m_rotatorEncoder.getAbsolutePosition());
+        arm2.setAngle(readRotateEncoder());
         elevatorMotorController.setGoal(distance);
         elevatorMotor.set(elevatorMotorController.calculate(m_elevatorEncoder.getPosition()));
         rotatorMotorController.setGoal(angle);
-        rotatorMotor.set(rotatorMotorController.calculate(m_rotatorEncoder.getAbsolutePosition()));
+        rotatorMotor.set(rotatorMotorController.calculate(readRotateEncoder()));
         //m_pidController.setReference(distance, CANSparkMax.ControlType.kPosition);
 
         SmartDashboard.putNumber("Arm distance", m_elevatorEncoder.getPosition());
-        SmartDashboard.putNumber("Arm angle", m_rotatorEncoder.getAbsolutePosition());
+        SmartDashboard.putNumber("Arm angle", readRotateEncoder());
         SmartDashboard.putData("Arm Mechanism", mechanism);
         SmartDashboard.putNumber("Distance Setpoint", distance);
         SmartDashboard.putNumber("Angle Setpoint", angle);
         SmartDashboard.putNumber("Elevator Current", elevatorMotor.getOutputCurrent());
         SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getAppliedOutput());
         SmartDashboard.putNumber("Claw Angle", clawMotor.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Arm extension", 1000 / 25.4 * (Math.cos(Math.toRadians(47)) * distance +
+                        Math.cos(Math.toRadians(angle + 135) * 0.4953) - 0.076));
     }
 }

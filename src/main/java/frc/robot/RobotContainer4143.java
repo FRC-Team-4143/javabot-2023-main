@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import frc.lib.controller.Axis;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.gamePiece;
 import frc.robot.Constants.FieldConstants.PlacementLocation;
 import frc.lib.logging.Logger;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -49,7 +50,7 @@ public class RobotContainer4143 {
     private final Axis translationAxis = driver.getLeftYAxis();
     private final Axis strafeAxis = driver.getLeftXAxis();
     private final Axis rotationAxis = driver.getRightXAxis();
-    private final SwerveDriveSubsystem swerveDriveSubsystem = new SwerveDriveSubsystem();
+    public final SwerveDriveSubsystem swerveDriveSubsystem = new SwerveDriveSubsystem();
     private final VisionSubsystem visionSubsystem =
             new VisionSubsystem(swerveDriveSubsystem::addVisionPoseEstimate, swerveDriveSubsystem::getPose);
 
@@ -74,6 +75,7 @@ public class RobotContainer4143 {
 
     private boolean blueAlliance;
 
+    public Constants.gamePiece currentMode = Constants.gamePiece.Cube;
 
     // //Rotator
     // private final JoystickButton rotateUpButton = new JoystickButton(driver, XboxController.Button.kA.value);
@@ -157,14 +159,26 @@ public class RobotContainer4143 {
         //Rhombus buttons
         driver.getLeftRhombus().toggleOnTrue(swerveDriveSubsystem.levelChargeStationCommand());
         driver.nameLeftRhombus("Level Charge Station");
+        driver.getRightRhombus().onTrue(runOnce(() -> {
+            if(currentMode == Constants.gamePiece.Cube){currentMode = gamePiece.Cone;}
+                else{currentMode = gamePiece.Cube;}
+            }).ignoringDisable(true));
+        driver.nameRightRhombus("Cone/cube mode");
+        
         operator.getLeftRhombus().toggleOnTrue(swerveDriveSubsystem.levelChargeStationCommand());
         operator.nameLeftRhombus("Level Charge Station");
+        operator.getRightRhombus().onTrue(runOnce(() -> {
+            if(currentMode == Constants.gamePiece.Cube){currentMode = gamePiece.Cone;}
+                else{currentMode = gamePiece.Cube;}
+            }).ignoringDisable(true));
+        operator.nameRightRhombus("Cone/cube mode");
+
 
         //Trigger buttons
-        driveLT.whileTrue(new PickupOutRev(pickupSubsystem,arm));
-        driveRT.whileTrue(new PickupOut(pickupSubsystem,arm));
-        operatorLT.whileTrue(new PickupOutRev(pickupSubsystem,arm));
-        operatorRT.whileTrue(new PickupOut(pickupSubsystem,arm));
+        driveLT.whileTrue(new PickupOutRev(pickupSubsystem,arm, this));
+        driveRT.whileTrue(new PickupOut(pickupSubsystem,arm, this));
+        operatorLT.whileTrue(new PickupOutRev(pickupSubsystem,arm,this));
+        operatorRT.whileTrue(new PickupOut(pickupSubsystem,arm,this));
 
         //driverRSU.whileTrue(skiSubsystem.setSkiUp());
         //driverRSD.whileTrue(skiSubsystem.setSkiDown());
@@ -172,9 +186,10 @@ public class RobotContainer4143 {
         operatorRSD.whileTrue(pickupSubsystem.spindexterCCW());
         driverRSU.whileTrue(pickupSubsystem.spindexterCW());
         driverRSD.whileTrue(pickupSubsystem.spindexterCCW());
+
         //Bumper buttons
-        driver.getRightBumper().onTrue(new ClawToggle(arm));
-        operator.getRightBumper().onTrue(new ClawToggle(arm));
+        driver.getRightBumper().onTrue(new ClawToggle(arm, this));
+        operator.getRightBumper().onTrue(new ClawToggle(arm, this));
 
         // X, Y, A, and B buttons
         driver.getButtonY().whileTrue(new ElevatorUp(arm));
@@ -215,11 +230,10 @@ public class RobotContainer4143 {
         //driver.getDPadRight().whileTrue(new ProxyCommand(()->autonomousManager.autoBuilder.followPathGroup(pathGroupOnTheFlyscore())));
 
         //Controls that we haven't made commands for
-        //driver.getRightRhombus().onTrue(runOnce(swerveDriveSubsystem::zeroRotation, swerveDriveSubsystem)); //Change to cone-cube toggle
-        //driver.nameRightRhombus("Reset Gyro Angle");
         //driver.getLeftBumper().whileTrue(pickupSubsystem.rollIn()); //Change to auto drive
         //driver.nameLeftBumper("Rollers In");
         //driver.nameRightBumper("Rollers Out");
+        
 
         //Old buttons to keep
         //driveLT.whileTrue(new ElevatorUp(arm));
@@ -305,6 +319,7 @@ public class RobotContainer4143 {
         
         
     }
+
 
     public ArrayList<PathPlannerTrajectory> pathGroupOnTheFly(){
         Translation2d vector;
