@@ -53,6 +53,7 @@ public class Arm extends SubsystemBase {
 
     public Arm(){ 
         clawMotor = new TalonSRX(3);
+        clawMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
         elevatorMotor = new CANSparkMax(11, MotorType.kBrushless);
         elevatorMotor2 = new CANSparkMax(10, MotorType.kBrushless);
         rotatorMotor = new CANSparkMax(5, MotorType.kBrushless);
@@ -65,12 +66,13 @@ public class Arm extends SubsystemBase {
     if (clawMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute) != ErrorCode.OK) {
         System.out.println("Claw encoder error");
     }
+    clawMotor.configFeedbackNotContinuous(true, 0);
     clawMotor.setNeutralMode(NeutralMode.Brake);
         
     // Encoder object created to display position values
     m_elevatorEncoder = elevatorMotor.getEncoder();
     m_rotatorEncoderMotor = rotatorMotor.getEncoder();
-    m_elevatorEncoder.setPositionConversionFactor(22*0.25/(3*3)*(25.4/1000)); //Conversion from revolutions to meters, 0.01129
+    m_elevatorEncoder.setPositionConversionFactor(22*0.25/9*(25.4/1000)); //Conversion from revolutions to meters, 0.01129
     m_rotatorEncoderMotor.setPositionConversionFactor(360/100); //Conversion from revolutions to degrees, 3.6
 
     arm1 = root.append(
@@ -103,12 +105,27 @@ public class Arm extends SubsystemBase {
         clawMotor.set(ControlMode.PercentOutput, clawSpeed);
     }
 
+    public CommandBase setClawOpen(){
+        return run(() -> {
+            double clawAngle = clawMotor.getSelectedSensorPosition();
+            if(clawAngle < 1200 || clawAngle>3500){
+                clawMotor.set(ControlMode.PercentOutput, 0.75);
+            } else {
+                clawMotor.set(ControlMode.PercentOutput, 0);
+            }
+
+        }
+        );
+    }
+
+    
+
     public double readRotateEncoder() {
         //return m_rotatorEncoder.getAbsolutePosition() + 106 - 360;
         return m_rotatorEncoderMotor.getPosition();
     }
 
-    public void setRotateSpeed(double rotateSpeed){ //Make this two functional
+    public void setRotate(double rotateSpeed){ //Make this two functional
         angle += rotateSpeed;
         if(angle>0){
             angle=0;
@@ -124,13 +141,13 @@ public class Arm extends SubsystemBase {
         return new FunctionalCommand(() -> {}, 
         () -> {
             if(m_elevatorEncoder.getPosition() > -0.44 ){
-                distance = -0.9;
+                distance = -0.7;
             } else {
-                distance = -0.9;
-                angle = -151;
+                distance = -0.7;
+                angle = -115;
             }
         }, interrupted -> {}, ()-> {
-            if(angle == -151 && distance == -0.9){
+            if(angle == -115 && distance == -0.7){
                 return true;
             }else{
                 return false;
@@ -142,13 +159,13 @@ public class Arm extends SubsystemBase {
         return new FunctionalCommand(() -> {}, 
         () -> {
             if(m_elevatorEncoder.getPosition() > -0.4 ){
-                distance = -0.46;
+                distance = -0.5;
             } else {
-                distance = -0.46;
+                distance = -0.5;
                 angle = -101;
             }
         }, interrupted -> {}, ()-> {
-            if(angle == -101 && distance == -0.46){
+            if(angle == -101 && distance == -0.5){
                 return true;
             }else{
                 return false;
@@ -166,7 +183,7 @@ public class Arm extends SubsystemBase {
                 angle = -3.6;
             }
         }, interrupted -> {}, ()-> {
-            if(angle == -3.6 && distance == -0.01129){
+            if(angle == -3.6 && distance == -0.1){
                 return true;
             }else{
                 return false;
@@ -198,6 +215,10 @@ public class Arm extends SubsystemBase {
         if(distance>-0.3){
             distance=-0.3;
         }
+    }
+
+    public double getDistance(){
+        return distance;
     }
     public void setPosition(){
         distance = m_elevatorEncoder.getPosition();

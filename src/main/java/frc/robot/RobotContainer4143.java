@@ -64,10 +64,16 @@ public class RobotContainer4143 {
 
     public AutonomousManager autonomousManager;
     
-    private Trigger driveLT = new Trigger(driver.isLeftTriggerPressed());
-    private Trigger driveRT = new Trigger(driver.isRightTriggerPressed());
-    private Trigger operatorLT = new Trigger(operator.isLeftTriggerPressed());
-    private Trigger operatorRT = new Trigger(operator.isRightTriggerPressed());
+    //private Trigger driveLT = new Trigger(driver.isLeftTriggerPressed());
+    //private Trigger driveRT = new Trigger(driver.isRightTriggerPressed());
+    //private Trigger operatorLT = new Trigger(operator.isLeftTriggerPressed());
+    //private Trigger operatorRT = new Trigger(operator.isRightTriggerPressed());
+
+    private Trigger driveLT = new Trigger(() -> {return driver.getLeftTrigger().get() > .5;});
+    private Trigger driveRT = new Trigger(() -> {return driver.getRightTrigger().get() > .5;});
+    private Trigger operatorLT = new Trigger(() -> {return driver.getLeftTrigger().get() > .5;});
+    private Trigger operatorRT = new Trigger(() -> {return driver.getRightTrigger().get() > .5;});
+
     private Trigger driverRSU = new Trigger(() -> {return driver.getRightYAxis().get() > 0.5;});
     private Trigger driverRSD = new Trigger(() -> {return driver.getRightYAxis().get() < -0.5;});
     private Trigger operatorRSU = new Trigger(() -> {return operator.getRightYAxis().get() > 0.5;});
@@ -188,8 +194,8 @@ public class RobotContainer4143 {
         driverRSD.whileTrue(pickupSubsystem.spindexterCCW());
 
         //Bumper buttons
-        driver.getRightBumper().onTrue(new ClawToggle(arm, this));
-        operator.getRightBumper().onTrue(new ClawToggle(arm, this));
+        driver.getRightBumper().toggleOnTrue(new ClawClose(arm, this));
+        operator.getRightBumper().toggleOnTrue(new ClawClose(arm, this));
 
         // X, Y, A, and B buttons
         driver.getButtonY().whileTrue(new ElevatorUp(arm));
@@ -253,7 +259,7 @@ public class RobotContainer4143 {
 
 
         fieldPositionSubsystem.setDefaultCommand(fieldPositionSubsystem.scoreSelectCommand(operator.getLeftYAxis(), operator.getLeftXAxis()));
-        
+        arm.setDefaultCommand(arm.setClawOpen());
 
         swerveDriveSubsystem.setDefaultCommand(swerveDriveSubsystem.driveCommand(
             getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), true, driver.getLeftBumper()));

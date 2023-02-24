@@ -12,11 +12,11 @@ public class RotateUp extends CommandBase{
 
     @Override
     public void execute() {
-        arm.setRotateSpeed(1.0);
+        arm.setRotate(1.0);
     }
 
     @Override
     public void end(boolean interrupted){
-        arm.setRotateSpeed(0);
+        arm.setRotate(0);
     }
 }
