@@ -245,7 +245,7 @@ public class Arm extends SubsystemBase {
         SmartDashboard.putNumber("Elevator Current", elevatorMotor.getOutputCurrent());
         SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getAppliedOutput());
         SmartDashboard.putNumber("Claw Angle", clawMotor.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Arm extension", 1000 / 25.4 * (Math.cos(Math.toRadians(47)) * distance +
+        SmartDashboard.putNumber("Arm extension", 1000 / 25.4 * (Math.cos(Math.toRadians(47)) * -distance +
                         Math.cos(Math.toRadians(angle + 135) * 0.4953) - 0.076));
     }
 }

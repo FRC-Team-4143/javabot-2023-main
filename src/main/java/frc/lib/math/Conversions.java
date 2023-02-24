@@ -91,6 +91,12 @@ public class Conversions {
         return wheelMPS;
     }
 
+    public static double falconProToMPS(double rps, double circumference, double gearRatio) {
+        double wheelRPS = rps / gearRatio;
+        double wheelMPS = (wheelRPS * circumference);
+        return wheelMPS;
+    }
+
     /**
      * @param velocity Velocity MPS
      * @param circumference Circumference of Wheel
@@ -100,6 +106,12 @@ public class Conversions {
     public static double MPSToFalcon(double velocity, double circumference, double gearRatio) {
         double wheelRPM = ((velocity * 60) / circumference);
         double wheelVelocity = RPMToFalcon(wheelRPM, gearRatio);
+        return wheelVelocity;
+    }
+
+    public static double MPSToFalconPro(double velocity, double circumference, double gearRatio) {
+        double wheelRPS = velocity / circumference;
+        double wheelVelocity = wheelRPS * gearRatio;
         return wheelVelocity;
     }
 }

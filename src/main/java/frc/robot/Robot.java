@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         // Set april tags to use the correct origin (red or blue corner)
         FieldConstants.setAprilTagOrigin();
-        robotContainer.swerveDriveSubsystem.resetToAbsolute();
+        //robotContainer.swerveDriveSubsystem.resetToAbsolute();
 
 
         autonomousCommand = robotContainer.getAutonomousCommand();
@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         // Set april tags to use the correct origin (red or blue corner)
         FieldConstants.setAprilTagOrigin();
-        robotContainer.swerveDriveSubsystem.resetToAbsolute();
+        //robotContainer.swerveDriveSubsystem.resetToAbsolute();
 
         // Prevent any autonomous code from overrunning into teleop
         if (autonomousCommand != null) autonomousCommand.cancel();
