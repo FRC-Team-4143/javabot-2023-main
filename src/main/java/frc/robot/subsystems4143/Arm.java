@@ -1,5 +1,7 @@
 package frc.robot.subsystems4143;
 
+import java.sql.Timestamp;
+
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -12,12 +14,19 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
+import frc.robot.RobotContainer4143;
+import frc.robot.Constants.gamePiece;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.TimestampedInteger;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -49,7 +58,7 @@ public class Arm extends SubsystemBase {
     private MechanismLigament2d arm2;
     public static final Rotation2d arm1StartingAngle = Rotation2d.fromDegrees(45);
     public static final Rotation2d arm2StartingAngle = Rotation2d.fromDegrees(-135);
-
+    private double count;
 
     public Arm(){ 
         clawMotor = new TalonSRX(3);
@@ -62,6 +71,7 @@ public class Arm extends SubsystemBase {
         m_rotatorEncoder = new WPI_CANCoder(1);
         m_rotatorEncoder.configFactoryDefault();
     elevatorMotor2.follow(elevatorMotor, true);
+    count =0;
 
     if (clawMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute) != ErrorCode.OK) {
         System.out.println("Claw encoder error");
@@ -84,10 +94,10 @@ public class Arm extends SubsystemBase {
     arm2.setLineWeight(5);
 
     // PID coefficients
-    elevatorkP = 1; //18; 
+    elevatorkP = 1.15; //18; 
     elevatorkI = 0;
     elevatorkD = 0;
-    rotatorkP = 0.05; 
+    rotatorkP = 0.055; 
     rotatorkI = 0;
     rotatorkD = 0;
     kMaxOutput = 0.25; 
@@ -109,16 +119,36 @@ public class Arm extends SubsystemBase {
         return run(() -> {
             double clawAngle = clawMotor.getSelectedSensorPosition();
             if(clawAngle < 1200 || clawAngle>3500){
-                clawMotor.set(ControlMode.PercentOutput, 0.75);
+                clawMotor.set(ControlMode.Current, 0.75);
             } else {
-                clawMotor.set(ControlMode.PercentOutput, 0);
+                //clawMotor.set(ControlMode.PercentOutput, 0);
+                clawMotor.set(ControlMode.Current, 0);
             }
 
         }
         );
     }
 
-    
+    public CommandBase setClawClosed(RobotContainer4143 container){
+        count = Timer.getFPGATimestamp();
+        return run(() ->{
+            if(count + 0.03 < Timer.getFPGATimestamp() && getDistance() < -0.29){
+                setRotate(-5);
+            } else if(count + 0.05 < Timer.getFPGATimestamp()){
+                if (container.currentMode == gamePiece.Cone) {
+                    setClawSpeed(-0.75);
+                }
+                else if (container.currentMode == gamePiece.Cube){
+                    setClawSpeed(-0.25);
+                }
+            } else {
+                setClawSpeed(-0.25);
+            }
+            
+        }
+        );
+    }
+
 
     public double readRotateEncoder() {
         //return m_rotatorEncoder.getAbsolutePosition() + 106 - 360;
@@ -166,6 +196,24 @@ public class Arm extends SubsystemBase {
             }
         }, interrupted -> {}, ()-> {
             if(angle == -101 && distance == -0.5){
+                return true;
+            }else{
+                return false;
+            }
+        });
+    }
+
+    public CommandBase setHybridPosition() {
+        return new FunctionalCommand(() -> {}, 
+        () -> {
+            if(m_elevatorEncoder.getPosition() > -0.38 ){
+                distance = -0.4;
+            } else {
+                distance = -0.4;
+                angle = -95;
+            }
+        }, interrupted -> {}, ()-> {
+            if(angle == -95 && distance == -0.4){
                 return true;
             }else{
                 return false;

@@ -71,8 +71,8 @@ public class RobotContainer4143 {
 
     private Trigger driveLT = new Trigger(() -> {return driver.getLeftTrigger().get() > .5;});
     private Trigger driveRT = new Trigger(() -> {return driver.getRightTrigger().get() > .5;});
-    private Trigger operatorLT = new Trigger(() -> {return driver.getLeftTrigger().get() > .5;});
-    private Trigger operatorRT = new Trigger(() -> {return driver.getRightTrigger().get() > .5;});
+    private Trigger operatorLT = new Trigger(() -> {return operator.getLeftTrigger().get() > .5;});
+    private Trigger operatorRT = new Trigger(() -> {return operator.getRightTrigger().get() > .5;});
 
     private Trigger driverRSU = new Trigger(() -> {return driver.getRightYAxis().get() > 0.5;});
     private Trigger driverRSD = new Trigger(() -> {return driver.getRightYAxis().get() < -0.5;});
@@ -183,19 +183,22 @@ public class RobotContainer4143 {
         //Trigger buttons
         driveLT.whileTrue(new PickupOutRev(pickupSubsystem,arm, this));
         driveRT.whileTrue(new PickupOut(pickupSubsystem,arm, this));
-        operatorLT.whileTrue(new PickupOutRev(pickupSubsystem,arm,this));
-        operatorRT.whileTrue(new PickupOut(pickupSubsystem,arm,this));
+        operatorLT.whileTrue(new PickupOutRev(pickupSubsystem,arm, this));
+        operatorRT.whileTrue(new PickupOut(pickupSubsystem,arm, this));
 
         //driverRSU.whileTrue(skiSubsystem.setSkiUp());
         //driverRSD.whileTrue(skiSubsystem.setSkiDown());
-        operatorRSU.whileTrue(pickupSubsystem.spindexterCW());
-        operatorRSD.whileTrue(pickupSubsystem.spindexterCCW());
         driverRSU.whileTrue(pickupSubsystem.spindexterCW());
         driverRSD.whileTrue(pickupSubsystem.spindexterCCW());
+        operatorRSU.whileTrue(pickupSubsystem.spindexterCW());
+        operatorRSD.whileTrue(pickupSubsystem.spindexterCCW());
 
         //Bumper buttons
-        driver.getRightBumper().toggleOnTrue(new ClawClose(arm, this));
-        operator.getRightBumper().toggleOnTrue(new ClawClose(arm, this));
+        driver.getRightBumper().toggleOnTrue(arm.setClawClosed(this));
+        driver.nameRightBumper("Toggle Claw");
+        operator.getRightBumper().toggleOnTrue(arm.setClawClosed(this));
+        operator.nameRightBumper("Toggle Claw");
+
 
         // X, Y, A, and B buttons
         driver.getButtonY().whileTrue(new ElevatorUp(arm));
@@ -218,11 +221,11 @@ public class RobotContainer4143 {
         //Dpad buttons
         driver.getDPadDown().onTrue(arm.setHomePosition());
         driver.getDPadRight().onTrue(arm.setMidPosition());
-        //driver.getDPadLeft().onTrue(arm.setHybridPosition);
+        driver.getDPadLeft().onTrue(arm.setHybridPosition());
         driver.getDPadUp().onTrue(arm.setHighPosition());
         operator.getDPadDown().onTrue(arm.setHomePosition());
         operator.getDPadRight().onTrue(arm.setMidPosition());
-        //operator.getDPadLeft().onTrue(arm.setHybridPosition);
+        operator.getDPadLeft().onTrue(arm.setHybridPosition());
         operator.getDPadUp().onTrue(arm.setHighPosition());
 
         //Autodrive stuff

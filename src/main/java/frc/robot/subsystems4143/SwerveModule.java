@@ -197,8 +197,8 @@ public class SwerveModule {
     private void configDriveMotor() {
         var driveConfiguration = new TalonFXConfiguration();
         driveConfiguration.MotorOutput.Inverted = Constants.SwerveConstants.driveEncoderInvert 
-                ? InvertedValue.CounterClockwise_Positive
-                : InvertedValue.Clockwise_Positive;
+                ? InvertedValue.Clockwise_Positive
+                : InvertedValue.CounterClockwise_Positive;
         driveConfiguration.MotorOutput.NeutralMode = Constants.SwerveConstants.driveNeutralMode == NeutralMode.Coast 
                         ? NeutralModeValue.Coast
                         : NeutralModeValue.Brake;
