@@ -130,7 +130,7 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
     }
 
     public Command levelChargeStationCommand() {
-        var constraints = new TrapezoidProfile.Constraints(0.35, 0.35);
+        var constraints = new TrapezoidProfile.Constraints(0.2, 0.2);
         var tiltController = new ProfiledPIDController(0.2, 0, 0, constraints);
 
         // End with no pitch and stationary
@@ -141,6 +141,7 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
 
         return run(() -> {
                     double pitch = getTiltAmount();
+                    SmartDashboard.putNumber("Pitch", pitch);
 
                     // Negative pitch -> drive forward, Positive pitch -> drive backward
 

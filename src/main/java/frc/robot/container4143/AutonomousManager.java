@@ -17,6 +17,8 @@ import frc.lib.logging.LoggedReceiver;
 import frc.lib.logging.Logger;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.subsystems4143.Arm;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
@@ -41,8 +43,7 @@ public class AutonomousManager {
 
     public AutonomousManager(RobotContainer4143 container) {
         swerveDriveSubsystem = container.getSwerveDriveSubsystem();
-        //ArmSubsystem armSubsystem = container.getArmSubsystem();
-
+        Arm arm = container.getArm();
         initializeNetworkTables();
 
         // Create an event map for use in all autos
@@ -52,13 +53,15 @@ public class AutonomousManager {
                 "shouldClimb",
                 either(none(), run(swerveDriveSubsystem::stop, swerveDriveSubsystem), () -> shouldClimb.getBoolean()));
         eventMap.put("levelChargeStation", swerveDriveSubsystem.levelChargeStationCommand());
-        eventMap.put(
-                "placeHigh",
+        eventMap.put("goHigh",
                 sequence(
-                        //runOnce(armSubsystem::setHigh, armSubsystem),
-                        waitSeconds(2)//,
-                        //runOnce(armSubsystem::setAwaitingPiece, armSubsystem)
-                        ));
+                    arm.setClawClosed(container),
+                    arm.setHighPosition()));
+        eventMap.put("placeHigh",
+                    sequence(
+                        arm.setClawOpen(),
+                        arm.setHomePosition()));
+
 
         autoBuilder = new SwerveAutoBuilder(
                 swerveDriveSubsystem::getPose,

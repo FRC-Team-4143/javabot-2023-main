@@ -194,9 +194,9 @@ public class RobotContainer4143 {
         operatorRSD.whileTrue(pickupSubsystem.spindexterCCW());
 
         //Bumper buttons
-        driver.getRightBumper().toggleOnTrue(arm.setClawClosed(this));
+        driver.getRightBumper().toggleOnTrue(arm.clawToggle(this));
         driver.nameRightBumper("Toggle Claw");
-        operator.getRightBumper().toggleOnTrue(arm.setClawClosed(this));
+        operator.getRightBumper().toggleOnTrue(arm.clawToggle(this));
         operator.nameRightBumper("Toggle Claw");
 
 
@@ -262,7 +262,7 @@ public class RobotContainer4143 {
 
 
         fieldPositionSubsystem.setDefaultCommand(fieldPositionSubsystem.scoreSelectCommand(operator.getLeftYAxis(), operator.getLeftXAxis()));
-        arm.setDefaultCommand(arm.setClawOpen());
+        
 
         swerveDriveSubsystem.setDefaultCommand(swerveDriveSubsystem.driveCommand(
             getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), true, driver.getLeftBumper()));
