@@ -12,6 +12,8 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.logging.LoggedReceiver;
 import frc.lib.logging.Logger;
@@ -38,6 +40,7 @@ public class AutonomousManager {
     public SwerveAutoBuilder autoBuilder;
 
     private List<PathPlannerTrajectory> chosenAuto = defaultAuto.getPath();
+    private static final SendableChooser<AutonomousOption> autoChooser = new SendableChooser<>();
 
     SwerveDriveSubsystem swerveDriveSubsystem;
 
@@ -48,6 +51,9 @@ public class AutonomousManager {
 
         // Create an event map for use in all autos
         HashMap<String, Command> eventMap = new HashMap<>();
+        autoChooser.setDefaultOption("PLACE1ANDCLIMB", AutonomousOption.PLACE1ANDCLIMB);
+        autoChooser.addOption("CORNERPLACE1ANDCLIMB", AutonomousOption.CORNERPLACE1ANDCLIMB);
+        SmartDashboard.putData("Autonomous Mode", autoChooser);
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
         eventMap.put(
                 "shouldClimb",
@@ -108,13 +114,29 @@ public class AutonomousManager {
     }
 
     public Command getAutonomousCommand() {
-        Command chosenPathCommand = autoBuilder.fullAuto(chosenAuto);
 
-        var chosenWaitDuration = waitDuration.getInteger();
+        AutonomousOption nameOfSelectedAuto = autoChooser.getSelected();
+        Command autonomousCommand;
 
-        if (chosenWaitDuration > 0) chosenPathCommand.beforeStarting(waitSeconds(chosenWaitDuration));
+        System.out.println(nameOfSelectedAuto);
+        System.out.println(nameOfSelectedAuto.pathName);
 
-        return chosenPathCommand;
+        // Run the default auto if an invalid auto has been chosen
+        //try {
+            nameOfSelectedAuto.getPath();
+            autonomousCommand = nameOfSelectedAuto.getCommand(autoBuilder);
+        //} catch (Exception e) {
+        //    System.out.println("Running default auto");
+        //    autonomousCommand = AutonomousOption.valueOf(defaultAuto.name()).getCommand(autoBuilder);
+        //}
+
+        // Return an empty command group if no auto is specified
+        return autonomousCommand;
+
+        // Command chosenPathCommand = autoBuilder.fullAuto(chosenAuto);
+        // var chosenWaitDuration = waitDuration.getInteger();
+        // if (chosenWaitDuration > 0) chosenPathCommand.beforeStarting(waitSeconds(chosenWaitDuration));
+        // return chosenPathCommand;
     }
 
     private void initializeNetworkTables() {
@@ -136,13 +158,14 @@ public class AutonomousManager {
     }
 
     private enum AutonomousOption {
-        PLACE1ANDCLIMB(StartingLocation.OPEN, 1, "place1andclimb", new PathConstraints(5, 4)),
+        PLACE1ANDCLIMB(StartingLocation.OPEN, 1, "place1andclimb", new PathConstraints(4, 4)),
+        CORNERPLACE1ANDCLIMB(StartingLocation.OPEN, 1, "cornerplace1andclimb", new PathConstraints(4, 4)),
         PLACE2ANDCLIMB(StartingLocation.OPEN, 2, "place2andclimb", new PathConstraints(5, 4)),
         PLACE3ANDCLIMB(StartingLocation.OPEN, 3, "place3andclimb", new PathConstraints(6, 5)),
         FIVEPIECE(StartingLocation.OPEN, 5, "fivepiece", new PathConstraints(5, 6));
 
         private List<PathPlannerTrajectory> path;
-        private String pathName;
+        public String pathName;
         private PathConstraints constraints;
         public StartingLocation startPosition;
         public int gamePieces;
@@ -160,6 +183,10 @@ public class AutonomousManager {
             if (path == null) path = PathPlanner.loadPathGroup(pathName, constraints);
 
             return path;
+        }
+
+        public Command getCommand(SwerveAutoBuilder autoBuilder) {
+            return autoBuilder.fullAuto(path);
         }
     }
 

@@ -10,6 +10,8 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.logging.LoggedReceiver;
 import frc.lib.logging.Logger;
@@ -36,6 +38,8 @@ public class AutonomousManager {
     private SwerveAutoBuilder autoBuilder;
 
     private List<PathPlannerTrajectory> chosenAuto = defaultAuto.getPath();
+    
+    private static final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     SwerveDriveSubsystem swerveDriveSubsystem;
 
@@ -47,6 +51,11 @@ public class AutonomousManager {
 
         // Create an event map for use in all autos
         HashMap<String, Command> eventMap = new HashMap<>();
+
+        autoChooser.setDefaultOption("PLACE1ANDCLIMB", "PLACE1ANDCLIMB");
+        autoChooser.addOption("CORNERPLACE1ANDCLIMB", "CORNERPLACE1ANDCLIMB");
+        SmartDashboard.putData("Autonomous Mode", autoChooser);
+
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
         eventMap.put(
                 "shouldClimb",
@@ -101,16 +110,30 @@ public class AutonomousManager {
             previousStartPosition = newStartPosition;
             previousGamePieces = (int) newGamePieces;
         }
+        
     }
+    
 
     public Command getAutonomousCommand() {
-        Command chosenPathCommand = autoBuilder.fullAuto(chosenAuto);
 
-        var chosenWaitDuration = waitDuration.getInteger();
+        String nameOfSelectedAuto = autoChooser.getSelected();
 
-        if (chosenWaitDuration > 0) chosenPathCommand.beforeStarting(waitSeconds(chosenWaitDuration));
+        Command autonomousCommand;
 
-        return chosenPathCommand;
+        // Run the default auto if an invalid auto has been chosen
+        try {
+            autonomousCommand = AutonomousOption.valueOf(nameOfSelectedAuto).getCommand(autoBuilder);
+        } catch (Exception e) {
+            autonomousCommand = AutonomousOption.valueOf(defaultAuto.name()).getCommand(autoBuilder);
+        }
+
+        // Return an empty command group if no auto is specified
+        return autonomousCommand;
+
+        // Command chosenPathCommand = autoBuilder.fullAuto(chosenAuto);
+        // var chosenWaitDuration = waitDuration.getInteger();
+        // if (chosenWaitDuration > 0) chosenPathCommand.beforeStarting(waitSeconds(chosenWaitDuration));
+        // return chosenPathCommand;
     }
 
     private void initializeNetworkTables() {
@@ -156,6 +179,10 @@ public class AutonomousManager {
             if (path == null) path = PathPlanner.loadPathGroup(pathName, constraints);
 
             return path;
+        }
+
+        public Command getCommand(SwerveAutoBuilder autoBuilder) {
+            return autoBuilder.fullAuto(path);
         }
     }
 

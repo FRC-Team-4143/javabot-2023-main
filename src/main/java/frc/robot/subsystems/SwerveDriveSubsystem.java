@@ -48,7 +48,8 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
     private final SwerveDrivePoseEstimator swervePoseEstimator;
     private final Field2d m_field = new Field2d(); //4143
     private boolean dpadR;
-
+    private boolean isClimbingForward = false;
+    private boolean isClimbingBackwards = false;
     private Pose2d pose = new Pose2d();
     private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(3);
     private ChassisSpeeds velocity = new ChassisSpeeds();
@@ -131,29 +132,43 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
 
     public Command levelChargeStationCommand() {
         var constraints = new TrapezoidProfile.Constraints(0.2, 0.2);
-        var tiltController = new ProfiledPIDController(0.2, 0, 0, constraints);
-
+        var tiltController = new ProfiledPIDController(0.02, 0, 0, constraints);
+        
         // End with no pitch and stationary
         State goal = new State(0, 0);
+
 
         // Four degrees of tolerance
         tiltController.setTolerance(4, 0.1);
 
         return run(() -> {
                     double pitch = getTiltAmount();
-                    SmartDashboard.putNumber("Pitch", pitch);
-
+                    // SmartDashboard.putNumber("Pitch", pitch);
+                    double rampRate = gyro.getRotationRates3d().getY();
+                    SmartDashboard.putBoolean("Is Climbing Forward", isClimbingForward);
+                    SmartDashboard.putBoolean("Is Climbing Backwards", isClimbingBackwards);
+                    
                     // Negative pitch -> drive forward, Positive pitch -> drive backward
-
+                    double gyroPitch = gyro.getRotation3d().getY() * 180 / Math.PI;
+                    SmartDashboard.putNumber("Gyro Pitch", gyroPitch);
                     Translation2d direction = new Translation2d(
                             getNormalVector3d().getX(), getNormalVector3d().getY());
-
+                    if(gyroPitch > 12){isClimbingForward = true; isClimbingBackwards = false;}
+                    if(gyroPitch < -12){isClimbingBackwards = true; isClimbingForward = false;}
+                    if(pitch < 4){isClimbingBackwards = false; isClimbingForward = false;}
+                    
                     Translation2d finalDirection = direction.times(tiltController.calculate(pitch, goal));
-
+                    ChassisSpeeds backwardsVelocity = new ChassisSpeeds(-finalDirection.getX(), -finalDirection.getY(), 0);
                     ChassisSpeeds velocity = new ChassisSpeeds(finalDirection.getX(), finalDirection.getY(), 0);
-
+                    //This locks the wheels within 2 degrees
                     if (MathUtils.equalsWithinError(pitch, 0, 3)) lock();
-                    else setVelocity(velocity, false);
+                    //Trying to backup when it goes overboard
+                  
+                    // else if(isClimbingForward && gyroPitch < 12){setVelocity(backwardsVelocity, false, false) ;}
+                    // else if(isClimbingBackwards && gyroPitch > -12){setVelocity(backwardsVelocity, false, false);}
+
+                    //drive forward
+                    else setVelocity(velocity, false,false);
                 })
                 .repeatedly();
     }
@@ -383,7 +398,11 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
     @Override
     public void periodic() {
         update();
-
+        SmartDashboard.putNumber("X rate", gyro.getRotationRates3d().getX());
+        SmartDashboard.putNumber("Y rate", gyro.getRotationRates3d().getY());
+        SmartDashboard.putNumber("Z rate", gyro.getRotationRates3d().getZ());
+        double pitch = getTiltAmount();
+        SmartDashboard.putNumber("Pitch", pitch);
         Logger.log("/SwerveDriveSubsystem/Pose", pose);
         Logger.log("/SwerveDriveSubsystem/Velocity", velocity);
         Logger.log("/SwerveDriveSubsystem/Desired Velocity", (ChassisSpeeds) driveSignal);

@@ -121,7 +121,7 @@ public class Arm extends SubsystemBase {
             () -> {clamped = false; clawMotor.set(ControlMode.PercentOutput, 1);},
             () -> { clawMotor.set(ControlMode.PercentOutput, 1); System.out.println("Moved Claw Out");}, 
             interrupted -> {clawMotor.set(ControlMode.PercentOutput, 0); System.out.println("Motor Off");},
-            () -> (clawMotor.getSelectedSensorPosition() < 2600 && clawMotor.getSelectedSensorPosition()>500));
+            () -> (clawMotor.getSelectedSensorPosition() < 3200 && clawMotor.getSelectedSensorPosition() > 1000));
     }
 
     public CommandBase setClawClosed(RobotContainer4143 container){
