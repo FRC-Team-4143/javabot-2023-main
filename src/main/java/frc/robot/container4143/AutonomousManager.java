@@ -53,6 +53,7 @@ public class AutonomousManager {
         HashMap<String, Command> eventMap = new HashMap<>();
         autoChooser.setDefaultOption("PLACE1ANDCLIMB", AutonomousOption.PLACE1ANDCLIMB);
         autoChooser.addOption("CORNERPLACE1ANDCLIMB", AutonomousOption.CORNERPLACE1ANDCLIMB);
+        autoChooser.addOption("TEST1", AutonomousOption.TEST1);
         SmartDashboard.putData("Autonomous Mode", autoChooser);
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
         eventMap.put(
@@ -162,6 +163,7 @@ public class AutonomousManager {
         CORNERPLACE1ANDCLIMB(StartingLocation.OPEN, 1, "cornerplace1andclimb", new PathConstraints(4, 4)),
         PLACE2ANDCLIMB(StartingLocation.OPEN, 2, "place2andclimb", new PathConstraints(5, 4)),
         PLACE3ANDCLIMB(StartingLocation.OPEN, 3, "place3andclimb", new PathConstraints(6, 5)),
+        TEST1(StartingLocation.OPEN, 1, "test1", new PathConstraints(3, 3)),
         FIVEPIECE(StartingLocation.OPEN, 5, "fivepiece", new PathConstraints(5, 6));
 
         private List<PathPlannerTrajectory> path;

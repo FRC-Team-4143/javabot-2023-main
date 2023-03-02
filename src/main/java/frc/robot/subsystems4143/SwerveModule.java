@@ -23,6 +23,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.Constants.GlobalConstants;
 import frc.lib.swerve.*;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.Preferences;
@@ -94,7 +95,7 @@ public class SwerveModule {
                     Constants.SwerveConstants.wheelCircumference,
                     Constants.SwerveConstants.driveGearRatio);
             driveVelOut.Velocity = velocity;
-            driveVelOut.FeedForward = driveFeedforward.calculate(desiredState.speedMetersPerSecond);
+            driveVelOut.FeedForward = driveFeedforward.calculate(desiredState.speedMetersPerSecond) / GlobalConstants.targetVoltage;
             driveMotor.setControl(driveVelOut);
             /*driveMotor.set(
                     ControlMode.Velocity,
@@ -210,7 +211,7 @@ public class SwerveModule {
         driveConfiguration.Slot0.kP = Constants.SwerveConstants.driveKP;
         driveConfiguration.Slot0.kI = Constants.SwerveConstants.driveKI;
         driveConfiguration.Slot0.kD = Constants.SwerveConstants.driveKD;
-        driveConfiguration.Slot0.kV = 0.12;
+        driveConfiguration.Slot0.kV = 0.0;
         //driveConfiguration.Slot0.kF = Constants.SwerveConstants.driveKF;
         driveConfiguration.CurrentLimits.StatorCurrentLimit = Constants.SwerveConstants.driveContinuousCurrentLimit;
         driveConfiguration.CurrentLimits.SupplyCurrentLimit = Constants.SwerveConstants.driveContinuousCurrentLimit;

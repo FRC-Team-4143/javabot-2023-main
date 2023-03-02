@@ -393,16 +393,16 @@ public final class Constants {
         public static final double angleKF = 0.0;
 
         /* Drive Motor PID Values */
-        public static final double driveKP = 0.10;
+        public static final double driveKP = 0.05;
         public static final double driveKI = 0.0;
         public static final double driveKD = 0.0;
         public static final double driveKF = 0.0;
 
         /* Drive Motor Characterization Values */
         public static final double driveKS =
-                (0.667 / 12); // divide by 12 to convert from volts to percent output for CTRE
-        public static final double driveKV = (2.44 / 12);
-        public static final double driveKA = (0.27 / 12);
+                (0.2); // Used to be 0.667
+        public static final double driveKV = (1.65); // Used to be 2.44
+        public static final double driveKA = (2); // Used to be 0.27
 
         /* Angle Motor Characterization Values */
         public static final double angleKS = 0;

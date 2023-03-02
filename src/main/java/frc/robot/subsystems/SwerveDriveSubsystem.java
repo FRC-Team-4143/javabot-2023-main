@@ -131,8 +131,8 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
     }
 
     public Command levelChargeStationCommand() {
-        var constraints = new TrapezoidProfile.Constraints(0.2, 0.2);
-        var tiltController = new ProfiledPIDController(0.02, 0, 0, constraints);
+        var constraints = new TrapezoidProfile.Constraints(0.6, 0.6);
+        var tiltController = new ProfiledPIDController(0.04, 0, 0, constraints);
         
         // End with no pitch and stationary
         State goal = new State(0, 0);
@@ -340,6 +340,8 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
         SwerveModulePosition[] modulePositions = getModulePositions();
 
         velocity = Constants.SwerveConstants.swerveKinematics.toChassisSpeeds(moduleStates);
+        SmartDashboard.putNumber("Robot X Velocity", velocity.vxMetersPerSecond);
+        SmartDashboard.putNumber("Robot Y Velocity", velocity.vyMetersPerSecond);
 
         velocityEstimator.add(velocity);
 
@@ -405,6 +407,8 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
         SmartDashboard.putNumber("Pitch", pitch);
         Logger.log("/SwerveDriveSubsystem/Pose", pose);
         Logger.log("/SwerveDriveSubsystem/Velocity", velocity);
+        
+
         Logger.log("/SwerveDriveSubsystem/Desired Velocity", (ChassisSpeeds) driveSignal);
 
         Logger.log("/SwerveDriveSubsystem/Velocity Magnitude", getVelocityMagnitude());

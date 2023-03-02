@@ -121,12 +121,14 @@ public class Arm extends SubsystemBase {
             () -> {clamped = false; clawMotor.set(ControlMode.PercentOutput, 1);},
             () -> { clawMotor.set(ControlMode.PercentOutput, 1); System.out.println("Moved Claw Out");}, 
             interrupted -> {clawMotor.set(ControlMode.PercentOutput, 0); System.out.println("Motor Off");},
-            () -> (clawMotor.getSelectedSensorPosition() < 3200 && clawMotor.getSelectedSensorPosition() > 1000));
+            () -> (clawMotor.getSelectedSensorPosition() < 3200 && clawMotor.getSelectedSensorPosition() > 1400));
     }
 
     public CommandBase setClawClosed(RobotContainer4143 container){
         return new FunctionalCommand(() -> {count = Timer.getFPGATimestamp(); clamped = true;}, 
-             () -> {if(count + 0.03 < Timer.getFPGATimestamp() && getDistance() < -0.29){
+             () -> {
+                clawMotor.set(ControlMode.Current, -3);
+                if(count + 0.03 < Timer.getFPGATimestamp() && getDistance() < -0.29){
 
             } 
             if(count + 0.25 < Timer.getFPGATimestamp()){
