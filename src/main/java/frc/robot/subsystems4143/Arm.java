@@ -23,6 +23,7 @@ import edu.wpi.first.networktables.TimestampedInteger;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
@@ -61,10 +62,15 @@ public class Arm extends SubsystemBase {
     public static final Rotation2d arm2StartingAngle = Rotation2d.fromDegrees(-135);
     private double count;
     private boolean clamped;
+    private ArmFeedforward m_rotatorFeedforward;
 
     public Arm(){ 
         clawMotor = new TalonSRX(3);
         clawMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
+        clawMotor.config_kP(0, 1, 10);
+        clawMotor.config_kF(0, 0.005, 10);
+        clawMotor.config_kI(0, 0.01, 10);
+        clawMotor.config_kD(0, 0.001, 10);
         elevatorMotor = new CANSparkMax(11, MotorType.kBrushless);
         elevatorMotor2 = new CANSparkMax(10, MotorType.kBrushless);
         rotatorMotor = new CANSparkMax(5, MotorType.kBrushless);
@@ -72,13 +78,13 @@ public class Arm extends SubsystemBase {
         rotatorMotor.setSmartCurrentLimit(20);
         m_rotatorEncoder = new WPI_CANCoder(1);
         m_rotatorEncoder.configFactoryDefault();
-    elevatorMotor2.follow(elevatorMotor, true);
-    count =0;
+        elevatorMotor2.follow(elevatorMotor, true);
+        count =0;
         clamped = false;
 
-    if (clawMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute) != ErrorCode.OK) {
-        System.out.println("Claw encoder error");
-    }
+        if (clawMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute) != ErrorCode.OK) {
+            System.out.println("Claw encoder error");
+        }
     clawMotor.configFeedbackNotContinuous(true, 0);
     clawMotor.setNeutralMode(NeutralMode.Brake);
         
@@ -87,6 +93,8 @@ public class Arm extends SubsystemBase {
     m_rotatorEncoderMotor = rotatorMotor.getEncoder();
     m_elevatorEncoder.setPositionConversionFactor(22*0.25/9*(25.4/1000)); //Conversion from revolutions to meters, 0.01129
     m_rotatorEncoderMotor.setPositionConversionFactor(360/100); //Conversion from revolutions to degrees, 3.6
+
+    m_rotatorFeedforward = new ArmFeedforward(.159, .033, .033);
 
     arm1 = root.append(
                 new MechanismLigament2d("Arm 1", 2.0, arm1StartingAngle.getDegrees()));
@@ -118,32 +126,26 @@ public class Arm extends SubsystemBase {
 
     public CommandBase setClawOpen(){
         return new FunctionalCommand(
-            () -> {clamped = false; clawMotor.set(ControlMode.PercentOutput, 1);},
-            () -> { clawMotor.set(ControlMode.PercentOutput, 1); System.out.println("Moved Claw Out");}, 
-            interrupted -> {clawMotor.set(ControlMode.PercentOutput, 0); System.out.println("Motor Off");},
-            () -> (clawMotor.getSelectedSensorPosition() < 3200 && clawMotor.getSelectedSensorPosition() > 1400));
+            () -> {clamped = false; clawMotor.set(ControlMode.Current, 5);},
+            () -> { clawMotor.set(ControlMode.Current, 5); System.out.println("Moved Claw Out");}, 
+            interrupted -> {clawMotor.set(ControlMode.Current, 0); System.out.println("Motor Off");},
+            () -> (clawMotor.getSelectedSensorPosition() < 3900 && clawMotor.getSelectedSensorPosition() > 1500));
     }
 
     public CommandBase setClawClosed(RobotContainer4143 container){
-        return new FunctionalCommand(() -> {count = Timer.getFPGATimestamp(); clamped = true;}, 
+        return new FunctionalCommand(() -> {clamped = true;}, 
              () -> {
-                clawMotor.set(ControlMode.Current, -3);
-                if(count + 0.03 < Timer.getFPGATimestamp() && getDistance() < -0.29){
-
-            } 
-            if(count + 0.25 < Timer.getFPGATimestamp()){
                 if (container.currentMode == gamePiece.Cone) {
                     // setClawSpeed(-0.75);
                     clawMotor.set(ControlMode.Current, -6);
                 }
-                else if (container.currentMode == gamePiece.Cube){
+                else {
                     clawMotor.set(ControlMode.Current, -3);
                 }
-            } else {
-                clawMotor.set(ControlMode.Current, -3);
-            }},
+            },
 
-          interrupted -> {clawMotor.set(ControlMode.Current, -3);}, () -> (count + 0.5 < Timer.getFPGATimestamp())
+
+          interrupted -> {}, () -> (true)
     );
 
     }
@@ -166,8 +168,8 @@ public class Arm extends SubsystemBase {
         if(angle>0){
             angle=0;
            }
-           if(angle<-180){
-            angle=-180;
+           if(angle<-144){
+            angle=-144;
            }
     }
 
@@ -283,6 +285,7 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic(){
+        m_rotatorFeedforward.calculate(Math.toRadians(angle), 180);
         arm1.setLength(2.0 - m_elevatorEncoder.getPosition());
         arm2.setAngle(readRotateEncoder());
         elevatorMotorController.setGoal(distance);
@@ -299,7 +302,12 @@ public class Arm extends SubsystemBase {
         SmartDashboard.putNumber("Elevator Current", elevatorMotor.getOutputCurrent());
         SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getAppliedOutput());
         SmartDashboard.putNumber("Claw Angle", clawMotor.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Arm extension", 1000 / 25.4 * (Math.cos(Math.toRadians(47)) * -distance +
-                        Math.cos(Math.toRadians(angle + 135) * 0.4953) - 0.076));
+        SmartDashboard.putBoolean("Clamped", clamped);
+        SmartDashboard.putNumber("Claw Current", clawMotor.getStatorCurrent());
+        SmartDashboard.putNumber("Arm extension", (Math.cos(Math.toRadians(41)) * -m_elevatorEncoder.getPosition()) +
+                        (Math.cos(Math.toRadians(readRotateEncoder() + 114)) * 0.762) 
+                        - 0.1016)
+                        ;
+
     }
 }
