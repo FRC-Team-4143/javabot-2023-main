@@ -97,7 +97,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {
         robotContainer.autonomousManager.update();
-
+        robotContainer.init();
         // Indicate if the battery is at voltage
         // if (RobotController.getBatteryVoltage() > GlobalConstants.batteryVoltageThreshold)
         //     LEDSegment.BatteryIndicator.setColor(LightsSubsystem.green.dim(4));

@@ -64,10 +64,10 @@ public class AutonomousManager {
                 sequence(
                     arm.setClawClosed(container),
                     arm.setHighPosition()));
-        eventMap.put("placeHigh",
-                    sequence(
-                        arm.setClawOpen(),
-                        arm.setHomePosition()));
+        eventMap.put("goHome",
+                    arm.setHomePosition());
+        eventMap.put("openClaw",
+                    arm.setClawOpen());
 
 
         autoBuilder = new SwerveAutoBuilder(

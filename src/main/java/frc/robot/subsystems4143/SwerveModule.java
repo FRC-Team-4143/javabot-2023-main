@@ -27,6 +27,7 @@ import frc.robot.Constants.GlobalConstants;
 import frc.lib.swerve.*;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModule {
     public int moduleNumber;
@@ -36,7 +37,7 @@ public class SwerveModule {
     private TalonFX driveMotor;
     private AnalogEncoder analogEncoder;
     private double lastAngle;
-    private final DutyCycleOut driveOut = new DutyCycleOut(0,true,false);
+    private final DutyCycleOut driveOut = new DutyCycleOut(0,false,false);
     private final VelocityDutyCycle driveVelOut = new VelocityDutyCycle(0,true,0,0,false);
     
     SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(
@@ -89,6 +90,8 @@ public class SwerveModule {
             //driveMotor.set(ControlMode.PercentOutput, percentOutput);
             driveOut.Output = percentOutput;
             driveMotor.setControl(driveOut);
+            SmartDashboard.putNumber("driveOut"+moduleNumber, driveOut.Output);
+            SmartDashboard.putNumber("driveCurrent"+moduleNumber, driveMotor.getStatorCurrent().getValue());
         } else {
             double velocity = Conversions.MPSToFalconPro(
                     desiredState.speedMetersPerSecond,
@@ -151,6 +154,7 @@ public class SwerveModule {
         // Set the drive motor to the specified voltage
         driveOut.Output = voltage / Constants.GlobalConstants.targetVoltage;
         driveMotor.setControl(driveOut);
+        
         //driveMotor.set(ControlMode.PercentOutput, voltage / Constants.GlobalConstants.targetVoltage);
     }
 
@@ -221,7 +225,7 @@ public class SwerveModule {
         driveMotor.getConfigurator().apply(driveConfiguration);
         driveMotor.setRotorPosition(0);
         driveMotor.setSafetyEnabled(true);
-        driveOut.EnableFOC = true;
+        driveOut.EnableFOC = false;
         
         /*
         driveMotor.configFactoryDefault();

@@ -447,6 +447,10 @@ public class RobotContainer4143 {
         return visionSubsystem;
     }
 
+    public void init(){
+        arm.setPosition();
+    }
+
     // public ArmSubsystem getArmSubsystem() {
     //     return armSubsystem;
     // }
