@@ -33,12 +33,12 @@ public class SkiSubsystem extends SubsystemBase {
     }
    
     public CommandBase setSkiUp() {
-            return runEnd(() -> {skiMotor.set(ControlMode.PercentOutput,-.30);}, 
+            return runEnd(() -> {skiMotor.set(ControlMode.PercentOutput,-.75);}, 
             () -> skiMotor.set(ControlMode.PercentOutput, 0.0));
     }
     
     public CommandBase setSkiDown() {
-        return runEnd(() -> {skiMotor.set(ControlMode.PercentOutput,0.30);}, 
+        return runEnd(() -> {skiMotor.set(ControlMode.PercentOutput,0.75);}, 
         () -> skiMotor.set(ControlMode.PercentOutput, 0.0));
     }
 

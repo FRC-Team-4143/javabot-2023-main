@@ -29,10 +29,13 @@ public class PickupSubsystem extends SubsystemBase {
         m_singleSolenoid1 = new Solenoid(PneumaticsModuleType.REVPH, 1);
     }
 
+
+    public void solenoidStart() {m_singleSolenoid0.set(false);
+                                m_singleSolenoid1.set(false);}
     public void solenoidRetract() {m_singleSolenoid0.set(false);
-                                   m_singleSolenoid1.set(false);}
+                                   m_singleSolenoid1.set(true);}
     public void solenoidExtend() {m_singleSolenoid0.set(true);
-                                  m_singleSolenoid1.set(false);}
+                                  m_singleSolenoid1.set(true);}
     public void rollersSet(double speed) {toproller.set(speed); 
         bottomroller.set(speed);}
     //public void pickupOff() {m_doubleSolenoid.set(DoubleSolenoid.Value.kOff);}

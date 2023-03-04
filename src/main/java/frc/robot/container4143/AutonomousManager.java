@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.logging.LoggedReceiver;
 import frc.lib.logging.Logger;
-import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems4143.Arm;
 
@@ -53,6 +52,7 @@ public class AutonomousManager {
         HashMap<String, Command> eventMap = new HashMap<>();
         autoChooser.setDefaultOption("PLACE1ANDCLIMB", AutonomousOption.PLACE1ANDCLIMB);
         autoChooser.addOption("CORNERPLACE1ANDCLIMB", AutonomousOption.CORNERPLACE1ANDCLIMB);
+        autoChooser.addOption("PLACE1GET1CLIMB", AutonomousOption.PLACE1GET1CLIMB);
         autoChooser.addOption("TEST1", AutonomousOption.TEST1);
         SmartDashboard.putData("Autonomous Mode", autoChooser);
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
@@ -74,7 +74,7 @@ public class AutonomousManager {
                 swerveDriveSubsystem::getPose,
                 swerveDriveSubsystem::setPose,
                 new PIDConstants(3.0, 0.0, 0.0),
-                new PIDConstants(1.0, 0.0, 0.001),
+                new PIDConstants(3.0, 0.0, 0.001),
                 (ChassisSpeeds velocity) -> swerveDriveSubsystem.setVelocity(velocity, false, false),
                 eventMap,
                 true,
@@ -161,6 +161,7 @@ public class AutonomousManager {
     private enum AutonomousOption {
         PLACE1ANDCLIMB(StartingLocation.OPEN, 1, "place1andclimb", new PathConstraints(4, 4)),
         CORNERPLACE1ANDCLIMB(StartingLocation.OPEN, 1, "cornerplace1andclimb", new PathConstraints(4, 4)),
+        PLACE1GET1CLIMB(StartingLocation.OPEN, 1, "place1get1climb", new PathConstraints(4, 4)),
         PLACE2ANDCLIMB(StartingLocation.OPEN, 2, "place2andclimb", new PathConstraints(5, 4)),
         PLACE3ANDCLIMB(StartingLocation.OPEN, 3, "place3andclimb", new PathConstraints(6, 5)),
         TEST1(StartingLocation.OPEN, 1, "test1", new PathConstraints(3, 3)),

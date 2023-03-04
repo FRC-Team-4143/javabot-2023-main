@@ -186,10 +186,10 @@ public class RobotContainer4143 {
         operatorLT.whileTrue(new PickupOutRev(pickupSubsystem,arm, this));
         operatorRT.whileTrue(new PickupOut(pickupSubsystem,arm, this));
 
-        //driverRSU.whileTrue(skiSubsystem.setSkiUp());
-        //driverRSD.whileTrue(skiSubsystem.setSkiDown());
-        driverRSU.whileTrue(pickupSubsystem.spindexterCW());
-        driverRSD.whileTrue(pickupSubsystem.spindexterCCW());
+        driverRSU.whileTrue(skiSubsystem.setSkiUp());
+        driverRSD.whileTrue(skiSubsystem.setSkiDown());
+        //driverRSU.whileTrue(pickupSubsystem.spindexterCW());
+        //driverRSD.whileTrue(pickupSubsystem.spindexterCCW());
         operatorRSU.whileTrue(pickupSubsystem.spindexterCW());
         operatorRSD.whileTrue(pickupSubsystem.spindexterCCW());
 

@@ -179,13 +179,13 @@ public class Arm extends SubsystemBase {
         return new FunctionalCommand(() -> {}, 
         () -> {
             if(m_elevatorEncoder.getPosition() > -0.44 ){
-                distance = -0.7;
+                distance = -0.727;
             } else {
-                distance = -0.7;
-                angle = -115;
+                distance = -0.727;
+                angle = -110;
             }
         }, interrupted -> {}, ()-> {
-            if(readRotateEncoder() < -110 && angle == -115 && distance == -0.7){
+            if(readRotateEncoder() < -105 && angle == -110 && distance == -0.727){
                 return true;
             }else{
                 return false;

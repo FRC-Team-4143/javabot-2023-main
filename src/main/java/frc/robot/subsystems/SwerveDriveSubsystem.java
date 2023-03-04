@@ -132,7 +132,7 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
 
     public Command levelChargeStationCommand() {
         var constraints = new TrapezoidProfile.Constraints(0.6, 0.6);
-        var tiltController = new ProfiledPIDController(0.04, 0, 0, constraints);
+        var tiltController = new ProfiledPIDController(0.06, 0, 0, constraints);
         
         // End with no pitch and stationary
         State goal = new State(0, 0);
