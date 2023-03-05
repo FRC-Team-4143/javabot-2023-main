@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import frc.lib.controller.Axis;
 import frc.robot.Constants.FieldConstants;
@@ -59,8 +60,9 @@ public class RobotContainer4143 {
     private final PickupSubsystem pickupSubsystem = new PickupSubsystem();
     private final FieldPositionSubsystem fieldPositionSubsystem = new FieldPositionSubsystem();
 
-    private AddressableLED m_led = new AddressableLED(8);
-    private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(14);
+    public AddressableLED m_led = new AddressableLED(0);
+    public AddressableLEDBuffer m_ledBufferCube = new AddressableLEDBuffer(15*3);
+    public AddressableLEDBuffer m_ledBufferCone = new AddressableLEDBuffer(15*3);
 
     public AutonomousManager autonomousManager;
     
@@ -74,10 +76,10 @@ public class RobotContainer4143 {
     private Trigger operatorLT = new Trigger(() -> {return operator.getLeftTrigger().get() > .5;});
     private Trigger operatorRT = new Trigger(() -> {return operator.getRightTrigger().get() > .5;});
 
-    private Trigger driverRSU = new Trigger(() -> {return driver.getRightYAxis().get() > 0.5;});
-    private Trigger driverRSD = new Trigger(() -> {return driver.getRightYAxis().get() < -0.5;});
-    private Trigger operatorRSU = new Trigger(() -> {return operator.getRightYAxis().get() > 0.5;});
-    private Trigger operatorRSD = new Trigger(() -> {return operator.getRightYAxis().get() < -0.5;});
+    private Trigger driverRSU = new Trigger(() -> {return driver.getRightYAxis().get() > 0.9;});
+    private Trigger driverRSD = new Trigger(() -> {return driver.getRightYAxis().get() < -0.9;});
+    private Trigger operatorRSU = new Trigger(() -> {return operator.getRightYAxis().get() > 0.9;});
+    private Trigger operatorRSD = new Trigger(() -> {return operator.getRightYAxis().get() < -0.9;});
 
     private boolean blueAlliance;
 
@@ -103,9 +105,19 @@ public class RobotContainer4143 {
     public RobotContainer4143(TimedRobot robot) {
         System.out.println("start of robotcontainer4143");
         autonomousManager = new AutonomousManager(this);
-        m_led.setLength(m_ledBuffer.getLength());
-        m_led.setData(m_ledBuffer);
+        for (var i = 0; i < m_ledBufferCone.getLength(); i++) {
+              m_ledBufferCone.setRGB(i, 255/2, 255/2, 0);
+        }
+        for (var i = 0; i < m_ledBufferCube.getLength(); i++) {
+            m_ledBufferCube.setRGB(i, 160/2, 32/2, 240/2);
+      }
+        m_led.setLength(m_ledBufferCube.getLength());
+        m_led.setData(m_ledBufferCube);
         m_led.start();
+        SmartDashboard.putData(CommandScheduler.getInstance());
+        SmartDashboard.putData(swerveDriveSubsystem);
+        SmartDashboard.putData(arm);
+        SmartDashboard.putData(pickupSubsystem);
     
         configureBindings();
         arm.setPosition();
@@ -166,16 +178,16 @@ public class RobotContainer4143 {
         driver.getLeftRhombus().toggleOnTrue(swerveDriveSubsystem.levelChargeStationCommand());
         driver.nameLeftRhombus("Level Charge Station");
         driver.getRightRhombus().onTrue(runOnce(() -> {
-            if(currentMode == Constants.gamePiece.Cube){currentMode = gamePiece.Cone;}
-                else{currentMode = gamePiece.Cube;}
+            if(currentMode == Constants.gamePiece.Cube){currentMode = gamePiece.Cone; m_led.setData(m_ledBufferCone);}
+                else{currentMode = gamePiece.Cube; m_led.setData(m_ledBufferCube);}
             }).ignoringDisable(true));
         driver.nameRightRhombus("Cone/cube mode");
         
         operator.getLeftRhombus().toggleOnTrue(swerveDriveSubsystem.levelChargeStationCommand());
         operator.nameLeftRhombus("Level Charge Station");
         operator.getRightRhombus().onTrue(runOnce(() -> {
-            if(currentMode == Constants.gamePiece.Cube){currentMode = gamePiece.Cone;}
-                else{currentMode = gamePiece.Cube;}
+            if(currentMode == Constants.gamePiece.Cube){currentMode = gamePiece.Cone; m_led.setData(m_ledBufferCone);}
+                else{currentMode = gamePiece.Cube; m_led.setData(m_ledBufferCube);}
             }).ignoringDisable(true));
         operator.nameRightRhombus("Cone/cube mode");
 

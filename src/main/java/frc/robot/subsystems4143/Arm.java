@@ -51,9 +51,9 @@ public class Arm extends SubsystemBase {
     public double elevatorkP, rotatorkP, elevatorkI, rotatorkI, elevatorkD, rotatorkD;
     private double distance;
     private double angle;
-    // private static final TrapezoidProfile.Constraints elevatorConstraints = new TrapezoidProfile.Constraints(84, 84);
-    private static final TrapezoidProfile.Constraints elevatorConstraints = new TrapezoidProfile.Constraints(28, 28);
-    private static final TrapezoidProfile.Constraints rotatorConstraints = new TrapezoidProfile.Constraints(180, 180);
+    // private static final TrapezoidProfile.Constraints elevatorConstraints = new TrapezoidProfile.Constraints(28, 28);
+    private static final TrapezoidProfile.Constraints elevatorConstraints = new TrapezoidProfile.Constraints(84, 84);
+    private static final TrapezoidProfile.Constraints rotatorConstraints = new TrapezoidProfile.Constraints(360, 360*1.5);
     private Mechanism2d mechanism = new Mechanism2d(4, 4);
     private MechanismRoot2d root = mechanism.getRoot("Arm", 2, 2);
     private MechanismLigament2d arm1;
@@ -74,8 +74,9 @@ public class Arm extends SubsystemBase {
         elevatorMotor = new CANSparkMax(11, MotorType.kBrushless);
         elevatorMotor2 = new CANSparkMax(10, MotorType.kBrushless);
         rotatorMotor = new CANSparkMax(5, MotorType.kBrushless);
-        elevatorMotor.setSmartCurrentLimit(20);
-        rotatorMotor.setSmartCurrentLimit(20);
+        elevatorMotor.setSmartCurrentLimit(35);
+        elevatorMotor2.setSmartCurrentLimit(35);
+        rotatorMotor.setSmartCurrentLimit(35);
         m_rotatorEncoder = new WPI_CANCoder(1);
         m_rotatorEncoder.configFactoryDefault();
         elevatorMotor2.follow(elevatorMotor, true);
@@ -105,12 +106,12 @@ public class Arm extends SubsystemBase {
     arm2.setLineWeight(5);
 
     // PID coefficients
-    elevatorkP = 1.15; //18; 
-    elevatorkI = 0;
-    elevatorkD = 0;
-    rotatorkP = 0.1; 
-    rotatorkI = 0;
-    rotatorkD = 0;
+    elevatorkP = 1.15*2; //18; 
+    elevatorkI = 0.01;
+    elevatorkD = .001;
+    rotatorkP = 0.10; 
+    rotatorkI = 0.01;
+    rotatorkD = 0.001;
     distance = 0;
     angle = 0;
 
@@ -137,7 +138,8 @@ public class Arm extends SubsystemBase {
              () -> {
                 if (container.currentMode == gamePiece.Cone) {
                     // setClawSpeed(-0.75);
-                    clawMotor.set(ControlMode.Current, -6);
+                    clawMotor.set(ControlMode.Current, -4
+                    );
                 }
                 else {
                     clawMotor.set(ControlMode.Current, -3);
@@ -180,6 +182,7 @@ public class Arm extends SubsystemBase {
         () -> {
             if(m_elevatorEncoder.getPosition() > -0.44 ){
                 distance = -0.727;
+                angle = -11;
             } else {
                 distance = -0.727;
                 angle = -110;
@@ -198,6 +201,7 @@ public class Arm extends SubsystemBase {
         () -> {
             if(m_elevatorEncoder.getPosition() > -0.4 ){
                 distance = -0.5;
+                angle = -11;
             } else {
                 distance = -0.5;
                 angle = -101;
@@ -214,14 +218,16 @@ public class Arm extends SubsystemBase {
     public CommandBase setHybridPosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
-            if(m_elevatorEncoder.getPosition() > -0.38 ){
-                distance = -0.4;
+            if(m_elevatorEncoder.getPosition() < -0.35 || readRotateEncoder() < -55. ){
+                angle = -114.;
             } else {
-                distance = -0.4;
-                angle = -95;
+                distance = -.4;
+            }
+            if (readRotateEncoder() < -110) {
+                distance = -0.01;
             }
         }, interrupted -> {}, ()-> {
-            if(angle == -95 && distance == -0.4){
+            if(angle == -114 && distance == -0.01){
                 return true;
             }else{
                 return false;
@@ -232,14 +238,15 @@ public class Arm extends SubsystemBase {
     public CommandBase setHomePosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
-            if(readRotateEncoder() < -5.4 ){
-                angle = -3.6;
+            if( readRotateEncoder() > -45.) {
+                distance = -.1; angle = -11.;
+            } else if(m_elevatorEncoder.getPosition() < -.35) {
+                angle = -11.;
             } else {
-                distance = -0.1;
-                angle = -3.6;
+                distance = -.4;
             }
         }, interrupted -> {}, ()-> {
-            if(angle == -3.6 && distance == -0.1){
+            if(angle == -11. && distance == -0.1){
                 return true;
             }else{
                 return false;
@@ -288,8 +295,10 @@ public class Arm extends SubsystemBase {
         m_rotatorFeedforward.calculate(Math.toRadians(angle), 180);
         arm1.setLength(2.0 - m_elevatorEncoder.getPosition());
         arm2.setAngle(readRotateEncoder());
+
         elevatorMotorController.setGoal(distance);
         elevatorMotor.set(elevatorMotorController.calculate(m_elevatorEncoder.getPosition()));
+
         rotatorMotorController.setGoal(angle);
         rotatorMotor.set(rotatorMotorController.calculate(readRotateEncoder()));
         //m_pidController.setReference(distance, CANSparkMax.ControlType.kPosition);
@@ -299,8 +308,11 @@ public class Arm extends SubsystemBase {
         SmartDashboard.putData("Arm Mechanism", mechanism);
         SmartDashboard.putNumber("Distance Setpoint", distance);
         SmartDashboard.putNumber("Angle Setpoint", angle);
+        SmartDashboard.putNumber("Rotator Current", rotatorMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Rotator Speed", m_rotatorEncoder.getVelocity());
         SmartDashboard.putNumber("Elevator Current", elevatorMotor.getOutputCurrent());
         SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getAppliedOutput());
+        SmartDashboard.putNumber("Elevator Speed", m_elevatorEncoder.getVelocity());
         SmartDashboard.putNumber("Claw Angle", clawMotor.getSelectedSensorPosition());
         SmartDashboard.putBoolean("Clamped", clamped);
         SmartDashboard.putNumber("Claw Current", clawMotor.getStatorCurrent());
