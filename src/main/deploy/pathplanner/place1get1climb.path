@@ -96,7 +96,7 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -118,22 +118,25 @@
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": true,
+      "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "pickupCancel",
+          "coneMode"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 3.0060200291340755,
-        "y": 3.1402712378074327
+        "x": 3.83961930317023,
+        "y": 3.083175397120025
       },
       "prevControl": {
-        "x": 3.8020787879182545,
-        "y": 3.125600283118301
+        "x": 4.635678061954411,
+        "y": 3.0685044424308936
       },
       "nextControl": null,
       "holonomicAngle": 179.78,
@@ -143,19 +146,29 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "levelChargeStation"
+          "levelChargeStation",
+          "pickOutReverse"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
+  "maxVelocity": 3.0,
+  "maxAcceleration": 2.0,
+  "isReversed": null,
   "markers": [
     {
       "position": 1.1054545454544737,
       "names": [
         "goHome"
+      ]
+    },
+    {
+      "position": 1.6,
+      "names": [
+        "PickupOut"
       ]
     }
   ]

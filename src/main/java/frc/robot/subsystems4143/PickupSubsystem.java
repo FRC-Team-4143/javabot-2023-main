@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -50,6 +52,8 @@ public class PickupSubsystem extends SubsystemBase {
     //     return new FunctionalCommand(() -> {m_doubleSolenoid.set(DoubleSolenoid.Value.kForward);}, () -> {},interrupted ->  {}, () -> false);
     // }
 
+    public CommandBase pickupcancel() { return runOnce(() -> {});}
+
     public CommandBase rollIn() {
         return new FunctionalCommand(() -> {toproller.set(-.40); 
                         bottomroller.set(-.40);}, () -> {},
@@ -76,10 +80,10 @@ public class PickupSubsystem extends SubsystemBase {
     // }
 
     public CommandBase spindexterCW() {
-        return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,-.30);}, 
+        return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,-.50);}, 
         () -> spindexter.set(ControlMode.PercentOutput, 0.0));}
     public CommandBase spindexterCCW() {
-        return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,.30);},
+        return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,.50);},
         () -> spindexter.set(ControlMode.PercentOutput, 0.0));} 
     public void spindexterStop() {
         spindexter.set(ControlMode.PercentOutput, 0.0);

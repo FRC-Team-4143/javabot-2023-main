@@ -12,7 +12,7 @@ public class RotateUp extends CommandBase{
 
     @Override
     public void execute() {
-        arm.setRotate(1.0);
+        arm.setRotate(0.5);
     }
 
     @Override

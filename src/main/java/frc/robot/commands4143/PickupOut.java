@@ -24,6 +24,7 @@ public class PickupOut extends CommandBase{
     public void initialize() {
         count = 0;
         arm.elevatorPickup();
+        addRequirements(pickupSubsystem);
     }
 
     @Override

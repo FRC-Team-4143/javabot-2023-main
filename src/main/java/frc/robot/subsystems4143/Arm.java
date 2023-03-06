@@ -53,7 +53,7 @@ public class Arm extends SubsystemBase {
     private double angle;
     // private static final TrapezoidProfile.Constraints elevatorConstraints = new TrapezoidProfile.Constraints(28, 28);
     private static final TrapezoidProfile.Constraints elevatorConstraints = new TrapezoidProfile.Constraints(84, 84);
-    private static final TrapezoidProfile.Constraints rotatorConstraints = new TrapezoidProfile.Constraints(360, 360*1.5);
+    private static final TrapezoidProfile.Constraints rotatorConstraints = new TrapezoidProfile.Constraints(360, 360);
     private Mechanism2d mechanism = new Mechanism2d(4, 4);
     private MechanismRoot2d root = mechanism.getRoot("Arm", 2, 2);
     private MechanismLigament2d arm1;
@@ -63,6 +63,8 @@ public class Arm extends SubsystemBase {
     private double count;
     private boolean clamped;
     private ArmFeedforward m_rotatorFeedforward;
+    private double armHomeHeight = -0.08;
+    private double armHomeAngle = 0;
 
     public Arm(){ 
         clawMotor = new TalonSRX(3);
@@ -80,7 +82,7 @@ public class Arm extends SubsystemBase {
         m_rotatorEncoder = new WPI_CANCoder(1);
         m_rotatorEncoder.configFactoryDefault();
         elevatorMotor2.follow(elevatorMotor, true);
-        count =0;
+        count = 0;
         clamped = false;
 
         if (clawMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute) != ErrorCode.OK) {
@@ -134,22 +136,39 @@ public class Arm extends SubsystemBase {
     }
 
     public CommandBase setClawClosed(RobotContainer4143 container){
-        return new FunctionalCommand(() -> {clamped = true;}, 
+        return new FunctionalCommand(() -> {
+                PickupSubsystem pickup = container.getPickup();
+                if(angle > -20 && distance > -0.2) {
+                    count = 2;
+                    if(container.currentMode == gamePiece.Cone) {
+                        angle = -12;
+                    } else {
+                        angle = -8;
+                    }
+                    //pickup.solenoidStart();
+                } else {
+                    count = 0;
+                }
+
+                clamped = true;
+            }, 
              () -> {
-                if (container.currentMode == gamePiece.Cone) {
-                    // setClawSpeed(-0.75);
-                    clawMotor.set(ControlMode.Current, -4
-                    );
-                }
-                else {
-                    clawMotor.set(ControlMode.Current, -3);
-                }
+                if(count == 2 && readRotateEncoder() < angle + 2) {
+                    container.getPickup().solenoidStart();
+                    count = 1;
+                } 
+                if(count == 1) {
+                     count = 0;
+
+                    if (container.currentMode == gamePiece.Cone) {
+                        clawMotor.set(ControlMode.Current, -4);
+                    }
+                    else {
+                        clawMotor.set(ControlMode.Current, -3);
+                    }
+                }   
             },
-
-
-          interrupted -> {}, () -> (true)
-    );
-
+          interrupted -> {}, () -> (count == 0));
     }
     public boolean returnClamped() {
         return clamped;
@@ -182,7 +201,7 @@ public class Arm extends SubsystemBase {
         () -> {
             if(m_elevatorEncoder.getPosition() > -0.44 ){
                 distance = -0.727;
-                angle = -11;
+                angle = armHomeAngle;
             } else {
                 distance = -0.727;
                 angle = -110;
@@ -201,7 +220,7 @@ public class Arm extends SubsystemBase {
         () -> {
             if(m_elevatorEncoder.getPosition() > -0.4 ){
                 distance = -0.5;
-                angle = -11;
+                angle = armHomeAngle;
             } else {
                 distance = -0.5;
                 angle = -101;
@@ -239,14 +258,14 @@ public class Arm extends SubsystemBase {
         return new FunctionalCommand(() -> {}, 
         () -> {
             if( readRotateEncoder() > -45.) {
-                distance = -.1; angle = -11.;
+                distance = armHomeHeight; angle = armHomeAngle;
             } else if(m_elevatorEncoder.getPosition() < -.35) {
-                angle = -11.;
+                angle = armHomeAngle;
             } else {
                 distance = -.4;
             }
         }, interrupted -> {}, ()-> {
-            if(angle == -11. && distance == -0.1){
+            if(angle == armHomeAngle && distance == armHomeHeight){
                 return true;
             }else{
                 return false;
@@ -275,8 +294,8 @@ public class Arm extends SubsystemBase {
        }
     }
     public void elevatorPickup(){
-        if(distance>-0.3){
-            distance=-0.3;
+        if(distance>= armHomeHeight){
+            distance= armHomeHeight;
         }
     }
 

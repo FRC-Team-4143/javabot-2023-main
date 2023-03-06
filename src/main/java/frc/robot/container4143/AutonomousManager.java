@@ -1,6 +1,8 @@
 package frc.robot.container4143;
 
 import frc.robot.RobotContainer4143;
+import frc.robot.commands4143.PickupOut;
+import frc.robot.commands4143.PickupOutRev;
 import frc.robot.Constants;
 
 import static edu.wpi.first.wpilibj2.command.Commands.*;
@@ -19,6 +21,7 @@ import frc.lib.logging.LoggedReceiver;
 import frc.lib.logging.Logger;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems4143.Arm;
+import frc.robot.subsystems4143.PickupSubsystem;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +49,7 @@ public class AutonomousManager {
     public AutonomousManager(RobotContainer4143 container) {
         swerveDriveSubsystem = container.getSwerveDriveSubsystem();
         Arm arm = container.getArm();
+        PickupSubsystem pickup = container.getPickup();
         initializeNetworkTables();
 
         // Create an event map for use in all autos
@@ -54,6 +58,7 @@ public class AutonomousManager {
         autoChooser.addOption("CORNERPLACE1ANDCLIMB", AutonomousOption.CORNERPLACE1ANDCLIMB);
         autoChooser.addOption("PLACE1GET1CLIMB", AutonomousOption.PLACE1GET1CLIMB);
         autoChooser.addOption("TEST1", AutonomousOption.TEST1);
+        autoChooser.addOption("PLACE1ANDCLIMBCONE", AutonomousOption.PLACE1GET1CLIMBCONE);
         SmartDashboard.putData("Autonomous Mode", autoChooser);
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
         eventMap.put(
@@ -68,6 +73,16 @@ public class AutonomousManager {
                     arm.setHomePosition());
         eventMap.put("openClaw",
                     arm.setClawOpen());
+        eventMap.put("PickupOut",
+                    new PickupOut(pickup, arm, container));
+        eventMap.put("pickOutReverse",
+                    new PickupOutRev(pickup, arm, container));
+        eventMap.put("pickupCancel",
+                    pickup.pickupcancel());
+        eventMap.put("cubeMode",
+                    container.cubeMode());
+        eventMap.put("coneMode",
+                    container.coneMode());
 
 
         autoBuilder = new SwerveAutoBuilder(
@@ -159,13 +174,14 @@ public class AutonomousManager {
     }
 
     private enum AutonomousOption {
-        PLACE1ANDCLIMB(StartingLocation.OPEN, 1, "place1andclimb", new PathConstraints(4, 4)),
-        CORNERPLACE1ANDCLIMB(StartingLocation.OPEN, 1, "cornerplace1andclimb", new PathConstraints(4, 4)),
-        PLACE1GET1CLIMB(StartingLocation.OPEN, 1, "place1get1climb", new PathConstraints(4, 4)),
-        PLACE2ANDCLIMB(StartingLocation.OPEN, 2, "place2andclimb", new PathConstraints(5, 4)),
-        PLACE3ANDCLIMB(StartingLocation.OPEN, 3, "place3andclimb", new PathConstraints(6, 5)),
+        PLACE1ANDCLIMB(StartingLocation.OPEN, 1, "place1andclimb", new PathConstraints(3, 2)),
+        CORNERPLACE1ANDCLIMB(StartingLocation.OPEN, 1, "cornerplace1andclimb", new PathConstraints(3, 2)),
+        PLACE1GET1CLIMB(StartingLocation.OPEN, 1, "place1get1climb", new PathConstraints(3, 2)),
         TEST1(StartingLocation.OPEN, 1, "test1", new PathConstraints(3, 3)),
-        FIVEPIECE(StartingLocation.OPEN, 5, "fivepiece", new PathConstraints(5, 6));
+        FIVEPIECE(StartingLocation.OPEN, 5, "fivepiece", new PathConstraints(5, 6)),
+        PLACE1GET1CLIMBCONE(StartingLocation.OPEN, 1, "place1get1climbcone", new PathConstraints(3, 2))
+        ;
+
 
         private List<PathPlannerTrajectory> path;
         public String pathName;

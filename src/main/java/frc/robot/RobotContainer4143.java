@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import frc.lib.controller.Axis;
@@ -198,10 +199,10 @@ public class RobotContainer4143 {
         operatorLT.whileTrue(new PickupOutRev(pickupSubsystem,arm, this));
         operatorRT.whileTrue(new PickupOut(pickupSubsystem,arm, this));
 
-        driverRSU.whileTrue(skiSubsystem.setSkiUp());
-        driverRSD.whileTrue(skiSubsystem.setSkiDown());
-        //driverRSU.whileTrue(pickupSubsystem.spindexterCW());
-        //driverRSD.whileTrue(pickupSubsystem.spindexterCCW());
+        //driverRSU.whileTrue(skiSubsystem.setSkiUp());
+        //driverRSD.whileTrue(skiSubsystem.setSkiDown());
+        driverRSU.whileTrue(pickupSubsystem.spindexterCW());
+        driverRSD.whileTrue(pickupSubsystem.spindexterCCW());
         operatorRSU.whileTrue(pickupSubsystem.spindexterCW());
         operatorRSD.whileTrue(pickupSubsystem.spindexterCCW());
 
@@ -210,6 +211,10 @@ public class RobotContainer4143 {
         driver.nameRightBumper("Toggle Claw");
         operator.getRightBumper().toggleOnTrue(arm.clawToggle(this));
         operator.nameRightBumper("Toggle Claw");
+
+        driver.getLeftBumper().whileTrue(new ProxyCommand(()->autonomousManager.autoBuilder.followPathGroup(pathGroupOnTheFly())));
+        driver.nameLeftBumper("Auto Drive");
+
 
 
         // X, Y, A, and B buttons
@@ -431,6 +436,14 @@ public class RobotContainer4143 {
         return autonomousManager.getAutonomousCommand();
     }
 
+    public CommandBase coneMode() {
+        return runOnce(() -> {currentMode = gamePiece.Cone; m_led.setData(m_ledBufferCone);}).ignoringDisable(true);    
+    }
+
+    public CommandBase cubeMode() {
+        return runOnce(() -> {currentMode = gamePiece.Cube; m_led.setData(m_ledBufferCube);}).ignoringDisable(true);    
+    }
+
     public Axis getDriveForwardAxis() {
         return translationAxis;
     }
@@ -445,6 +458,10 @@ public class RobotContainer4143 {
 
     public SwerveDriveSubsystem getSwerveDriveSubsystem() {
         return swerveDriveSubsystem;
+    }
+
+    public PickupSubsystem getPickup() {
+        return pickupSubsystem;
     }
 
     public Arm getArm(){
