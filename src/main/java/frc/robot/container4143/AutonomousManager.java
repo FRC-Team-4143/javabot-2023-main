@@ -17,6 +17,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.logging.LoggedReceiver;
 import frc.lib.logging.Logger;
 import frc.robot.subsystems.SwerveDriveSubsystem;
@@ -59,6 +61,8 @@ public class AutonomousManager {
         autoChooser.addOption("PLACE1GET1CLIMB", AutonomousOption.PLACE1GET1CLIMB);
         autoChooser.addOption("TEST1", AutonomousOption.TEST1);
         autoChooser.addOption("PLACE1ANDCLIMBCONE", AutonomousOption.PLACE1GET1CLIMBCONE);
+        autoChooser.addOption("CORNERPICKUP2", AutonomousOption.CORNERPICKUP2);
+        
         SmartDashboard.putData("Autonomous Mode", autoChooser);
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
         eventMap.put(
@@ -68,6 +72,7 @@ public class AutonomousManager {
         eventMap.put("goHigh",
                 sequence(
                     arm.setClawClosed(container),
+                    Commands.waitSeconds(0.3),
                     arm.setHighPosition()));
         eventMap.put("goHome",
                     arm.setHomePosition());
@@ -89,7 +94,7 @@ public class AutonomousManager {
                 swerveDriveSubsystem::getPose,
                 swerveDriveSubsystem::setPose,
                 new PIDConstants(3.0, 0.0, 0.0),
-                new PIDConstants(3.0, 0.0, 0.001),
+                new PIDConstants(4.0, 0.0, 0.001),
                 (ChassisSpeeds velocity) -> swerveDriveSubsystem.setVelocity(velocity, false, false),
                 eventMap,
                 true,
@@ -174,12 +179,13 @@ public class AutonomousManager {
     }
 
     private enum AutonomousOption {
-        PLACE1ANDCLIMB(StartingLocation.OPEN, 1, "place1andclimb", new PathConstraints(3, 2)),
-        CORNERPLACE1ANDCLIMB(StartingLocation.OPEN, 1, "cornerplace1andclimb", new PathConstraints(3, 2)),
-        PLACE1GET1CLIMB(StartingLocation.OPEN, 1, "place1get1climb", new PathConstraints(3, 2)),
-        TEST1(StartingLocation.OPEN, 1, "test1", new PathConstraints(3, 3)),
-        FIVEPIECE(StartingLocation.OPEN, 5, "fivepiece", new PathConstraints(5, 6)),
-        PLACE1GET1CLIMBCONE(StartingLocation.OPEN, 1, "place1get1climbcone", new PathConstraints(3, 2))
+        PLACE1ANDCLIMB(StartingLocation.OPEN, 1, "place1andclimb", new PathConstraints(2, 2)),
+        CORNERPLACE1ANDCLIMB(StartingLocation.OPEN, 1, "cornerplace1andclimb", new PathConstraints(2, 2)),
+        PLACE1GET1CLIMB(StartingLocation.OPEN, 1, "place1get1climb", new PathConstraints(2, 2)),
+        TEST1(StartingLocation.OPEN, 1, "test1", new PathConstraints(2, 2)),
+        FIVEPIECE(StartingLocation.OPEN, 5, "fivepiece", new PathConstraints(2, 2)),
+        PLACE1GET1CLIMBCONE(StartingLocation.OPEN, 1, "place1get1climbCone", new PathConstraints(2, 2)),
+        CORNERPICKUP2(StartingLocation.OPEN, 1, "cornerpickup2", new PathConstraints(2, 2))
         ;
 
 

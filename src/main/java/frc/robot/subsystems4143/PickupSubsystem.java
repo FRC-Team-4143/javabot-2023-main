@@ -2,6 +2,7 @@ package frc.robot.subsystems4143;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -15,8 +16,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class PickupSubsystem extends SubsystemBase {
-    private Solenoid m_singleSolenoid0;
-    private Solenoid m_singleSolenoid1;
+    private DoubleSolenoid m_doubleSolenoid0;
+    private DoubleSolenoid m_doubleSolenoid1;
+    private DoubleSolenoid m_doubleSolenoid2;
     private CANSparkMax toproller;
     private CANSparkMax bottomroller;
     private VictorSPX spindexter; 
@@ -27,17 +29,22 @@ public class PickupSubsystem extends SubsystemBase {
         toproller = new CANSparkMax(25, MotorType.kBrushless);
         bottomroller = new CANSparkMax(26, MotorType.kBrushless);
 
-        m_singleSolenoid0 = new Solenoid(PneumaticsModuleType.REVPH, 0);
-        m_singleSolenoid1 = new Solenoid(PneumaticsModuleType.REVPH, 1);
+        m_doubleSolenoid0 = new DoubleSolenoid(PneumaticsModuleType.REVPH,0, 1); //short cylinder
+        m_doubleSolenoid1 = new DoubleSolenoid(PneumaticsModuleType.REVPH, 2, 3); //dump cylinder
+        m_doubleSolenoid2 = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);//long cylinder
+        
     }
 
 
-    public void solenoidStart() {m_singleSolenoid0.set(false);
-                                m_singleSolenoid1.set(false);}
-    public void solenoidRetract() {m_singleSolenoid0.set(false);
-                                   m_singleSolenoid1.set(true);}
-    public void solenoidExtend() {m_singleSolenoid0.set(true);
-                                  m_singleSolenoid1.set(true);}
+    public void solenoidStart() {m_doubleSolenoid0.set(Value.kForward);
+                                m_doubleSolenoid1.set(Value.kReverse);   //Reverse is non - dump    , Forward is dump
+                                m_doubleSolenoid2.set(Value.kForward);} 
+    public void solenoidRetract() {m_doubleSolenoid0.set(Value.kForward);
+                                   m_doubleSolenoid1.set(Value.kReverse);
+                                   m_doubleSolenoid2.set(Value.kReverse);}
+    public void solenoidExtend() {m_doubleSolenoid0.set(Value.kReverse);
+                                  m_doubleSolenoid1.set(Value.kReverse);
+                                  m_doubleSolenoid2.set(Value.kReverse);}
     public void rollersSet(double speed) {toproller.set(speed); 
         bottomroller.set(speed);}
     //public void pickupOff() {m_doubleSolenoid.set(DoubleSolenoid.Value.kOff);}

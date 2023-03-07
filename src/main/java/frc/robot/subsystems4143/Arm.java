@@ -111,7 +111,7 @@ public class Arm extends SubsystemBase {
     elevatorkP = 1.15*2; //18; 
     elevatorkI = 0.01;
     elevatorkD = .001;
-    rotatorkP = 0.10; 
+    rotatorkP = 0.07; 
     rotatorkI = 0.01;
     rotatorkD = 0.001;
     distance = 0;
@@ -141,9 +141,9 @@ public class Arm extends SubsystemBase {
                 if(angle > -20 && distance > -0.2) {
                     count = 2;
                     if(container.currentMode == gamePiece.Cone) {
-                        angle = -12;
+                        angle = -14;
                     } else {
-                        angle = -8;
+                        angle = -10;
                     }
                     //pickup.solenoidStart();
                 } else {
@@ -157,9 +157,12 @@ public class Arm extends SubsystemBase {
                     container.getPickup().solenoidStart();
                     count = 1;
                 } 
-                if(count == 1) {
+                else if(count == 1) {
                      count = 0;
+                }
+                else if(count == 0){
 
+                    count = -1;
                     if (container.currentMode == gamePiece.Cone) {
                         clawMotor.set(ControlMode.Current, -4);
                     }
@@ -168,7 +171,7 @@ public class Arm extends SubsystemBase {
                     }
                 }   
             },
-          interrupted -> {}, () -> (count == 0));
+          interrupted -> {}, () -> (count == -1));
     }
     public boolean returnClamped() {
         return clamped;
@@ -204,16 +207,17 @@ public class Arm extends SubsystemBase {
                 angle = armHomeAngle;
             } else {
                 distance = -0.727;
-                angle = -110;
+                angle = -115;
             }
         }, interrupted -> {}, ()-> {
-            if(readRotateEncoder() < -105 && angle == -110 && distance == -0.727){
+            if(readRotateEncoder() < -105 && angle == -115 && distance == -0.727){
                 return true;
             }else{
                 return false;
             }
         });
     }
+
 
     public CommandBase setMidPosition() {
         return new FunctionalCommand(() -> {}, 
