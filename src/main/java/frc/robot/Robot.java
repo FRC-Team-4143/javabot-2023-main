@@ -70,6 +70,7 @@ public class Robot extends TimedRobot {
 
 
         autonomousCommand = robotContainer.getAutonomousCommand();
+        robotContainer.getPickup().solenoidStart();
 
         // Schedule the chosen autonomous command
         if (autonomousCommand != null) autonomousCommand.schedule();
@@ -82,6 +83,7 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         // Set april tags to use the correct origin (red or blue corner)
         FieldConstants.setAprilTagOrigin();
+        robotContainer.getPickup().solenoidStart();
         //robotContainer.swerveDriveSubsystem.resetToAbsolute();
 
         // Prevent any autonomous code from overrunning into teleop

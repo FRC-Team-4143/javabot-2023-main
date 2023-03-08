@@ -25,19 +25,22 @@ public class PickupOut extends CommandBase{
         count = 0;
         arm.elevatorPickup();
         addRequirements(pickupSubsystem);
+        pickupSubsystem.solenoidExtend();
     }
 
     @Override
     public void execute() {
         if(container.currentMode == gamePiece.Cube) {
-            pickupSubsystem.solenoidExtend();
             pickupSubsystem.rollersSet(-0.5);
         } else {
-            pickupSubsystem.solenoidExtend();
+            
             pickupSubsystem.rollersSet(-1);
         }
         
         count+=1;
+        if(count > 20) {
+            pickupSubsystem.dump();
+        }
 
     }
 

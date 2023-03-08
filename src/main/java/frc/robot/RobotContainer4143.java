@@ -25,6 +25,7 @@ import frc.robot.commands.AssistedDriveToPositionCommand;
 import frc.robot.commands.DriveToPositionCommand;
 import frc.robot.commands4143.*;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.VisionSubsystem2;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems4143.*;
 import frc.robot.subsystems4143.SkiSubsystem;
@@ -55,6 +56,8 @@ public class RobotContainer4143 {
     public final SwerveDriveSubsystem swerveDriveSubsystem = new SwerveDriveSubsystem();
     private final VisionSubsystem visionSubsystem =
             new VisionSubsystem(swerveDriveSubsystem::addVisionPoseEstimate, swerveDriveSubsystem::getPose);
+    private final VisionSubsystem2 visionSubsystem2 =
+            new VisionSubsystem2(swerveDriveSubsystem::addVisionPoseEstimate, swerveDriveSubsystem::getPose);
 
     private final Arm arm = new Arm();
     private final SkiSubsystem skiSubsystem = new SkiSubsystem();
@@ -77,10 +80,10 @@ public class RobotContainer4143 {
     private Trigger operatorLT = new Trigger(() -> {return operator.getLeftTrigger().get() > .5;});
     private Trigger operatorRT = new Trigger(() -> {return operator.getRightTrigger().get() > .5;});
 
-    private Trigger driverRSU = new Trigger(() -> {return driver.getRightYAxis().get() > 0.9;});
-    private Trigger driverRSD = new Trigger(() -> {return driver.getRightYAxis().get() < -0.9;});
-    private Trigger operatorRSU = new Trigger(() -> {return operator.getRightYAxis().get() > 0.9;});
-    private Trigger operatorRSD = new Trigger(() -> {return operator.getRightYAxis().get() < -0.9;});
+    private Trigger driverRSU = new Trigger(() -> {return driver.getRightYAxis().get() > 0.50;});
+    private Trigger driverRSD = new Trigger(() -> {return driver.getRightYAxis().get() < -0.50;});
+    private Trigger operatorRSU = new Trigger(() -> {return operator.getRightYAxis().get() > 0.50;});
+    private Trigger operatorRSD = new Trigger(() -> {return operator.getRightYAxis().get() < -0.50;});
 
     private boolean blueAlliance;
 
@@ -201,10 +204,10 @@ public class RobotContainer4143 {
 
         //driverRSU.whileTrue(skiSubsystem.setSkiUp());
         //driverRSD.whileTrue(skiSubsystem.setSkiDown());
-        driverRSU.whileTrue(pickupSubsystem.spindexterCW());
-        driverRSD.whileTrue(pickupSubsystem.spindexterCCW());
-        operatorRSU.whileTrue(pickupSubsystem.spindexterCW());
-        operatorRSD.whileTrue(pickupSubsystem.spindexterCCW());
+        driverRSU.whileTrue(pickupSubsystem.spindexterCW(driver.getRightYAxis()));
+        driverRSD.whileTrue(pickupSubsystem.spindexterCCW(driver.getRightYAxis()));
+        operatorRSU.whileTrue(pickupSubsystem.spindexterCW(operator.getRightYAxis()));
+        operatorRSD.whileTrue(pickupSubsystem.spindexterCCW(operator.getRightYAxis()));
 
         //Bumper buttons
         driver.getRightBumper().toggleOnTrue(arm.clawToggle(this));
@@ -283,6 +286,8 @@ public class RobotContainer4143 {
 
         swerveDriveSubsystem.setDefaultCommand(swerveDriveSubsystem.driveCommand(
             getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), true, driver.getLeftBumper()));
+        
+        
 
         driver.sendButtonNamesToNT();
         operator.sendButtonNamesToNT();
@@ -475,6 +480,10 @@ public class RobotContainer4143 {
     public VisionSubsystem getVisionSubsystem() {
         return visionSubsystem;
     }
+
+    //public VisionSubsystem2 getVisionSubsystem2() {
+    //    return visionSubsystem2;
+    //}
 
     public void init(){
         arm.setPosition();

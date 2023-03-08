@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class AutonomousManager {
-    private static final AutonomousOption defaultAuto = AutonomousOption.PLACE1ANDCLIMB;
+    private static final AutonomousOption defaultAuto = AutonomousOption.LOADCONE3_PICKUP1_CLIMB;
 
     // Add tunables for all autonomous configuration options
     LoggedReceiver waitDuration;
@@ -56,12 +56,12 @@ public class AutonomousManager {
 
         // Create an event map for use in all autos
         HashMap<String, Command> eventMap = new HashMap<>();
-        autoChooser.setDefaultOption("PLACE1ANDCLIMB", AutonomousOption.PLACE1ANDCLIMB);
-        autoChooser.addOption("CORNERPLACE1ANDCLIMB", AutonomousOption.CORNERPLACE1ANDCLIMB);
-        autoChooser.addOption("PLACE1GET1CLIMB", AutonomousOption.PLACE1GET1CLIMB);
-        autoChooser.addOption("TEST1", AutonomousOption.TEST1);
-        autoChooser.addOption("PLACE1ANDCLIMBCONE", AutonomousOption.PLACE1GET1CLIMBCONE);
-        autoChooser.addOption("CORNERPICKUP2", AutonomousOption.CORNERPICKUP2);
+        autoChooser.setDefaultOption("loadcone3_pickup1_climb", AutonomousOption.LOADCONE3_PICKUP1_CLIMB);
+        autoChooser.addOption("loadcone3_pickup2", AutonomousOption.LOADCONE3_PICKUP2);
+        autoChooser.addOption("cornercone1_pickup1_climb", AutonomousOption.CORNERCONE1_PICKUP1_CLIMB);
+        autoChooser.addOption("cornercone1_pickup2", AutonomousOption.CORNERCONE1_PICKUP2);
+        autoChooser.addOption("cornercube2_pickup1_climb", AutonomousOption.CORNERCUBE2_PICKUP1_CLIMB);
+        autoChooser.addOption("loadcube2_pickup1_climb", AutonomousOption.LOADCUBE2_PICKUP1_CLIMB);
         
         SmartDashboard.putData("Autonomous Mode", autoChooser);
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
@@ -179,13 +179,12 @@ public class AutonomousManager {
     }
 
     private enum AutonomousOption {
-        PLACE1ANDCLIMB(StartingLocation.OPEN, 1, "place1andclimb", new PathConstraints(2, 2)),
-        CORNERPLACE1ANDCLIMB(StartingLocation.OPEN, 1, "cornerplace1andclimb", new PathConstraints(2, 2)),
-        PLACE1GET1CLIMB(StartingLocation.OPEN, 1, "place1get1climb", new PathConstraints(2, 2)),
-        TEST1(StartingLocation.OPEN, 1, "test1", new PathConstraints(2, 2)),
-        FIVEPIECE(StartingLocation.OPEN, 5, "fivepiece", new PathConstraints(2, 2)),
-        PLACE1GET1CLIMBCONE(StartingLocation.OPEN, 1, "place1get1climbCone", new PathConstraints(2, 2)),
-        CORNERPICKUP2(StartingLocation.OPEN, 1, "cornerpickup2", new PathConstraints(2, 2))
+        CORNERCONE1_PICKUP1_CLIMB(StartingLocation.OPEN, 1, "cornercone1_pickup1_climb", new PathConstraints(2, 2)),
+        LOADCONE3_PICKUP1_CLIMB(StartingLocation.OPEN, 1, "loadcone3_pickup1_climb", new PathConstraints(2, 2)),
+        LOADCONE3_PICKUP2(StartingLocation.OPEN, 1, "loadcone3_pickup2", new PathConstraints(2, 2)),
+        CORNERCONE1_PICKUP2(StartingLocation.OPEN, 1, "cornercone1_pickup2", new PathConstraints(2, 2)),
+        CORNERCUBE2_PICKUP1_CLIMB(StartingLocation.OPEN, 1, "cornercube2_pickup1_climb", new PathConstraints(2, 2)),
+        LOADCUBE2_PICKUP1_CLIMB(StartingLocation.OPEN, 1, "loadcube2_pickup1_climb", new PathConstraints(2, 2))
         ;
 
 

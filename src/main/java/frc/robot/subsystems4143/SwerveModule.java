@@ -37,7 +37,7 @@ public class SwerveModule {
     private TalonFX driveMotor;
     private AnalogEncoder analogEncoder;
     private double lastAngle;
-    private final DutyCycleOut driveOut = new DutyCycleOut(0,false,false);
+    private final DutyCycleOut driveOut = new DutyCycleOut(0,true,false);
     private final VelocityDutyCycle driveVelOut = new VelocityDutyCycle(0,true,0,0,false);
     
     SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(
@@ -63,6 +63,7 @@ public class SwerveModule {
                 ? new WPI_TalonFX(moduleConstants.angleMotorID, "CANivore")
                 : new WPI_TalonFX(moduleConstants.angleMotorID, moduleConstants.canivoreName.get());
         configAngleMotor();
+        System.out.println(moduleConstants.canivoreName);
 
         /* Drive Motor Config */
         driveMotor = moduleConstants.canivoreName.isEmpty()
@@ -225,7 +226,7 @@ public class SwerveModule {
         driveMotor.getConfigurator().apply(driveConfiguration);
         driveMotor.setRotorPosition(0);
         driveMotor.setSafetyEnabled(true);
-        driveOut.EnableFOC = false;
+        //driveOut.EnableFOC = true;
         
         /*
         driveMotor.configFactoryDefault();

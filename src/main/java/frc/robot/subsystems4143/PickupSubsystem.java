@@ -3,12 +3,14 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.robot.container4143.CustomXboxController;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.controller.Axis;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 
@@ -29,22 +31,26 @@ public class PickupSubsystem extends SubsystemBase {
         toproller = new CANSparkMax(25, MotorType.kBrushless);
         bottomroller = new CANSparkMax(26, MotorType.kBrushless);
 
-        m_doubleSolenoid0 = new DoubleSolenoid(PneumaticsModuleType.REVPH,0, 1); //short cylinder
+        m_doubleSolenoid0 = new DoubleSolenoid(PneumaticsModuleType.REVPH,0, 1); //long cylinder
         m_doubleSolenoid1 = new DoubleSolenoid(PneumaticsModuleType.REVPH, 2, 3); //dump cylinder
-        m_doubleSolenoid2 = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);//long cylinder
+        m_doubleSolenoid2 = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);//short cylinder
         
     }
 
 
-    public void solenoidStart() {m_doubleSolenoid0.set(Value.kForward);
+    public void solenoidStart() {m_doubleSolenoid0.set(Value.kReverse);
                                 m_doubleSolenoid1.set(Value.kReverse);   //Reverse is non - dump    , Forward is dump
                                 m_doubleSolenoid2.set(Value.kForward);} 
-    public void solenoidRetract() {m_doubleSolenoid0.set(Value.kForward);
+    public void solenoidRetract() {m_doubleSolenoid0.set(Value.kReverse);
                                    m_doubleSolenoid1.set(Value.kReverse);
                                    m_doubleSolenoid2.set(Value.kReverse);}
-    public void solenoidExtend() {m_doubleSolenoid0.set(Value.kReverse);
+    public void solenoidExtend() {m_doubleSolenoid0.set(Value.kForward);
                                   m_doubleSolenoid1.set(Value.kReverse);
                                   m_doubleSolenoid2.set(Value.kReverse);}
+    public void dump() {
+        m_doubleSolenoid1.set(Value.kForward);
+    }
+
     public void rollersSet(double speed) {toproller.set(speed); 
         bottomroller.set(speed);}
     //public void pickupOff() {m_doubleSolenoid.set(DoubleSolenoid.Value.kOff);}
@@ -86,11 +92,11 @@ public class PickupSubsystem extends SubsystemBase {
     //         m_doubleSolenoid.set(DoubleSolenoid.Value.kForward);}, null, null)
     // }
 
-    public CommandBase spindexterCW() {
-        return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,-.50);}, 
+    public CommandBase spindexterCW(Axis rightStick) {
+        return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,-.50 * Math.abs(rightStick.get()));}, 
         () -> spindexter.set(ControlMode.PercentOutput, 0.0));}
-    public CommandBase spindexterCCW() {
-        return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,.50);},
+    public CommandBase spindexterCCW(Axis rightStick) {
+        return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,.50 * Math.abs(rightStick.get()));},
         () -> spindexter.set(ControlMode.PercentOutput, 0.0));} 
     public void spindexterStop() {
         spindexter.set(ControlMode.PercentOutput, 0.0);
