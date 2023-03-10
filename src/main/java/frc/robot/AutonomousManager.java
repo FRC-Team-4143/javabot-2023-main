@@ -67,7 +67,7 @@ public class AutonomousManager {
                         runOnce(armSubsystem::setHigh, armSubsystem),
                         waitSeconds(2),
                         runOnce(armSubsystem::setAwaitingPiece, armSubsystem)));
-
+        
         autoBuilder = new SwerveAutoBuilder(
                 swerveDriveSubsystem::getPose,
                 swerveDriveSubsystem::setPose,

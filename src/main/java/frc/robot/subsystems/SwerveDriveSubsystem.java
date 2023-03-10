@@ -116,7 +116,11 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
             this.dpadR = dpadR.getAsBoolean();
            });
     }
-
+    public Command driveForward(double forward, double strafe, double rotation, boolean isFieldOriented) {
+        return run(() -> {
+            setVelocity(new ChassisSpeeds(forward, strafe, rotation), isFieldOriented);
+           });
+    }
     public Command preciseDriveCommand(Axis forward, Axis strafe, Axis rotation, boolean isFieldOriented) {
         var speedMultiplier = SwerveConstants.preciseDrivingModeSpeedMultiplier;
 

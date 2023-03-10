@@ -70,6 +70,7 @@ public class AutonomousManager {
         autoChooser.addOption("LOAD_CONE3_CLIMB", AutonomousOption.LOADCONE3_CLIMB);
         autoChooser.addOption("LOAD_CUBE2_CLIMB", AutonomousOption.LOADCUBE2_CLIMB);
         autoChooser.addOption("CORNERCUBE2_MOBILITY", AutonomousOption.CORNERCUBE2_MOBILITY);
+        autoChooser.addOption("CORNER_CUBE2_CLIMB_V2", AutonomousOption.CORNERCUBE2_CLIMBV2);
         SmartDashboard.putData("Autonomous Mode", autoChooser);
         
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
@@ -96,8 +97,16 @@ public class AutonomousManager {
                     container.cubeMode());
         eventMap.put("coneMode",
                     container.coneMode());
-
-
+        eventMap.put(
+                    "V2Start",
+                    sequence(
+                    arm.setClawClosed(container),
+                    Commands.waitSeconds(0.3),
+                    arm.setHighPosition(),
+                    swerveDriveSubsystem.driveForward(2, 0, 0, false).withTimeout(1),
+                    runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem),
+                    arm.setClawOpen(container)
+                    ));
         autoBuilder = new SwerveAutoBuilder(
                 swerveDriveSubsystem::getPose,
                 swerveDriveSubsystem::setPose,
@@ -194,13 +203,14 @@ public class AutonomousManager {
         CORNERCUBE2_PICKUP1_CLIMB(StartingLocation.OPEN, 1, "cornercube2_pickup1_climb", new PathConstraints(2, 2)),
         LOADCUBE2_PICKUP1_CLIMB(StartingLocation.OPEN, 1, "loadcube2_pickup1_climb", new PathConstraints(2, 2)),
         NOTHING(StartingLocation.OPEN, 1, "Nothing", new PathConstraints(0.1, 0.1)),
-        MIDDLE_CUBE_CLIMB(StartingLocation.OPEN, 1, "middleCubeClimb", new PathConstraints(3, 6)),
-        LOAD4_CONE_CLIMB(StartingLocation.OPEN, 1, "load4ConeClimb", new PathConstraints(3, 6)),
+        MIDDLE_CUBE_CLIMB(StartingLocation.OPEN, 1, "middleCubeClimb", new PathConstraints(3, 3)),
+        LOAD4_CONE_CLIMB(StartingLocation.OPEN, 1, "load4ConeClimb", new PathConstraints(3, 3)),
         CORNERCONE1_CLIMB(StartingLocation.OPEN, 1, "cornercone1_climb", new PathConstraints(2, 2)),
         CORNERCUBE2_CLIMB(StartingLocation.OPEN, 1, "cornercube2_climb", new PathConstraints(2, 2)),
         LOADCONE3_CLIMB(StartingLocation.OPEN, 1, "loadcone3_climb", new PathConstraints(2, 2)),
         LOADCUBE2_CLIMB(StartingLocation.OPEN, 1, "loadcube2_climb", new PathConstraints(2, 2)),
-        CORNERCUBE2_MOBILITY(StartingLocation.OPEN, 1, "cornercube2_mobility", new PathConstraints(2, 2))
+        CORNERCUBE2_MOBILITY(StartingLocation.OPEN, 1, "cornercube2_mobility", new PathConstraints(2, 2)),
+        CORNERCUBE2_CLIMBV2(StartingLocation.OPEN, 1, "cornercube2_climbV2", new PathConstraints(2, 2))
         ;
 
 

@@ -57,14 +57,14 @@
         "y": 4.773212281467298
       },
       "prevControl": {
-        "x": 3.892285492065122,
-        "y": 4.792561276994024
+        "x": 4.353481869356901,
+        "y": 5.104368157454264
       },
       "nextControl": {
-        "x": 6.16912960321647,
-        "y": 4.761793113329817
+        "x": 6.123937413889106,
+        "y": 4.500330383437394
       },
-      "holonomicAngle": 0.0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -82,18 +82,18 @@
         "y": 3.1288520696699518
       },
       "prevControl": {
-        "x": 5.982264217331434,
-        "y": 3.2756448771736575
+        "x": 6.269075828082171,
+        "y": 3.494752058560313
       },
       "nextControl": {
-        "x": 5.541075355654984,
-        "y": 2.934726211332765
+        "x": 5.301272824767873,
+        "y": 2.7520195211330596
       },
-      "holonomicAngle": 0.0,
+      "holonomicAngle": 179.34145682243644,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": true,
+      "isStopPoint": false,
       "stopEvent": {
         "names": [
           "pickupCancel",
@@ -114,16 +114,14 @@
         "y": 3.0456661061559305
       },
       "nextControl": null,
-      "holonomicAngle": 0.0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "levelChargeStation",
-          "coneMode",
-          "pickOutReverse"
+          "levelChargeStation"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
