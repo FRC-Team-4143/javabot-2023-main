@@ -27,6 +27,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -127,18 +128,22 @@ public class Arm extends SubsystemBase {
         clawMotor.set(ControlMode.PercentOutput, clawSpeed);
     }
 
-    public CommandBase setClawOpen(){
+    public CommandBase setClawOpen(RobotContainer4143 container){
         return new FunctionalCommand(
-            () -> {clamped = false; clawMotor.set(ControlMode.Current, 5);},
-            () -> { clawMotor.set(ControlMode.Current, 5); System.out.println("Moved Claw Out");}, 
-            interrupted -> {clawMotor.set(ControlMode.Current, 0); System.out.println("Motor Off");},
+            () -> {clamped = false; clawMotor.set(ControlMode.Current, 5);
+                if(container.currentMode == gamePiece.Cube && distance <= -0.4) angle-=1;
+            },
+            () -> { clawMotor.set(ControlMode.Current, 5); }, 
+            interrupted -> {clawMotor.set(ControlMode.Current, 0); },
             () -> (clawMotor.getSelectedSensorPosition() < 3900 && clawMotor.getSelectedSensorPosition() > 1500));
     }
 
     public CommandBase setClawClosed(RobotContainer4143 container){
         return new FunctionalCommand(() -> {
                 PickupSubsystem pickup = container.getPickup();
-                if(angle > -20 && distance > -0.2) {
+                boolean driverLB = container.driver.getLeftBumper().getAsBoolean();
+                boolean operatorLB = container.operator.getLeftBumper().getAsBoolean();
+                if(angle > -20 && distance > -0.2 && !driverLB && !operatorLB) {
                     count = 2;
                     if(container.currentMode == gamePiece.Cone) {
                         angle = -14;
@@ -178,7 +183,7 @@ public class Arm extends SubsystemBase {
     }
 
     public CommandBase clawToggle(RobotContainer4143 container) {
-        return new ConditionalCommand(setClawOpen(), setClawClosed(container), this::returnClamped);
+        return new ConditionalCommand(setClawOpen(container), setClawClosed(container), this::returnClamped);
     }
 
 
@@ -207,10 +212,10 @@ public class Arm extends SubsystemBase {
                 angle = armHomeAngle;
             } else {
                 distance = -0.727;
-                angle = -115;
+                angle = -113;
             }
         }, interrupted -> {}, ()-> {
-            if(readRotateEncoder() < -105 && angle == -115 && distance == -0.727){
+            if(readRotateEncoder() < -105 && angle == -113 && distance == -0.727){
                 return true;
             }else{
                 return false;
@@ -238,10 +243,10 @@ public class Arm extends SubsystemBase {
         });
     }
 
-    public CommandBase setHybridPosition() {
+    public CommandBase setHybridPosition(PickupSubsystem pickup) {
         return new FunctionalCommand(() -> {}, 
         () -> {
-            if(m_elevatorEncoder.getPosition() < -0.35 || readRotateEncoder() < -55. ){
+            if(m_elevatorEncoder.getPosition() < -0.35 || readRotateEncoder() < -55. || pickup.m_doubleSolenoid0.get().equals(Value.kForward)){
                 angle = -114.;
             } else {
                 distance = -.4;
@@ -326,19 +331,19 @@ public class Arm extends SubsystemBase {
         rotatorMotor.set(rotatorMotorController.calculate(readRotateEncoder()));
         //m_pidController.setReference(distance, CANSparkMax.ControlType.kPosition);
 
-        SmartDashboard.putNumber("Arm distance", m_elevatorEncoder.getPosition());
-        SmartDashboard.putNumber("Arm angle", readRotateEncoder());
-        SmartDashboard.putData("Arm Mechanism", mechanism);
-        SmartDashboard.putNumber("Distance Setpoint", distance);
-        SmartDashboard.putNumber("Angle Setpoint", angle);
-        SmartDashboard.putNumber("Rotator Current", rotatorMotor.getOutputCurrent());
-        SmartDashboard.putNumber("Rotator Speed", m_rotatorEncoder.getVelocity());
-        SmartDashboard.putNumber("Elevator Current", elevatorMotor.getOutputCurrent());
-        SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getAppliedOutput());
-        SmartDashboard.putNumber("Elevator Speed", m_elevatorEncoder.getVelocity());
-        SmartDashboard.putNumber("Claw Angle", clawMotor.getSelectedSensorPosition());
-        SmartDashboard.putBoolean("Clamped", clamped);
-        SmartDashboard.putNumber("Claw Current", clawMotor.getStatorCurrent());
+        //SmartDashboard.putNumber("Arm distance", m_elevatorEncoder.getPosition());
+        //SmartDashboard.putNumber("Arm angle", readRotateEncoder());
+        //SmartDashboard.putData("Arm Mechanism", mechanism);
+        // SmartDashboard.putNumber("Distance Setpoint", distance);
+        // SmartDashboard.putNumber("Angle Setpoint", angle);
+        // SmartDashboard.putNumber("Rotator Current", rotatorMotor.getOutputCurrent());
+        // SmartDashboard.putNumber("Rotator Speed", m_rotatorEncoder.getVelocity());
+        // SmartDashboard.putNumber("Elevator Current", elevatorMotor.getOutputCurrent());
+        // SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getAppliedOutput());
+        // SmartDashboard.putNumber("Elevator Speed", m_elevatorEncoder.getVelocity());
+        // SmartDashboard.putNumber("Claw Angle", clawMotor.getSelectedSensorPosition());
+        // SmartDashboard.putBoolean("Clamped", clamped);
+        // SmartDashboard.putNumber("Claw Current", clawMotor.getStatorCurrent());
         SmartDashboard.putNumber("Arm extension", (Math.cos(Math.toRadians(41)) * -m_elevatorEncoder.getPosition()) +
                         (Math.cos(Math.toRadians(readRotateEncoder() + 114)) * 0.762) 
                         - 0.1016)

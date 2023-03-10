@@ -48,19 +48,19 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class RobotContainer4143 {
-    private final CustomXboxController driver = new CustomXboxController(0);
-    private final CustomXboxController operator = new CustomXboxController(1);
+    public final CustomXboxController driver = new CustomXboxController(0);
+    public final CustomXboxController operator = new CustomXboxController(1);
     private final Axis translationAxis = driver.getLeftYAxis();
     private final Axis strafeAxis = driver.getLeftXAxis();
     private final Axis rotationAxis = driver.getRightXAxis();
     public final SwerveDriveSubsystem swerveDriveSubsystem = new SwerveDriveSubsystem();
     private final VisionSubsystem visionSubsystem =
             new VisionSubsystem(swerveDriveSubsystem::addVisionPoseEstimate, swerveDriveSubsystem::getPose);
-    private final VisionSubsystem2 visionSubsystem2 =
-            new VisionSubsystem2(swerveDriveSubsystem::addVisionPoseEstimate, swerveDriveSubsystem::getPose);
+    // private final VisionSubsystem2 visionSubsystem2 =
+    //         new VisionSubsystem2(swerveDriveSubsystem::addVisionPoseEstimate, swerveDriveSubsystem::getPose);
 
     private final Arm arm = new Arm();
-    private final SkiSubsystem skiSubsystem = new SkiSubsystem();
+   // private final SkiSubsystem skiSubsystem = new SkiSubsystem();
     private final PickupSubsystem pickupSubsystem = new PickupSubsystem();
     private final FieldPositionSubsystem fieldPositionSubsystem = new FieldPositionSubsystem();
 
@@ -204,8 +204,8 @@ public class RobotContainer4143 {
 
         //driverRSU.whileTrue(skiSubsystem.setSkiUp());
         //driverRSD.whileTrue(skiSubsystem.setSkiDown());
-        driverRSU.whileTrue(pickupSubsystem.spindexterCW(driver.getRightYAxis()));
-        driverRSD.whileTrue(pickupSubsystem.spindexterCCW(driver.getRightYAxis()));
+        // driverRSU.whileTrue(pickupSubsystem.spindexterCW(driver.getRightYAxis()));
+        // driverRSD.whileTrue(pickupSubsystem.spindexterCCW(driver.getRightYAxis()));
         operatorRSU.whileTrue(pickupSubsystem.spindexterCW(operator.getRightYAxis()));
         operatorRSD.whileTrue(pickupSubsystem.spindexterCCW(operator.getRightYAxis()));
 
@@ -241,11 +241,11 @@ public class RobotContainer4143 {
         //Dpad buttons
         driver.getDPadDown().onTrue(arm.setHomePosition());
         driver.getDPadRight().onTrue(arm.setMidPosition());
-        driver.getDPadLeft().onTrue(arm.setHybridPosition());
+        driver.getDPadLeft().onTrue(arm.setHybridPosition(pickupSubsystem));
         driver.getDPadUp().onTrue(arm.setHighPosition());
         operator.getDPadDown().onTrue(arm.setHomePosition());
         operator.getDPadRight().onTrue(arm.setMidPosition());
-        operator.getDPadLeft().onTrue(arm.setHybridPosition());
+        operator.getDPadLeft().onTrue(arm.setHybridPosition(pickupSubsystem));
         operator.getDPadUp().onTrue(arm.setHighPosition());
 
         //Autodrive stuff

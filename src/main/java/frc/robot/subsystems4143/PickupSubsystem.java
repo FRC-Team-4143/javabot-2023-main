@@ -18,7 +18,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class PickupSubsystem extends SubsystemBase {
-    private DoubleSolenoid m_doubleSolenoid0;
+    public DoubleSolenoid m_doubleSolenoid0;
     private DoubleSolenoid m_doubleSolenoid1;
     private DoubleSolenoid m_doubleSolenoid2;
     private CANSparkMax toproller;
@@ -48,7 +48,9 @@ public class PickupSubsystem extends SubsystemBase {
                                   m_doubleSolenoid1.set(Value.kReverse);
                                   m_doubleSolenoid2.set(Value.kReverse);}
     public void dump() {
+        m_doubleSolenoid0.set(Value.kForward);
         m_doubleSolenoid1.set(Value.kForward);
+        m_doubleSolenoid2.set(Value.kReverse);
     }
 
     public void rollersSet(double speed) {toproller.set(speed); 

@@ -21,7 +21,7 @@
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
-        "waitTime": 1.0
+        "waitTime": 0.0
       }
     },
     {
@@ -156,14 +156,21 @@
     {
       "position": 1.490909090909017,
       "names": [
-        "pickupOut"
+        "PickupOut",
+        "cubeMode"
       ]
     },
     {
       "position": 3.490909090908967,
       "names": [
         "cubeMode",
-        "pickupOut"
+        "PickupOut"
+      ]
+    },
+    {
+      "position": 1.2,
+      "names": [
+        "goHome"
       ]
     }
   ]

@@ -44,6 +44,6 @@ public class SkiSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("skiangle", skiMotor.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("skiangle", skiMotor.getSelectedSensorPosition());
     }
 }

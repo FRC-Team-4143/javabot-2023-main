@@ -34,12 +34,15 @@ public class PickupOut extends CommandBase{
             pickupSubsystem.rollersSet(-0.5);
         } else {
             
-            pickupSubsystem.rollersSet(-1);
+            pickupSubsystem.rollersSet(-0.80);
         }
         
         count+=1;
         if(count > 20) {
             pickupSubsystem.dump();
+        }
+        else{
+            pickupSubsystem.solenoidExtend();
         }
 
     }

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class AutonomousManager {
-    private static final AutonomousOption defaultAuto = AutonomousOption.LOADCONE3_PICKUP1_CLIMB;
+    private static final AutonomousOption defaultAuto = AutonomousOption.NOTHING;
 
     // Add tunables for all autonomous configuration options
     LoggedReceiver waitDuration;
@@ -56,14 +56,22 @@ public class AutonomousManager {
 
         // Create an event map for use in all autos
         HashMap<String, Command> eventMap = new HashMap<>();
-        autoChooser.setDefaultOption("loadcone3_pickup1_climb", AutonomousOption.LOADCONE3_PICKUP1_CLIMB);
+        autoChooser.setDefaultOption("Nothing", AutonomousOption.NOTHING);
+        autoChooser.addOption("loadcone3_pickup1_climb", AutonomousOption.LOADCONE3_PICKUP1_CLIMB);
         autoChooser.addOption("loadcone3_pickup2", AutonomousOption.LOADCONE3_PICKUP2);
         autoChooser.addOption("cornercone1_pickup1_climb", AutonomousOption.CORNERCONE1_PICKUP1_CLIMB);
         autoChooser.addOption("cornercone1_pickup2", AutonomousOption.CORNERCONE1_PICKUP2);
         autoChooser.addOption("cornercube2_pickup1_climb", AutonomousOption.CORNERCUBE2_PICKUP1_CLIMB);
         autoChooser.addOption("loadcube2_pickup1_climb", AutonomousOption.LOADCUBE2_PICKUP1_CLIMB);
-        
+        autoChooser.addOption("middleCubeClimb", AutonomousOption.MIDDLE_CUBE_CLIMB);
+        autoChooser.addOption("load4_Cone_Climb", AutonomousOption.LOAD4_CONE_CLIMB);
+        autoChooser.addOption("CORNER_CONE1_CLIMB", AutonomousOption.CORNERCONE1_CLIMB);
+        autoChooser.addOption("CORNER_CUBE2_CLIMB", AutonomousOption.CORNERCUBE2_CLIMB);
+        autoChooser.addOption("LOAD_CONE3_CLIMB", AutonomousOption.LOADCONE3_CLIMB);
+        autoChooser.addOption("LOAD_CUBE2_CLIMB", AutonomousOption.LOADCUBE2_CLIMB);
+        autoChooser.addOption("CORNERCUBE2_MOBILITY", AutonomousOption.CORNERCUBE2_MOBILITY);
         SmartDashboard.putData("Autonomous Mode", autoChooser);
+        
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
         eventMap.put(
                 "shouldClimb",
@@ -77,7 +85,7 @@ public class AutonomousManager {
         eventMap.put("goHome",
                     arm.setHomePosition());
         eventMap.put("openClaw",
-                    arm.setClawOpen());
+                    arm.setClawOpen(container));
         eventMap.put("PickupOut",
                     new PickupOut(pickup, arm, container));
         eventMap.put("pickOutReverse",
@@ -184,7 +192,15 @@ public class AutonomousManager {
         LOADCONE3_PICKUP2(StartingLocation.OPEN, 1, "loadcone3_pickup2", new PathConstraints(2, 2)),
         CORNERCONE1_PICKUP2(StartingLocation.OPEN, 1, "cornercone1_pickup2", new PathConstraints(2, 2)),
         CORNERCUBE2_PICKUP1_CLIMB(StartingLocation.OPEN, 1, "cornercube2_pickup1_climb", new PathConstraints(2, 2)),
-        LOADCUBE2_PICKUP1_CLIMB(StartingLocation.OPEN, 1, "loadcube2_pickup1_climb", new PathConstraints(2, 2))
+        LOADCUBE2_PICKUP1_CLIMB(StartingLocation.OPEN, 1, "loadcube2_pickup1_climb", new PathConstraints(2, 2)),
+        NOTHING(StartingLocation.OPEN, 1, "Nothing", new PathConstraints(0.1, 0.1)),
+        MIDDLE_CUBE_CLIMB(StartingLocation.OPEN, 1, "middleCubeClimb", new PathConstraints(3, 6)),
+        LOAD4_CONE_CLIMB(StartingLocation.OPEN, 1, "load4ConeClimb", new PathConstraints(3, 6)),
+        CORNERCONE1_CLIMB(StartingLocation.OPEN, 1, "cornercone1_climb", new PathConstraints(2, 2)),
+        CORNERCUBE2_CLIMB(StartingLocation.OPEN, 1, "cornercube2_climb", new PathConstraints(2, 2)),
+        LOADCONE3_CLIMB(StartingLocation.OPEN, 1, "loadcone3_climb", new PathConstraints(2, 2)),
+        LOADCUBE2_CLIMB(StartingLocation.OPEN, 1, "loadcube2_climb", new PathConstraints(2, 2)),
+        CORNERCUBE2_MOBILITY(StartingLocation.OPEN, 1, "cornercube2_mobility", new PathConstraints(2, 2))
         ;
 
 

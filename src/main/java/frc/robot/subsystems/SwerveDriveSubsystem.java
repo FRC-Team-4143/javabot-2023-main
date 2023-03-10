@@ -145,8 +145,8 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
                     double pitch = getTiltAmount();
                     // SmartDashboard.putNumber("Pitch", pitch);
                     double rampRate = gyro.getRotationRates3d().getY();
-                    SmartDashboard.putBoolean("Is Climbing Forward", isClimbingForward);
-                    SmartDashboard.putBoolean("Is Climbing Backwards", isClimbingBackwards);
+                 //   SmartDashboard.putBoolean("Is Climbing Forward", isClimbingForward);
+                   // SmartDashboard.putBoolean("Is Climbing Backwards", isClimbingBackwards);
                     
                     // Negative pitch -> drive forward, Positive pitch -> drive backward
                     double gyroPitch = gyro.getRotation3d().getY() * 180 / Math.PI;
@@ -234,9 +234,9 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
         double dist = visionPose.getTranslation().getDistance(pose.getTranslation());
         Transform2d vector = pose.minus(visionPose);
         Logger.log("/SwerveDriveSubsystem/VisionError", dist);
-        if(/*dpadR && */ visionPose.getY() > 0 && 
+        if(/*dpadR && */ visionPose.getY() > 0 + 0.38 && 
         !(visionPose.getY() > 4 && visionPose.getY() < 4.02) && 
-        visionPose.getY() < 7.9248 && 
+        visionPose.getY() < 7.9248 - 0.38 && 
         !(visionPose.getX() > 8.25 && visionPose.getX() < 8.29) 
         && visionPose.getX() > 0 && visionPose.getX() < 16.4592) 
         { 
@@ -340,8 +340,8 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
         SwerveModulePosition[] modulePositions = getModulePositions();
 
         velocity = Constants.SwerveConstants.swerveKinematics.toChassisSpeeds(moduleStates);
-        SmartDashboard.putNumber("Robot X Velocity", velocity.vxMetersPerSecond);
-        SmartDashboard.putNumber("Robot Y Velocity", velocity.vyMetersPerSecond);
+        //SmartDashboard.putNumber("Robot X Velocity", velocity.vxMetersPerSecond);
+        //SmartDashboard.putNumber("Robot Y Velocity", velocity.vyMetersPerSecond);
 
         velocityEstimator.add(velocity);
 
@@ -400,9 +400,9 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
     @Override
     public void periodic() {
         update();
-        SmartDashboard.putNumber("X rate", gyro.getRotationRates3d().getX());
-        SmartDashboard.putNumber("Y rate", gyro.getRotationRates3d().getY());
-        SmartDashboard.putNumber("Z rate", gyro.getRotationRates3d().getZ());
+        // SmartDashboard.putNumber("X rate", gyro.getRotationRates3d().getX());
+        // SmartDashboard.putNumber("Y rate", gyro.getRotationRates3d().getY());
+        // SmartDashboard.putNumber("Z rate", gyro.getRotationRates3d().getZ());
         double pitch = getTiltAmount();
         SmartDashboard.putNumber("Pitch", pitch);
         Logger.log("/SwerveDriveSubsystem/Pose", pose);

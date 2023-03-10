@@ -91,8 +91,8 @@ public class SwerveModule {
             //driveMotor.set(ControlMode.PercentOutput, percentOutput);
             driveOut.Output = percentOutput;
             driveMotor.setControl(driveOut);
-            SmartDashboard.putNumber("driveOut"+moduleNumber, driveOut.Output);
-            SmartDashboard.putNumber("driveCurrent"+moduleNumber, driveMotor.getStatorCurrent().getValue());
+           // SmartDashboard.putNumber("driveOut"+moduleNumber, driveOut.Output);
+            //SmartDashboard.putNumber("driveCurrent"+moduleNumber, driveMotor.getStatorCurrent().getValue());
         } else {
             double velocity = Conversions.MPSToFalconPro(
                     desiredState.speedMetersPerSecond,

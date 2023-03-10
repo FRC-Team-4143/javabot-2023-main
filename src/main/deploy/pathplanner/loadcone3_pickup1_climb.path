@@ -78,16 +78,16 @@
     },
     {
       "anchorPoint": {
-        "x": 6.9570522047027,
-        "y": 4.647601431955001
+        "x": 7.802070646876336,
+        "y": 4.556248086855149
       },
       "prevControl": {
-        "x": 6.032099585566693,
-        "y": 4.670439768229964
+        "x": 6.8771180277403285,
+        "y": 4.579086423130112
       },
       "nextControl": {
-        "x": 7.004120295435905,
-        "y": 4.646439256875169
+        "x": 7.849138737609541,
+        "y": 4.555085911775317
       },
       "holonomicAngle": 0.0,
       "isReversal": false,
@@ -121,7 +121,8 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "pickupCancel"
+          "pickupCancel",
+          "coneMode"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -166,7 +167,8 @@
     {
       "position": 1.55,
       "names": [
-        "PickupOut"
+        "PickupOut",
+        "cubeMode"
       ]
     }
   ]

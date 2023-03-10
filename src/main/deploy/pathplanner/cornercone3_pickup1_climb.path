@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 2.4532346451866314,
-        "y": 0.4665042109181609
+        "x": 2.45,
+        "y": 1.6215218755223841
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2052850056286752,
-        "y": 0.4665042109181609
+        "x": 2.1601005823683095,
+        "y": 1.6215218755223841
       },
       "holonomicAngle": -180.0,
       "isReversal": false,
@@ -21,21 +21,21 @@
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
-        "waitTime": 1.0
+        "waitTime": 0.0
       }
     },
     {
       "anchorPoint": {
-        "x": 1.9296074696662469,
-        "y": 0.4665042109181609
+        "x": 1.921199056073326,
+        "y": 1.6215218755223841
       },
       "prevControl": {
-        "x": 1.8319288009943175,
-        "y": 0.457885504858873
+        "x": 1.8641032153859183,
+        "y": 1.6786177162097915
       },
       "nextControl": {
-        "x": 3.224394667316652,
-        "y": 0.5807501401226086
+        "x": 2.8717044195922643,
+        "y": 0.6710165120034535
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -78,22 +78,22 @@
     },
     {
       "anchorPoint": {
-        "x": 7.042112801565271,
-        "y": 0.9044469395352096
+        "x": 7.60794478853915,
+        "y": 1.0391443005108238
       },
       "prevControl": {
-        "x": 6.471154394691193,
-        "y": 0.4362610458984655
+        "x": 7.630783124814112,
+        "y": 0.5024433980491892
       },
       "nextControl": {
-        "x": 7.559558205251606,
-        "y": 1.3287521705580034
+        "x": 7.578815826691784,
+        "y": 1.723674903923968
       },
-      "holonomicAngle": 5.0131137550358185,
+      "holonomicAngle": -1.1691393279074431,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": true,
+      "isStopPoint": false,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -153,5 +153,20 @@
       }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 2.2545454545453905,
+      "names": [
+        "PickupOut",
+        "cubeMode"
+      ]
+    },
+    {
+      "position": 3.999999999999877,
+      "names": [
+        "pickupCancel",
+        "coneMode"
+      ]
+    }
+  ]
 }

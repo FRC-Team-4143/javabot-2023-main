@@ -57,14 +57,14 @@
         "y": 0.7330780457285386
       },
       "prevControl": {
-        "x": 3.776583325138148,
-        "y": 0.7902010103307618
+        "x": 3.7739575355320105,
+        "y": 0.7094927462211201
       },
       "nextControl": {
-        "x": 4.786792112123632,
-        "y": 0.677955589554598
+        "x": 4.741733586031274,
+        "y": 0.7536650970737852
       },
-      "holonomicAngle": 90.0,
+      "holonomicAngle": 179.41404283596898,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -78,78 +78,21 @@
     },
     {
       "anchorPoint": {
-        "x": 7.459495602751889,
-        "y": 1.027725132373342
+        "x": 5.952165408604322,
+        "y": 0.7879226014862292
       },
       "prevControl": {
-        "x": 6.88853719587781,
-        "y": 0.5595392387365979
-      },
-      "nextControl": {
-        "x": 7.976941006438223,
-        "y": 1.4520303633961364
-      },
-      "holonomicAngle": 5.0131137550358185,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.109104379728951,
-        "y": 1.7232094321670837
-      },
-      "prevControl": {
-        "x": 6.898502206657447,
-        "y": 1.3285105187028343
-      },
-      "nextControl": {
-        "x": 5.347464851699302,
-        "y": 2.104029196181909
-      },
-      "holonomicAngle": 180.0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [
-          "pickupCancel",
-          "coneMode"
-        ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 3.497044259045783,
-        "y": 2.706342848583134
-      },
-      "prevControl": {
-        "x": 4.293238195438481,
-        "y": 2.706342848583134
+        "x": 5.209919479668018,
+        "y": 0.7536650970737852
       },
       "nextControl": null,
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 177.39743779750015,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "levelChargeStation",
-          "coneMode",
-          "pickOutReverse"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -160,15 +103,7 @@
     {
       "position": 1.11,
       "names": [
-        "event",
         "goHome"
-      ]
-    },
-    {
-      "position": 2.25454545454543,
-      "names": [
-        "PickupOut",
-        "cubeMode"
       ]
     }
   ]
