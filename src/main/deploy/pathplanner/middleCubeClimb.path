@@ -72,8 +72,8 @@
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "after",
+        "waitTime": 1.0
       }
     },
     {
@@ -106,7 +106,7 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 1.11,
+      "position": 1.05,
       "names": [
         "goHome"
       ]

@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 2.45,
+        "x": 1.921199056073326,
         "y": 0.548120070599115
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.202050360442044,
-        "y": 0.548120070599115
+        "x": 2.172420755097921,
+        "y": 1.2104318225730466
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -17,34 +17,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "goHigh"
-        ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "after",
-        "waitTime": 0.0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 1.921199056073326,
-        "y": 0.5595392387365979
-      },
-      "prevControl": {
-        "x": 1.884750349102496,
-        "y": 0.46344719308622756
-      },
-      "nextControl": {
-        "x": 2.172420755097921,
-        "y": 1.2218509907105293
-      },
-      "holonomicAngle": 180.0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [
-          "openClaw"
+          "V2Start"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
@@ -82,12 +55,12 @@
         "y": 0.9706292916859334
       },
       "prevControl": {
-        "x": 6.854279691465367,
-        "y": 0.6623117519739301
+        "x": 7.002728877252626,
+        "y": 0.5367009024616345
       },
       "nextControl": {
-        "x": 8.069436065327201,
-        "y": 1.2698899389048495
+        "x": 7.961702232328395,
+        "y": 1.4255054754586851
       },
       "holonomicAngle": 5.0131137550358185,
       "isReversal": false,
@@ -135,8 +108,8 @@
         "y": 2.3866061407336496
       },
       "prevControl": {
-        "x": 7.219693071864776,
-        "y": 2.3066719637712785
+        "x": 7.208273903727295,
+        "y": 1.2903659995354173
       },
       "nextControl": null,
       "holonomicAngle": 41.98721249581669,
@@ -146,8 +119,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "stop",
-          "pickupCancel"
+          "stop"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -160,29 +132,23 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 2.25,
+      "position": 1.13,
       "names": [
-        "PickupOut"
-      ]
-    },
-    {
-      "position": 4.436363636363633,
-      "names": [
-        "cubeMode",
-        "PickupOut"
-      ]
-    },
-    {
-      "position": 1.11,
-      "names": [
-        "goHome",
+        "PickupOut",
         "cubeMode"
       ]
     },
     {
-      "position": 1.11,
+      "position": 0.32,
       "names": [
         "goHome"
+      ]
+    },
+    {
+      "position": 3.4327272727271705,
+      "names": [
+        "PickupOut",
+        "cubeMode"
       ]
     }
   ]

@@ -103,10 +103,9 @@ public class AutonomousManager {
                     arm.setClawClosed(container),
                     Commands.waitSeconds(0.3),
                     arm.setHighPosition(),
-                    swerveDriveSubsystem.driveForward(2, 0, 0, false).withTimeout(1),
+                    swerveDriveSubsystem.driveForward(1, 0, 0, false, 1),
                     runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem),
-                    arm.setClawOpen(container)
-                    ));
+                    arm.setClawOpen(container)));
         autoBuilder = new SwerveAutoBuilder(
                 swerveDriveSubsystem::getPose,
                 swerveDriveSubsystem::setPose,
