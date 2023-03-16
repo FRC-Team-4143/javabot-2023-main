@@ -37,7 +37,7 @@ public class SwerveModule {
     private TalonFX driveMotor;
     private AnalogEncoder analogEncoder;
     private double lastAngle;
-    private final DutyCycleOut driveOut = new DutyCycleOut(0,true,false);
+    private final DutyCycleOut driveOut = new DutyCycleOut(0,false,false);
     private final VelocityDutyCycle driveVelOut = new VelocityDutyCycle(0,true,0,0,false);
     
     SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(

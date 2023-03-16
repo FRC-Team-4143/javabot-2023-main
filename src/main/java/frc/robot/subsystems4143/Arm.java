@@ -135,7 +135,7 @@ public class Arm extends SubsystemBase {
             },
             () -> { clawMotor.set(ControlMode.Current, 5); }, 
             interrupted -> {clawMotor.set(ControlMode.Current, 0); },
-            () -> (clawMotor.getSelectedSensorPosition() < 3900 && clawMotor.getSelectedSensorPosition() > 1500));
+            () -> (clawMotor.getSelectedSensorPosition() < 1000));
     }
 
     public CommandBase setClawClosed(RobotContainer4143 container){
@@ -169,10 +169,10 @@ public class Arm extends SubsystemBase {
 
                     count = -1;
                     if (container.currentMode == gamePiece.Cone) {
-                        clawMotor.set(ControlMode.Current, -4);
+                        clawMotor.set(ControlMode.Current, -7);
                     }
                     else {
-                        clawMotor.set(ControlMode.Current, -3);
+                        clawMotor.set(ControlMode.Current, -4);
                     }
                 }   
             },
@@ -341,7 +341,7 @@ public class Arm extends SubsystemBase {
         // SmartDashboard.putNumber("Elevator Current", elevatorMotor.getOutputCurrent());
         // SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getAppliedOutput());
         // SmartDashboard.putNumber("Elevator Speed", m_elevatorEncoder.getVelocity());
-        // SmartDashboard.putNumber("Claw Angle", clawMotor.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Claw Angle", clawMotor.getSelectedSensorPosition());
         // SmartDashboard.putBoolean("Clamped", clamped);
         // SmartDashboard.putNumber("Claw Current", clawMotor.getStatorCurrent());
         SmartDashboard.putNumber("Arm extension", (Math.cos(Math.toRadians(41)) * -m_elevatorEncoder.getPosition()) +
