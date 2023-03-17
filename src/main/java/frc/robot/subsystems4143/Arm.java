@@ -138,6 +138,11 @@ public class Arm extends SubsystemBase {
             () -> (clawMotor.getSelectedSensorPosition() < 1000));
     }
 
+    public CommandBase manualClawOpen(RobotContainer4143 container) {
+        return runEnd(() -> {clawMotor.set(ControlMode.Current, 4); clamped = false;}, 
+            () -> clawMotor.set(ControlMode.PercentOutput, 0.0));
+    }
+
     public CommandBase setClawClosed(RobotContainer4143 container){
         return new FunctionalCommand(() -> {
                 PickupSubsystem pickup = container.getPickup();

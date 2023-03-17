@@ -71,7 +71,7 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "pickupcancel"
+          "rollerCancel"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",

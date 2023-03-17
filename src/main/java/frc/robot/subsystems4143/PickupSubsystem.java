@@ -55,6 +55,9 @@ public class PickupSubsystem extends SubsystemBase {
 
     public void rollersSet(double speed) {toproller.set(speed); 
         bottomroller.set(speed);}
+
+    public void rollersSetSlow(double speed) {toproller.set(speed); 
+            bottomroller.set(speed/2);}
     //public void pickupOff() {m_doubleSolenoid.set(DoubleSolenoid.Value.kOff);}
 
     // public CommandBase pickupExtend() {
@@ -67,7 +70,9 @@ public class PickupSubsystem extends SubsystemBase {
     //     return new FunctionalCommand(() -> {m_doubleSolenoid.set(DoubleSolenoid.Value.kForward);}, () -> {},interrupted ->  {}, () -> false);
     // }
 
-    public CommandBase pickupcancel() { return runOnce(() -> {});}
+    public CommandBase pickupcancel() { return runOnce(() -> {solenoidRetract();});}
+
+    public CommandBase rollercancel() { return runOnce(() -> {rollersSet(0);});}
 
     public CommandBase rollIn() {
         return new FunctionalCommand(() -> {toproller.set(-.40); 

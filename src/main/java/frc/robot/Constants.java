@@ -26,7 +26,7 @@ public final class Constants {
         Cube,
         Cone
     }
-    public static final boolean competitionMode = false;
+    public static final boolean competitionMode = true;
 
     public static final class GlobalConstants {
         //public static final String CANIVORE_NAME = "CANivore";

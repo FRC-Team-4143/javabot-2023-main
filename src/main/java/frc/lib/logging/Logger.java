@@ -8,6 +8,8 @@ import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.logging.LogValue.LoggableType;
 import frc.lib.logging.LoggingThread.Writer;
+import frc.robot.Constants;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -60,46 +62,57 @@ public class Logger {
     /* Logger Methods - Log to DataLog and NetworkTables, no getting */
 
     public static void log(String key, boolean value) {
+        if(Constants.competitionMode) return;
         updatesMap.put(key, new LogValue(value));
     }
 
     public static void log(String key, boolean[] value) {
+        if(Constants.competitionMode) return;
         updatesMap.put(key, new LogValue(value));
     }
 
     public static void log(String key, double value) {
+        if(Constants.competitionMode) return;
         updatesMap.put(key, new LogValue(value));
     }
 
     public static void log(String key, double[] value) {
+        if(Constants.competitionMode) return;
         updatesMap.put(key, new LogValue(value));
     }
 
     public static void log(String key, long value) {
+        if(Constants.competitionMode) return;
         updatesMap.put(key, new LogValue(value));
     }
 
     public static void log(String key, long[] value) {
+        if(Constants.competitionMode) return;
         updatesMap.put(key, new LogValue(value));
     }
 
     public static void log(String key, String value) {
+        if(Constants.competitionMode) return;
         updatesMap.put(key, new LogValue(value));
     }
 
     public static void log(String key, String[] value) {
+        if(Constants.competitionMode) return;
         updatesMap.put(key, new LogValue(value));
     }
 
     public static void log(String key, ChassisSpeeds value) {
+        if(Constants.competitionMode) return;
         log(key, new double[] {value.vxMetersPerSecond, value.vyMetersPerSecond, value.omegaRadiansPerSecond});
     }
 
     public static void log(String key, Pose2d value) {
+        if(Constants.competitionMode) return;
         log(key, new double[] {value.getX(), value.getY(), value.getRotation().getRadians()});
     }
 
     public static void log(String key, Pose3d value, boolean logQuaternion) {
+        if(Constants.competitionMode) return;
         if (logQuaternion) {
             var rotation = value.getRotation().getQuaternion();
 

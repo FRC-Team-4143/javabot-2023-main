@@ -238,7 +238,8 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
         double dist = visionPose.getTranslation().getDistance(pose.getTranslation());
         Transform2d vector = pose.minus(visionPose);
         Logger.log("/SwerveDriveSubsystem/VisionError", dist);
-        if(/*dpadR && */ visionPose.getY() > 0 + 0.38 && 
+        if(/*dpadR && */ visionPose.getX() < 4.5 &&
+        visionPose.getY() > 0 + 0.38 && 
         !(visionPose.getY() > 4 && visionPose.getY() < 4.02) && 
         visionPose.getY() < 7.9248 - 0.38 && 
         !(visionPose.getX() > 8.25 && visionPose.getX() < 8.29) 

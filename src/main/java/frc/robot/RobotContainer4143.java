@@ -83,9 +83,10 @@ public class RobotContainer4143 {
     private Trigger driverRSU = new Trigger(() -> {return driver.getRightYAxis().get() > 0.50;});
     private Trigger driverRSD = new Trigger(() -> {return driver.getRightYAxis().get() < -0.50;});
     private Trigger operatorRSU = new Trigger(() -> {return operator.getRightYAxis().get() > 0.50;});
+    private Trigger operatorLSU = new Trigger(() -> {return operator.getLeftYAxis().get() > 0.50;});
     private Trigger operatorRSD = new Trigger(() -> {return operator.getRightYAxis().get() < -0.50;});
 
-    private boolean blueAlliance;
+    public boolean blueAlliance;
 
     public Constants.gamePiece currentMode = Constants.gamePiece.Cube;
 
@@ -118,10 +119,10 @@ public class RobotContainer4143 {
         m_led.setLength(m_ledBufferCube.getLength());
         m_led.setData(m_ledBufferCube);
         m_led.start();
-        SmartDashboard.putData(CommandScheduler.getInstance());
-        SmartDashboard.putData(swerveDriveSubsystem);
-        SmartDashboard.putData(arm);
-        SmartDashboard.putData(pickupSubsystem);
+        // SmartDashboard.putData(CommandScheduler.getInstance());
+        // SmartDashboard.putData(swerveDriveSubsystem);
+        // SmartDashboard.putData(arm);
+        // SmartDashboard.putData(pickupSubsystem);
     
         configureBindings();
         arm.setPosition();
@@ -207,6 +208,7 @@ public class RobotContainer4143 {
         // driverRSU.whileTrue(pickupSubsystem.spindexterCW(driver.getRightYAxis()));
         // driverRSD.whileTrue(pickupSubsystem.spindexterCCW(driver.getRightYAxis()));
         operatorRSU.whileTrue(pickupSubsystem.spindexterCW(operator.getRightYAxis()));
+        operatorLSU.whileTrue(arm.manualClawOpen(this));
         operatorRSD.whileTrue(pickupSubsystem.spindexterCCW(operator.getRightYAxis()));
 
         //Bumper buttons

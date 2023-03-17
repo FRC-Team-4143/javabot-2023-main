@@ -1,5 +1,6 @@
 package frc.robot.commands4143;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer4143;
@@ -31,7 +32,7 @@ public class PickupOut extends CommandBase{
     @Override
     public void execute() {
         if(container.currentMode == gamePiece.Cube) {
-            pickupSubsystem.rollersSet(-0.5);
+            pickupSubsystem.rollersSetSlow(-0.5);
         } else {
             
             pickupSubsystem.rollersSet(-0.80);
@@ -49,7 +50,9 @@ public class PickupOut extends CommandBase{
 
     @Override
     public void end(boolean interrupted){
-        pickupSubsystem.solenoidRetract();
+        if(!DriverStation.isAutonomous()){
+            pickupSubsystem.solenoidRetract();
+        }
         pickupSubsystem.rollersSet(0.0);
     }
 
