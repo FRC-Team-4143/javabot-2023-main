@@ -154,6 +154,7 @@ public class Arm extends SubsystemBase {
                         angle = -14;
                     } else {
                         angle = -10;
+                        //distance = -.04;
                     }
                     //pickup.solenoidStart();
                 } else {

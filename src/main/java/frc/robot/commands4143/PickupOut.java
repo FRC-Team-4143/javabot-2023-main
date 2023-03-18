@@ -52,8 +52,9 @@ public class PickupOut extends CommandBase{
     public void end(boolean interrupted){
         if(!DriverStation.isAutonomous()){
             pickupSubsystem.solenoidRetract();
+            pickupSubsystem.rollersSet(0.0);
         }
-        pickupSubsystem.rollersSet(0.0);
+
     }
 
     @Override

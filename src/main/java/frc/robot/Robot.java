@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
         else{
             SmartDashboard.putString("Current Mode ", "Cube");
         }
-        Logger.update();
+        //Logger.update();
     }
 
     @Override

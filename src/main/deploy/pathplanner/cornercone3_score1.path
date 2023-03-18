@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1495824188229578,
-        "y": 0.6166350794240054
+        "x": 2.058229073723105,
+        "y": 0.3654133803994108
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -68,10 +68,7 @@
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
-        "names": [
-          "PickupOut",
-          "cubeMode"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "after",
         "waitTime": 1.0
@@ -79,26 +76,24 @@
     },
     {
       "anchorPoint": {
-        "x": 7.390980593926999,
-        "y": 2.4208636451460936
+        "x": 7.0484055498025535,
+        "y": 2.1468036098465357
       },
       "prevControl": {
-        "x": 6.939923452496476,
-        "y": 1.9355489993031276
+        "x": 6.597348408372031,
+        "y": 1.6614889640035697
       },
       "nextControl": {
-        "x": 7.842037735357522,
-        "y": 2.9061782909890597
+        "x": 7.499462691233076,
+        "y": 2.6321182556895018
       },
       "holonomicAngle": 48.81407483429034,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [
-          "pickupCancel"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -174,7 +169,7 @@
           "pickOutReverse"
         ],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
+        "waitBehavior": "after",
         "waitTime": 0
       }
     }
@@ -184,6 +179,21 @@
       "position": 0.17454545454545703,
       "names": [
         "goHome"
+      ]
+    },
+    {
+      "position": 3.53454545454544,
+      "names": [
+        "event",
+        "rollerCancel",
+        "coneMode"
+      ]
+    },
+    {
+      "position": 1.5272727272726287,
+      "names": [
+        "PickupOut",
+        "cubeMode"
       ]
     }
   ]

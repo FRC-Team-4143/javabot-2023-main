@@ -57,7 +57,7 @@ public class PickupSubsystem extends SubsystemBase {
         bottomroller.set(speed);}
 
     public void rollersSetSlow(double speed) {toproller.set(speed); 
-            bottomroller.set(speed/2);}
+            bottomroller.set(speed*.75);}
     //public void pickupOff() {m_doubleSolenoid.set(DoubleSolenoid.Value.kOff);}
 
     // public CommandBase pickupExtend() {

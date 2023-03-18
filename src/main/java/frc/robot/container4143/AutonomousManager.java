@@ -107,7 +107,7 @@ public class AutonomousManager {
                     arm.setClawClosed(container),
                     Commands.waitSeconds(0.3),
                     arm.setHighPosition(),
-                    swerveDriveSubsystem.driveForward(1, 0, 0, false, 0.65),
+                    swerveDriveSubsystem.driveForward(1, 0, 0, false, 0.62),
                     runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem),
                     Commands.waitSeconds(1),
                     arm.setClawOpen(container)));
