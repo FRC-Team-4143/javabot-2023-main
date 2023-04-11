@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.io.IOException;
+
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -21,7 +23,7 @@ import frc.robot.subsystems.LightsSubsystem.LEDSegment;
 public class Robot extends TimedRobot {
     public static CTREConfigs ctreConfigs = new CTREConfigs();
 
-    public static Compressor compressor = new Compressor(GlobalConstants.PCM_ID, PneumaticsModuleType.REVPH);
+    //public static Compressor compressor = new Compressor(GlobalConstants.PCM_ID, PneumaticsModuleType.REVPH);
 
     private RobotContainer4143 robotContainer;
 
@@ -33,6 +35,12 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Disable default NetworkTables logging
         DataLogManager.logNetworkTables(false);
+        try {
+            Process process = Runtime.getRuntime().exec("caniv --any --reset");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         // Begin controller inputs
         if (isReal()) {
@@ -44,7 +52,7 @@ public class Robot extends TimedRobot {
         // Prevents the logging of many errors with our controllers
         DriverStation.silenceJoystickConnectionWarning(true);
 
-        compressor.enableAnalog(GlobalConstants.minimumPressure, GlobalConstants.maximumPressure);
+        //compressor.enableAnalog(GlobalConstants.minimumPressure, GlobalConstants.maximumPressure);
     }
 
     @Override
@@ -71,7 +79,6 @@ public class Robot extends TimedRobot {
         robotContainer.blueAlliance = DriverStation.getAlliance() == Alliance.Blue;
 
         autonomousCommand = robotContainer.getAutonomousCommand();
-        robotContainer.getPickup().solenoidStart();
 
         // Schedule the chosen autonomous command
         if (autonomousCommand != null) autonomousCommand.schedule();

@@ -64,8 +64,8 @@ public class Arm extends SubsystemBase {
     private double count;
     private boolean clamped;
     private ArmFeedforward m_rotatorFeedforward;
-    private double armHomeHeight = -0.08;
-    private double armHomeAngle = 0;
+    private double armHomeHeight = -0.001;
+    private double armHomeAngle = -14;
 
     public Arm(){ 
         clawMotor = new TalonSRX(3);
@@ -145,15 +145,15 @@ public class Arm extends SubsystemBase {
 
     public CommandBase setClawClosed(RobotContainer4143 container){
         return new FunctionalCommand(() -> {
-                PickupSubsystem pickup = container.getPickup();
+                //PickupSubsystem pickup = container.getPickup();
                 boolean driverLB = container.driver.getLeftBumper().getAsBoolean();
                 boolean operatorLB = container.operator.getLeftBumper().getAsBoolean();
                 if(angle > -20 && distance > -0.2 && !driverLB && !operatorLB) {
                     count = 2;
                     if(container.currentMode == gamePiece.Cone) {
-                        angle = -14;
+                        //angle = -14;
                     } else {
-                        angle = -10;
+                        //angle = -10;
                         //distance = -.04;
                     }
                     //pickup.solenoidStart();
@@ -165,7 +165,7 @@ public class Arm extends SubsystemBase {
             }, 
              () -> {
                 if(count == 2 && readRotateEncoder() < angle + 2) {
-                    container.getPickup().solenoidStart();
+                    //container.getPickup().solenoidStart();
                     count = 1;
                 } 
                 else if(count == 1) {
@@ -269,6 +269,26 @@ public class Arm extends SubsystemBase {
         });
     }
 
+    public CommandBase setHybridPosition() {
+        return new FunctionalCommand(() -> {}, 
+        () -> {
+            if(m_elevatorEncoder.getPosition() < -0.35 || readRotateEncoder() < -55.){
+                angle = -114.;
+            } else {
+                distance = -.4;
+            }
+            if (readRotateEncoder() < -110) {
+                distance = -0.01;
+            }
+        }, interrupted -> {}, ()-> {
+            if(angle == -114 && distance == -0.01){
+                return true;
+            }else{
+                return false;
+            }
+        });
+    }
+
     public CommandBase setHomePosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
@@ -337,8 +357,9 @@ public class Arm extends SubsystemBase {
         rotatorMotor.set(rotatorMotorController.calculate(readRotateEncoder()));
         //m_pidController.setReference(distance, CANSparkMax.ControlType.kPosition);
 
-        //SmartDashboard.putNumber("Arm distance", m_elevatorEncoder.getPosition());
-        //SmartDashboard.putNumber("Arm angle", readRotateEncoder());
+        SmartDashboard.putNumber("Arm distance", m_elevatorEncoder.getPosition());
+        SmartDashboard.putNumber("Arm angle", readRotateEncoder());
+
         //SmartDashboard.putData("Arm Mechanism", mechanism);
         // SmartDashboard.putNumber("Distance Setpoint", distance);
         // SmartDashboard.putNumber("Angle Setpoint", angle);

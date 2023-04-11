@@ -1,6 +1,7 @@
 package frc.robot.container4143;
 
 import frc.robot.RobotContainer4143;
+import frc.robot.commands4143.CubeOut;
 import frc.robot.commands4143.PickupOut;
 import frc.robot.commands4143.PickupOutRev;
 import frc.robot.Constants;
@@ -23,6 +24,7 @@ import frc.lib.logging.LoggedReceiver;
 import frc.lib.logging.Logger;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems4143.Arm;
+import frc.robot.subsystems4143.CubeSubsystem;
 import frc.robot.subsystems4143.PickupSubsystem;
 
 import java.util.HashMap;
@@ -47,12 +49,15 @@ public class AutonomousManager {
     private static final SendableChooser<AutonomousOption> autoChooser = new SendableChooser<>();
 
     SwerveDriveSubsystem swerveDriveSubsystem;
+    CubeSubsystem cubeSubsystem;
 
     public AutonomousManager(RobotContainer4143 container) {
         swerveDriveSubsystem = container.getSwerveDriveSubsystem();
         Arm arm = container.getArm();
-        PickupSubsystem pickup = container.getPickup();
+        cubeSubsystem = container.getCubeSubsystem();
+        //PickupSubsystem pickup = container.getPickup();
         initializeNetworkTables();
+
 
         // Create an event map for use in all autos
         HashMap<String, Command> eventMap = new HashMap<>();
@@ -73,6 +78,7 @@ public class AutonomousManager {
         autoChooser.addOption("CORNERCUBE2_MOBILITY", AutonomousOption.CORNERCUBE2_MOBILITY);
         autoChooser.addOption("CORNER_CUBE2_CLIMB_V2", AutonomousOption.CORNERCUBE2_CLIMBV2);
         autoChooser.addOption("cornercone3_score1", AutonomousOption.CORNERCONE3_SCORE1);
+        autoChooser.addOption("loadcone3_pickup2V2", AutonomousOption.LOADCONE3_PICKUP2V2);
         SmartDashboard.putData("Autonomous Mode", autoChooser);
         
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
@@ -90,13 +96,13 @@ public class AutonomousManager {
         eventMap.put("openClaw",
                     arm.setClawOpen(container));
         eventMap.put("PickupOut",
-                    new PickupOut(pickup, arm, container));
-        eventMap.put("pickOutReverse",
-                    new PickupOutRev(pickup, arm, container));
+                     new CubeOut(cubeSubsystem, arm, container));
+        // eventMap.put("pickOutReverse",
+        //             new PickupOutRev(pickup, arm, container));
         eventMap.put("pickupCancel",
-                    pickup.pickupcancel());
+                     cubeSubsystem.pickupcancel());
         eventMap.put("rollerCancel",
-                    pickup.rollercancel());
+                     cubeSubsystem.rollercancel());
         eventMap.put("cubeMode",
                     container.cubeMode());
         eventMap.put("coneMode",
@@ -105,11 +111,11 @@ public class AutonomousManager {
                     "V2Start",
                     sequence(
                     arm.setClawClosed(container),
-                    Commands.waitSeconds(0.3),
+                    Commands.waitSeconds(0.2),
                     arm.setHighPosition(),
                     swerveDriveSubsystem.driveForward(1, 0, 0, false, 0.62),
                     runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem),
-                    Commands.waitSeconds(1),
+                    Commands.waitSeconds(0.5),
                     arm.setClawOpen(container)));
         autoBuilder = new SwerveAutoBuilder(
                 swerveDriveSubsystem::getPose,
@@ -216,7 +222,8 @@ public class AutonomousManager {
         LOADCUBE2_CLIMB(StartingLocation.OPEN, 1, "loadcube2_climb", new PathConstraints(2, 2)),
         CORNERCUBE2_MOBILITY(StartingLocation.OPEN, 1, "cornercube2_mobility", new PathConstraints(2, 2)),
         CORNERCUBE2_CLIMBV2(StartingLocation.OPEN, 1, "cornercube2_climbV2", new PathConstraints(2, 2)),
-        CORNERCONE3_SCORE1(StartingLocation.OPEN, 1, "cornercone3_score1", new PathConstraints(2, 2))
+        CORNERCONE3_SCORE1(StartingLocation.OPEN, 1, "cornercone3_score1", new PathConstraints(2, 2)),
+        LOADCONE3_PICKUP2V2(StartingLocation.OPEN, 1, "loadcone3_pickup2V2", new PathConstraints(3.5, 3.5))
         ;
 
 

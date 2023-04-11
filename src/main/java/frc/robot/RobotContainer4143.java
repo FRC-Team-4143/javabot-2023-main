@@ -61,7 +61,8 @@ public class RobotContainer4143 {
 
     private final Arm arm = new Arm();
    // private final SkiSubsystem skiSubsystem = new SkiSubsystem();
-    private final PickupSubsystem pickupSubsystem = new PickupSubsystem();
+    //private final PickupSubsystem pickupSubsystem = new PickupSubsystem();
+    private final CubeSubsystem cubeSubsystem = new CubeSubsystem();
     private final FieldPositionSubsystem fieldPositionSubsystem = new FieldPositionSubsystem();
 
     public AddressableLED m_led = new AddressableLED(0);
@@ -198,18 +199,18 @@ public class RobotContainer4143 {
 
 
         //Trigger buttons
-        driveLT.whileTrue(new PickupOutRev(pickupSubsystem,arm, this));
-        driveRT.whileTrue(new PickupOut(pickupSubsystem,arm, this));
-        operatorLT.whileTrue(new PickupOutRev(pickupSubsystem,arm, this));
-        operatorRT.whileTrue(new PickupOut(pickupSubsystem,arm, this));
+        driveLT.whileTrue(cubeSubsystem.rollerReverse());
+        driveRT.whileTrue(new CubeOut(cubeSubsystem,arm, this));
+        //operatorLT.whileTrue(new PickupOutRev(pickupSubsystem,arm, this));
+        operatorRT.whileTrue(new CubeOut(cubeSubsystem,arm, this));
 
         //driverRSU.whileTrue(skiSubsystem.setSkiUp());
         //driverRSD.whileTrue(skiSubsystem.setSkiDown());
         // driverRSU.whileTrue(pickupSubsystem.spindexterCW(driver.getRightYAxis()));
         // driverRSD.whileTrue(pickupSubsystem.spindexterCCW(driver.getRightYAxis()));
-        operatorRSU.whileTrue(pickupSubsystem.spindexterCW(operator.getRightYAxis()));
+        operatorRSU.whileTrue(cubeSubsystem.beltForward(operator.getRightYAxis()));
         operatorLSU.whileTrue(arm.manualClawOpen(this));
-        operatorRSD.whileTrue(pickupSubsystem.spindexterCCW(operator.getRightYAxis()));
+        operatorRSD.whileTrue(cubeSubsystem.beltReverse(operator.getRightYAxis()));
 
         //Bumper buttons
         driver.getRightBumper().toggleOnTrue(arm.clawToggle(this));
@@ -243,11 +244,11 @@ public class RobotContainer4143 {
         //Dpad buttons
         driver.getDPadDown().onTrue(arm.setHomePosition());
         driver.getDPadRight().onTrue(arm.setMidPosition());
-        driver.getDPadLeft().onTrue(arm.setHybridPosition(pickupSubsystem));
+        driver.getDPadLeft().onTrue(arm.setHybridPosition());
         driver.getDPadUp().onTrue(arm.setHighPosition());
         operator.getDPadDown().onTrue(arm.setHomePosition());
         operator.getDPadRight().onTrue(arm.setMidPosition());
-        operator.getDPadLeft().onTrue(arm.setHybridPosition(pickupSubsystem));
+        operator.getDPadLeft().onTrue(arm.setHybridPosition());
         operator.getDPadUp().onTrue(arm.setHighPosition());
 
         //Autodrive stuff
@@ -467,8 +468,12 @@ public class RobotContainer4143 {
         return swerveDriveSubsystem;
     }
 
-    public PickupSubsystem getPickup() {
-        return pickupSubsystem;
+    // public PickupSubsystem getPickup() {
+    //     return pickupSubsystem;
+    // }
+
+    public CubeSubsystem getCubeSubsystem(){
+        return cubeSubsystem;
     }
 
     public Arm getArm(){
