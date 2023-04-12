@@ -72,7 +72,7 @@ public class DriveToPositionCommand extends CommandBase {
         if (yController.atGoal()) ySpeed = 0;
         if (omegaController.atGoal()) omegaSpeed = 0;
 
-        swerveDriveSubsystem.setVelocity(new ChassisSpeeds(xSpeed, ySpeed, omegaSpeed), true, true);
+        swerveDriveSubsystem.setVelocity(new ChassisSpeeds(xSpeed, ySpeed, omegaSpeed), false, true); // rjs test
     }
 
     @Override

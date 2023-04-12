@@ -77,8 +77,9 @@ public class Robot extends TimedRobot {
         FieldConstants.setAprilTagOrigin();
         //robotContainer.swerveDriveSubsystem.resetToAbsolute();
         robotContainer.blueAlliance = DriverStation.getAlliance() == Alliance.Blue;
-
+        System.out.println(RobotController.getFPGATime());
         autonomousCommand = robotContainer.getAutonomousCommand();
+        System.out.println(RobotController.getFPGATime());
 
         // Schedule the chosen autonomous command
         if (autonomousCommand != null) autonomousCommand.schedule();
@@ -93,6 +94,7 @@ public class Robot extends TimedRobot {
         FieldConstants.setAprilTagOrigin();
         //robotContainer.getPickup().solenoidStart();
         //robotContainer.swerveDriveSubsystem.resetToAbsolute();
+        robotContainer.blueAlliance = DriverStation.getAlliance() == Alliance.Blue;
 
         // Prevent any autonomous code from overrunning into teleop
         if (autonomousCommand != null) autonomousCommand.cancel();
@@ -108,6 +110,7 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
         robotContainer.autonomousManager.update();
         robotContainer.init();
+        
         // Indicate if the battery is at voltage
         // if (RobotController.getBatteryVoltage() > GlobalConstants.batteryVoltageThreshold)
         //     LEDSegment.BatteryIndicator.setColor(LightsSubsystem.green.dim(4));

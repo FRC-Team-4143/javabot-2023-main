@@ -9,6 +9,7 @@ import com.ctre.phoenixpro.controls.VoltageOut;
 import com.ctre.phoenixpro.hardware.TalonFX;
 import com.ctre.phoenixpro.signals.InvertedValue;
 import com.ctre.phoenixpro.signals.NeutralModeValue;
+import com.ctre.phoenixpro.wpiutils.MotorSafetyImplem;
 
 import javax.naming.directory.DirContext;
 
@@ -26,6 +27,7 @@ import frc.robot.Robot;
 import frc.robot.Constants.GlobalConstants;
 import frc.lib.swerve.*;
 import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.MotorSafety;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -70,6 +72,8 @@ public class SwerveModule {
                 ? new TalonFX(moduleConstants.driveMotorID, "CANivore")
                 : new TalonFX(moduleConstants.driveMotorID, moduleConstants.canivoreName.get());
         configDriveMotor();
+
+        
 
         lastAngle = getState().angle.getDegrees();
     }
@@ -225,7 +229,7 @@ public class SwerveModule {
         
         driveMotor.getConfigurator().apply(driveConfiguration);
         driveMotor.setRotorPosition(0);
-        driveMotor.setSafetyEnabled(true);
+        driveMotor.setSafetyEnabled(false);
         //driveOut.EnableFOC = true;
         
         /*

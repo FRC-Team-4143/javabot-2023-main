@@ -213,13 +213,13 @@ public class Arm extends SubsystemBase {
     public CommandBase setHighPosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
-            if(m_elevatorEncoder.getPosition() > -0.44 ){
-                distance = -0.727;
-                angle = armHomeAngle;
-            } else {
+            // if(m_elevatorEncoder.getPosition() > -0.44 ){
+            //     distance = -0.727;
+            //     angle = armHomeAngle;
+            // } else {
                 distance = -0.727;
                 angle = -113;
-            }
+            //}
         }, interrupted -> {}, ()-> {
             if(readRotateEncoder() < -105 && angle == -113 && distance == -0.727){
                 return true;
@@ -233,13 +233,13 @@ public class Arm extends SubsystemBase {
     public CommandBase setMidPosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
-            if(m_elevatorEncoder.getPosition() > -0.4 ){
-                distance = -0.5;
-                angle = armHomeAngle;
-            } else {
+            //if(m_elevatorEncoder.getPosition() > -0.4 ){
+                //distance = -0.5;
+                //angle = armHomeAngle;
+            //} else {
                 distance = -0.5;
                 angle = -101;
-            }
+            //}
         }, interrupted -> {}, ()-> {
             if(angle == -101 && distance == -0.5){
                 return true;
@@ -292,13 +292,13 @@ public class Arm extends SubsystemBase {
     public CommandBase setHomePosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
-            if( readRotateEncoder() > -45.) {
+            //if( readRotateEncoder() > -45.) {
                 distance = armHomeHeight; angle = armHomeAngle;
-            } else if(m_elevatorEncoder.getPosition() < -.35) {
-                angle = armHomeAngle;
-            } else {
-                distance = -.4;
-            }
+            //} else if(m_elevatorEncoder.getPosition() < -.35) {
+            //    angle = armHomeAngle;
+            //} else {
+            //    distance = -.4;
+            //}
         }, interrupted -> {}, ()-> {
             if(angle == armHomeAngle && distance == armHomeHeight){
                 return true;

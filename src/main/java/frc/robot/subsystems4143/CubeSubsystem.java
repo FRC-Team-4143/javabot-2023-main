@@ -13,6 +13,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.controller.Axis;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -57,6 +59,7 @@ public class CubeSubsystem extends SubsystemBase {
         manualBeltPower = 0;
         autoBeltPower = 0;
         count = 0;
+        beltMotor.setNeutralMode(NeutralMode.Brake);
     }
 
     public void rollersSet(double speed) { 
@@ -64,8 +67,8 @@ public class CubeSubsystem extends SubsystemBase {
     }
 
     public void rackOut() {
-        distance = -5;
-        autoBeltPower = 0.5;
+        distance = -7;
+        autoBeltPower = 1;
     }
 
     public void rackIn() {
@@ -116,7 +119,7 @@ public class CubeSubsystem extends SubsystemBase {
         if(count > 0) 
             count--;
         
-        if(input.get()) count = 4;
+        if(input.get()) count = 3;
         if(count == 1) autoBeltPower = 0;
         if(manualBeltPower > 0) {
             autoBeltPower = 0;

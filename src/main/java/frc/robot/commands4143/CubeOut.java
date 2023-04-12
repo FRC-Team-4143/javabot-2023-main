@@ -32,7 +32,7 @@ public class CubeOut extends CommandBase{
 
     @Override
     public void execute() {
-            cubeSubsystem.rollersSet(-.7);
+            cubeSubsystem.rollersSet(-1);
         
         count+=1;
 

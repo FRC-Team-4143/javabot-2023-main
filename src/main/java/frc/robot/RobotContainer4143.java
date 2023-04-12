@@ -139,8 +139,13 @@ public class RobotContainer4143 {
 
 
         Supplier<Pose2d> testPoseSupplier = () -> {
-            var targetPose = new Pose2d(1, 1, new Rotation2d(0));
-            return targetPose;
+            if(blueAlliance) {
+                var targetPose = new Pose2d(15.5, 6.1, new Rotation2d(0));
+                return targetPose;
+            } else {
+                var targetPose = new Pose2d(15.5,FieldConstants.fieldLength - 6.1, new Rotation2d(0));
+                return targetPose;
+            }
         };
         SmartDashboard.putData("Drive to default position", new DriveToPositionCommand(swerveDriveSubsystem, testPoseSupplier));
         
@@ -218,7 +223,8 @@ public class RobotContainer4143 {
         operator.getRightBumper().toggleOnTrue(arm.clawToggle(this));
         operator.nameRightBumper("Toggle Claw");
 
-        driver.getLeftBumper().whileTrue(new ProxyCommand(()->autonomousManager.autoBuilder.followPathGroup(pathGroupOnTheFly())));
+        //driver.getLeftBumper().whileTrue(new ProxyCommand(()->autonomousManager.autoBuilder.followPathGroup(pathGroupOnTheFly())));
+        driver.getLeftBumper().whileTrue(new DriveToPositionCommand(swerveDriveSubsystem, testPoseSupplier));
         driver.nameLeftBumper("Auto Drive");
 
 
@@ -361,9 +367,9 @@ public class RobotContainer4143 {
             vector = (new Translation2d(12.6, 6.25).minus(swerveDriveSubsystem.getPose().getTranslation()));}
         else {
             vector = (new Translation2d(12.6, FieldConstants.fieldLength - 6.25).minus(swerveDriveSubsystem.getPose().getTranslation()));}
-        // System.out.println(Math.atan2(vector.getX(),vector.getY()));
-        // System.out.println(vector.getAngle().minus(new Rotation2d(0)));
-        // System.out.println("Path group on the fly is being called");
+        System.out.println(Math.atan2(vector.getX(),vector.getY()));
+        System.out.println(vector.getAngle().minus(new Rotation2d(0)));
+        System.out.println("Path group on the fly is being called");
         ArrayList<PathPlannerTrajectory> PGOTF = new ArrayList<PathPlannerTrajectory>();
         if (blueAlliance) {
         PGOTF.add(0,
@@ -396,7 +402,7 @@ public class RobotContainer4143 {
                 vector = (new Translation2d(5.80, FieldConstants.fieldLength - 4.68).minus(swerveDriveSubsystem.getPose().getTranslation()));}
             System.out.println(Math.atan2(vector.getX(),vector.getY()));
             System.out.println(vector.getAngle().minus(new Rotation2d(0)));
-            System.out.println("Path group on the fly is being called");
+            System.out.println("Path group on the fly score is being called");
             ArrayList<PathPlannerTrajectory> PGOTF = new ArrayList<PathPlannerTrajectory>();
             if (blueAlliance) {
                 PGOTF.add(0,
