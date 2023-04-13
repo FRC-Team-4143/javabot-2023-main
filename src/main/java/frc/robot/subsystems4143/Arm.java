@@ -148,41 +148,21 @@ public class Arm extends SubsystemBase {
                 //PickupSubsystem pickup = container.getPickup();
                 boolean driverLB = container.driver.getLeftBumper().getAsBoolean();
                 boolean operatorLB = container.operator.getLeftBumper().getAsBoolean();
-                if(angle > -20 && distance > -0.2 && !driverLB && !operatorLB) {
-                    count = 2;
-                    if(container.currentMode == gamePiece.Cone) {
-                        //angle = -14;
-                    } else {
-                        //angle = -10;
-                        //distance = -.04;
-                    }
-                    //pickup.solenoidStart();
-                } else {
-                    count = 0;
+                
+                if (container.currentMode == gamePiece.Cone) {
+                    clawMotor.set(ControlMode.Current, -7);
                 }
-
-                clamped = true;
+                else {
+                    clawMotor.set(ControlMode.Current, -4);
+                }
+                count = 2;
+                     clamped = true;
             }, 
              () -> {
-                if(count == 2 && readRotateEncoder() < angle + 2) {
-                    //container.getPickup().solenoidStart();
-                    count = 1;
-                } 
-                else if(count == 1) {
-                     count = 0;
-                }
-                else if(count == 0){
-
-                    count = -1;
-                    if (container.currentMode == gamePiece.Cone) {
-                        clawMotor.set(ControlMode.Current, -7);
-                    }
-                    else {
-                        clawMotor.set(ControlMode.Current, -4);
-                    }
-                }   
+                count--;
+                 
             },
-          interrupted -> {}, () -> (count == -1));
+          interrupted -> {if(angle == -68) container.coneSubsystem.setAngle(0);}, () -> (count == -1));
     }
     public boolean returnClamped() {
         return clamped;
@@ -251,17 +231,11 @@ public class Arm extends SubsystemBase {
 
     public CommandBase setHybridPosition(PickupSubsystem pickup) {
         return new FunctionalCommand(() -> {}, 
-        () -> {
-            if(m_elevatorEncoder.getPosition() < -0.35 || readRotateEncoder() < -55. || pickup.m_doubleSolenoid0.get().equals(Value.kForward)){
-                angle = -114.;
-            } else {
-                distance = -.4;
-            }
-            if (readRotateEncoder() < -110) {
-                distance = -0.01;
-            }
+        () -> {   
+                angle = -68;
+                distance = armHomeHeight;
         }, interrupted -> {}, ()-> {
-            if(angle == -114 && distance == -0.01){
+            if(angle == -68 && distance == armHomeHeight){
                 return true;
             }else{
                 return false;
@@ -272,16 +246,10 @@ public class Arm extends SubsystemBase {
     public CommandBase setHybridPosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
-            if(m_elevatorEncoder.getPosition() < -0.35 || readRotateEncoder() < -55.){
-                angle = -114.;
-            } else {
-                distance = -.4;
-            }
-            if (readRotateEncoder() < -110) {
-                distance = -0.01;
-            }
+                angle = -68;
+                distance = armHomeHeight;
         }, interrupted -> {}, ()-> {
-            if(angle == -114 && distance == -0.01){
+            if(angle == -68 && distance == armHomeHeight){
                 return true;
             }else{
                 return false;

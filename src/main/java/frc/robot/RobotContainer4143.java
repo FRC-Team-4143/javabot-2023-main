@@ -60,9 +60,13 @@ public class RobotContainer4143 {
     //         new VisionSubsystem2(swerveDriveSubsystem::addVisionPoseEstimate, swerveDriveSubsystem::getPose);
 
     private final Arm arm = new Arm();
+    
+    
+
    // private final SkiSubsystem skiSubsystem = new SkiSubsystem();
     //private final PickupSubsystem pickupSubsystem = new PickupSubsystem();
     private final CubeSubsystem cubeSubsystem = new CubeSubsystem();
+    public final ConeSubsystem coneSubsystem = new ConeSubsystem();
     private final FieldPositionSubsystem fieldPositionSubsystem = new FieldPositionSubsystem();
 
     public AddressableLED m_led = new AddressableLED(0);
@@ -136,6 +140,8 @@ public class RobotContainer4143 {
         SmartDashboard.putData("Set Middle Position", arm.setMidPosition());
         SmartDashboard.putData("Set Home Position", arm.setHomePosition());
         SmartDashboard.putData("0Arm", arm.set0Arm());
+        SmartDashboard.putData("0ConePickup", coneSubsystem.set0cone());
+        SmartDashboard.putData("0CubePickup", cubeSubsystem.set0cube());
 
 
         Supplier<Pose2d> testPoseSupplier = () -> {
@@ -204,19 +210,28 @@ public class RobotContainer4143 {
 
 
         //Trigger buttons
-        driveLT.whileTrue(cubeSubsystem.rollerReverse());
-        driveRT.whileTrue(new CubeOut(cubeSubsystem,arm, this));
+       // if(currentMode == Constants.gamePiece.Cube){ 
+            driveLT.whileTrue(cubeSubsystem.rollerReverse().unless(()-> currentMode != Constants.gamePiece.Cube));
+            driveRT.whileTrue(new CubeOut(cubeSubsystem,arm, this).unless(()-> currentMode != Constants.gamePiece.Cube));
+            operatorRT.whileTrue(new CubeOut(cubeSubsystem,arm, this).unless(()-> currentMode != Constants.gamePiece.Cube));
+            operatorLT.whileTrue(cubeSubsystem.rollerReverse().unless(()-> currentMode != Constants.gamePiece.Cube));
+            
+       // } 
+       // else {
+            driveLT.whileTrue(coneSubsystem.storePickup().unless(()-> currentMode != Constants.gamePiece.Cone));
+            driveRT.whileTrue(new ConeOut(coneSubsystem,this).alongWith(arm.setHybridPosition()).unless(()-> currentMode != Constants.gamePiece.Cone));
+            operatorRT.whileTrue(new ConeOut(coneSubsystem, this).alongWith(arm.setHybridPosition()).unless(()-> currentMode != Constants.gamePiece.Cone));
+            operatorLT.whileTrue(coneSubsystem.storePickup().unless(()-> currentMode != Constants.gamePiece.Cone));
+       // }
+        operatorRSU.whileTrue(cubeSubsystem.beltForward(operator.getRightYAxis()));
+        operatorRSD.whileTrue(cubeSubsystem.beltReverse(operator.getRightYAxis()));
         //operatorLT.whileTrue(new PickupOutRev(pickupSubsystem,arm, this));
-        operatorRT.whileTrue(new CubeOut(cubeSubsystem,arm, this));
-
         //driverRSU.whileTrue(skiSubsystem.setSkiUp());
         //driverRSD.whileTrue(skiSubsystem.setSkiDown());
         // driverRSU.whileTrue(pickupSubsystem.spindexterCW(driver.getRightYAxis()));
         // driverRSD.whileTrue(pickupSubsystem.spindexterCCW(driver.getRightYAxis()));
-        operatorRSU.whileTrue(cubeSubsystem.beltForward(operator.getRightYAxis()));
+        
         operatorLSU.whileTrue(arm.manualClawOpen(this));
-        operatorRSD.whileTrue(cubeSubsystem.beltReverse(operator.getRightYAxis()));
-
         //Bumper buttons
         driver.getRightBumper().toggleOnTrue(arm.clawToggle(this));
         driver.nameRightBumper("Toggle Claw");

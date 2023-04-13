@@ -44,8 +44,8 @@ public class CubeSubsystem extends SubsystemBase {
     public CubeSubsystem () {
         beltMotor = new VictorSPX(12);
         rollerMotor = new VictorSPX(11);
-        rackMotor = new CANSparkMax( 4, MotorType.kBrushless);
-        rackMotor.setSmartCurrentLimit(30);
+        rackMotor = new CANSparkMax(4, MotorType.kBrushless);
+        rackMotor.setSmartCurrentLimit(40);
         rackMotor.setInverted(false);
         rackMotor.setIdleMode(IdleMode.kBrake);
         m_cubeEncoder = rackMotor.getEncoder();
@@ -97,6 +97,15 @@ public class CubeSubsystem extends SubsystemBase {
 
     public void beltStop() {
         beltMotor.set(ControlMode.PercentOutput, 0.0);
+    }
+
+    public CommandBase set0cube() {
+        return runOnce(() -> {
+            m_cubeEncoder.setPosition(0);
+            distance=0;
+            
+
+        }).ignoringDisable(true);
     }
 
     @Override

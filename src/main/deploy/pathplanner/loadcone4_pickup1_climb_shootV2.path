@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.9097798879358443,
-        "y": 3.2658820873197305
+        "x": 1.921199056073326,
+        "y": 3.2430437510447674
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2045670855862483,
-        "y": 3.3801280165241785
+        "x": 3.371433409533487,
+        "y": 3.1973670784948416
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -26,37 +26,37 @@
     },
     {
       "anchorPoint": {
-        "x": 7.425238098339444,
-        "y": 2.797696193682985
+        "x": 6.8086030189154405,
+        "y": 3.380073768694546
       },
       "prevControl": {
-        "x": 5.87223123164195,
-        "y": 2.820534529957947
+        "x": 5.164242807118093,
+        "y": 3.357235432419584
       },
       "nextControl": {
-        "x": 8.094332902206098,
-        "y": 2.787856564214358
+        "x": 8.084670974502668,
+        "y": 3.397796934744368
       },
-      "holonomicAngle": -179.7850449801453,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": true,
+      "isStopPoint": false,
       "stopEvent": {
         "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "after",
-        "waitTime": 0.1
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 4.2,
-        "y": 2.706342848583134
+        "x": 3.8967151438576377,
+        "y": 2.763438689270541
       },
       "prevControl": {
-        "x": 4.996193936392698,
-        "y": 2.706342848583134
+        "x": 5.883945701149256,
+        "y": 2.763438689270541
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -66,23 +66,13 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "levelChargeStation"
+          "openClaw"
         ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
         "waitTime": 0
       }
     }
   ],
-  "maxVelocity": 2.0,
-  "maxAcceleration": 2.0,
-  "isReversed": null,
-  "markers": [
-    {
-      "position": 0.05,
-      "names": [
-        "goHome"
-      ]
-    }
-  ]
+  "markers": []
 }

@@ -80,6 +80,8 @@ public class AutonomousManager {
         //autoChooser.addOption("cornercone3_score1", AutonomousOption.CORNERCONE3_SCORE1);
         autoChooser.addOption("loadcone3_pickup2V2", AutonomousOption.LOADCONE3_PICKUP2V2);
         autoChooser.addOption("cornercone1_pickup2V2", AutonomousOption.CORNERCONE1_PICKUP2V2);
+        autoChooser.addOption(("cornercone4_pickup1_climbV2"), AutonomousOption.CORNERCONE4_PICKUP1_CLIMBV2);
+        autoChooser.addOption(("loadcone4_pickup1_climbV2"), AutonomousOption.LOADCONE4_PICKUP1_CLIMBV2);
         SmartDashboard.putData("Autonomous Mode", autoChooser);
         
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
@@ -232,7 +234,9 @@ public class AutonomousManager {
         CORNERCUBE2_CLIMBV2(StartingLocation.OPEN, 1, "cornercube2_climbV2", new PathConstraints(2, 2)),
         //CORNERCONE3_SCORE1(StartingLocation.OPEN, 1, "cornercone3_score1", new PathConstraints(2, 2)),
         LOADCONE3_PICKUP2V2(StartingLocation.OPEN, 1, "loadcone3_pickup2V2", new PathConstraints(3.5, 3.5)),
-        CORNERCONE1_PICKUP2V2(StartingLocation.OPEN, 1, "cornercone1_pickup2V2", new PathConstraints(3.5, 3.5))
+        CORNERCONE1_PICKUP2V2(StartingLocation.OPEN, 1, "cornercone1_pickup2V2", new PathConstraints(3.5, 3.5)),
+        CORNERCONE4_PICKUP1_CLIMBV2(StartingLocation.OPEN, 1, "cornercone4_pickup1_climbV2", new PathConstraints(3.5, 3.5)),
+        LOADCONE4_PICKUP1_CLIMBV2(StartingLocation.OPEN, 1, "loadcone4_pickup1_climbV2", new PathConstraints(3.5, 3.5))
         ;
 
 
