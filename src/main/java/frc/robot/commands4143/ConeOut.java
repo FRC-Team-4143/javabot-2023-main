@@ -29,7 +29,7 @@ public class ConeOut extends CommandBase{
 
     @Override
     public void end(boolean interrupted){
-        coneSubsystem.setAngle(-110);
+        coneSubsystem.setAngle(-107);
         coneSubsystem.setPickupMotorSpeed(0);
     }
 

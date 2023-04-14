@@ -162,7 +162,7 @@ public class Arm extends SubsystemBase {
                 count--;
                  
             },
-          interrupted -> {if(angle == -68) container.coneSubsystem.setAngle(0);}, () -> (count == -1));
+          interrupted -> {if(angle == -66 && container.currentMode == gamePiece.Cone) {container.coneSubsystem.setAngle(0); }}, () -> (count == -1));
     }
     public boolean returnClamped() {
         return clamped;
@@ -232,10 +232,10 @@ public class Arm extends SubsystemBase {
     public CommandBase setHybridPosition(PickupSubsystem pickup) {
         return new FunctionalCommand(() -> {}, 
         () -> {   
-                angle = -68;
+                angle = -66;
                 distance = armHomeHeight;
         }, interrupted -> {}, ()-> {
-            if(angle == -68 && distance == armHomeHeight){
+            if(angle == -66 && distance == armHomeHeight){
                 return true;
             }else{
                 return false;
@@ -246,10 +246,10 @@ public class Arm extends SubsystemBase {
     public CommandBase setHybridPosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
-                angle = -68;
+                angle = -66;
                 distance = armHomeHeight;
         }, interrupted -> {}, ()-> {
-            if(angle == -68 && distance == armHomeHeight){
+            if(angle == -66 && distance == armHomeHeight){
                 return true;
             }else{
                 return false;

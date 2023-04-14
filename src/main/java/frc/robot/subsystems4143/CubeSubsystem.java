@@ -53,6 +53,7 @@ public class CubeSubsystem extends SubsystemBase {
         cubekI = 0.0;
         cubekD = .00;
         rackMController = new ProfiledPIDController(cubekP, cubekI, cubekD, cubeConstraints);
+        rackMotor.enableVoltageCompensation(11);
         m_cubeEncoder.setPositionConversionFactor(1);
         distance = 0;
         input = new DigitalInput(9);
@@ -67,7 +68,7 @@ public class CubeSubsystem extends SubsystemBase {
     }
 
     public void rackOut() {
-        distance = -7;
+        distance = -5.5;
         autoBeltPower = 1;
     }
 
@@ -81,7 +82,7 @@ public class CubeSubsystem extends SubsystemBase {
     public CommandBase rollercancel() { return runOnce(() -> {rollersSet(0);});}
 
     public CommandBase rollerReverse() {
-        return runEnd(() -> {rollersSet(0.5);}, 
+        return runEnd(() -> {rollersSet(0.7);}, 
         () -> {rollersSet(0);});
     }
     

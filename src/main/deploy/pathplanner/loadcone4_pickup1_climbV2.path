@@ -51,25 +51,52 @@
     },
     {
       "anchorPoint": {
-        "x": 3.8967151438576377,
+        "x": 1.9097798879358443,
         "y": 2.763438689270541
       },
       "prevControl": {
-        "x": 5.883945701149256,
+        "x": 3.8970104452274574,
         "y": 2.763438689270541
       },
-      "nextControl": null,
+      "nextControl": {
+        "x": -0.07745066935576883,
+        "y": 2.763438689270541
+      },
       "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [
           "openClaw"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.8738768075826755,
+        "y": 2.637827839758243
+      },
+      "prevControl": {
+        "x": 4.741733586031274,
+        "y": 2.740600352995578
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "levelChargeStation"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
         "waitTime": 0
       }
     }
