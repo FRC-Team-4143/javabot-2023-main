@@ -37,7 +37,7 @@ public class AutonomousManager {
 
     private SwerveAutoBuilder autoBuilder;
 
-    private List<PathPlannerTrajectory> chosenAuto = defaultAuto.getPath();
+    public List<PathPlannerTrajectory> chosenAuto = defaultAuto.getPath();
     
     private static final SendableChooser<String> autoChooser = new SendableChooser<>();
 

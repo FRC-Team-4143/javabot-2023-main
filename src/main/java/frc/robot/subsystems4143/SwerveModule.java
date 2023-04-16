@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.lib.math.Conversions;
+import frc.robot.AutonomousManager;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.GlobalConstants;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.MotorSafety;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class SwerveModule {
     public int moduleNumber;
@@ -133,7 +135,7 @@ public class SwerveModule {
 
         lastAngle = angle;
     }
-
+    
     public void setDesiredAngleOnly(Rotation2d desiredAngle, boolean optimized) {
         // Set the module to face forwards
         if (optimized) {

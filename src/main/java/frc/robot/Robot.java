@@ -2,6 +2,9 @@ package frc.robot;
 
 import java.io.IOException;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -73,6 +76,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        robotContainer.getArm().elevatorMotor.setIdleMode(IdleMode.kBrake);
+        robotContainer.getArm().elevatorMotor2.setIdleMode(IdleMode.kBrake);
         // Set april tags to use the correct origin (red or blue corner)
         FieldConstants.setAprilTagOrigin();
         //robotContainer.swerveDriveSubsystem.resetToAbsolute();
@@ -80,6 +85,7 @@ public class Robot extends TimedRobot {
         System.out.println(RobotController.getFPGATime());
         autonomousCommand = robotContainer.getAutonomousCommand();
         System.out.println(RobotController.getFPGATime());
+        robotContainer.getCubeSubsystem().state = 0;
 
         // Schedule the chosen autonomous command
         if (autonomousCommand != null) autonomousCommand.schedule();
@@ -90,11 +96,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        robotContainer.getArm().elevatorMotor.setIdleMode(IdleMode.kBrake);
+        robotContainer.getArm().elevatorMotor2.setIdleMode(IdleMode.kBrake);
         // Set april tags to use the correct origin (red or blue corner)
         FieldConstants.setAprilTagOrigin();
         //robotContainer.getPickup().solenoidStart();
         //robotContainer.swerveDriveSubsystem.resetToAbsolute();
         robotContainer.blueAlliance = DriverStation.getAlliance() == Alliance.Blue;
+        robotContainer.getCubeSubsystem().state = 0;
 
         // Prevent any autonomous code from overrunning into teleop
         if (autonomousCommand != null) autonomousCommand.cancel();
@@ -110,6 +119,7 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
         robotContainer.autonomousManager.update();
         robotContainer.init();
+
         
         // Indicate if the battery is at voltage
         // if (RobotController.getBatteryVoltage() > GlobalConstants.batteryVoltageThreshold)

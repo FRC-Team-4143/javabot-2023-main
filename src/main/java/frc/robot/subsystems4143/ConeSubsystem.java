@@ -41,13 +41,13 @@ public class ConeSubsystem extends SubsystemBase{
         rollerMotor.setIdleMode(IdleMode.kBrake);
         extenderMotor.setIdleMode(IdleMode.kCoast);
         //rackMotor.setIdleMode(IdleMode.kBrake);
-        conekP = 0.03;
+        conekP = 0.04;
         conekI = 0;
         conekD = 0.001;
         extenderMotorController = new ProfiledPIDController(conekP, conekI, conekD, coneConstraints);
         //beltMotor.setNeutralMode(NeutralMode.Brake);
         angle = 0;
-        extenderMotor.enableVoltageCompensation(8);
+        extenderMotor.enableVoltageCompensation(9);
         
     }
 
@@ -63,7 +63,7 @@ public class ConeSubsystem extends SubsystemBase{
         this.angle = angle;
         if(angle == 0) {
             rollerMotor.setIdleMode(IdleMode.kCoast);
-            rollerMotor.set(.2);
+            rollerMotor.set(.3);
         } else {
             rollerMotor.setIdleMode(IdleMode.kBrake);
         }

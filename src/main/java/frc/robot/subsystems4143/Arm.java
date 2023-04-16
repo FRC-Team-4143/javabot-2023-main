@@ -22,6 +22,8 @@ import edu.wpi.first.networktables.TimestampedInteger;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -41,16 +43,16 @@ public class Arm extends SubsystemBase {
     // public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
     private ProfiledPIDController elevatorMotorController;
     private ProfiledPIDController rotatorMotorController;
-    private TalonSRX clawMotor;
-    private CANSparkMax elevatorMotor;
-    private CANSparkMax rotatorMotor; 
-    private CANSparkMax elevatorMotor2;
+    public TalonSRX clawMotor;
+    public CANSparkMax elevatorMotor;
+    public CANSparkMax rotatorMotor; 
+    public CANSparkMax elevatorMotor2;
     private WPI_CANCoder m_rotatorEncoder; 
     //private SparkMaxPIDController m_pidController;
     private RelativeEncoder m_elevatorEncoder;
     private RelativeEncoder m_rotatorEncoderMotor;
     public double elevatorkP, rotatorkP, elevatorkI, rotatorkI, elevatorkD, rotatorkD;
-    private double distance;
+    public double distance;
     private double angle;
     // private static final TrapezoidProfile.Constraints elevatorConstraints = new TrapezoidProfile.Constraints(28, 28);
     private static final TrapezoidProfile.Constraints elevatorConstraints = new TrapezoidProfile.Constraints(84, 84);
@@ -66,6 +68,7 @@ public class Arm extends SubsystemBase {
     private ArmFeedforward m_rotatorFeedforward;
     private double armHomeHeight = -0.001;
     private double armHomeAngle = -14;
+    private double armHybrid = -67;
 
     public Arm(){ 
         clawMotor = new TalonSRX(3);
@@ -91,6 +94,8 @@ public class Arm extends SubsystemBase {
         }
     clawMotor.configFeedbackNotContinuous(true, 0);
     clawMotor.setNeutralMode(NeutralMode.Brake);
+    elevatorMotor.setIdleMode(IdleMode.kCoast);
+    elevatorMotor2.setIdleMode(IdleMode.kCoast);
         
     // Encoder object created to display position values
     m_elevatorEncoder = elevatorMotor.getEncoder();
@@ -155,14 +160,14 @@ public class Arm extends SubsystemBase {
                 else {
                     clawMotor.set(ControlMode.Current, -4);
                 }
-                count = 2;
+                count = 4;
                      clamped = true;
             }, 
              () -> {
                 count--;
                  
             },
-          interrupted -> {if(angle == -66 && container.currentMode == gamePiece.Cone) {container.coneSubsystem.setAngle(0); }}, () -> (count == -1));
+          interrupted -> {if(angle == armHybrid && container.currentMode == gamePiece.Cone) {container.coneSubsystem.setAngle(0); }}, () -> (count == -1));
     }
     public boolean returnClamped() {
         return clamped;
@@ -224,44 +229,41 @@ public class Arm extends SubsystemBase {
             if(angle == -101 && distance == -0.5){
                 return true;
             }else{
-                return false;
+                return true;
             }
         });
     }
 
-    public CommandBase setHybridPosition(PickupSubsystem pickup) {
+    public CommandBase setHybridPosition(RobotContainer4143 container) {
         return new FunctionalCommand(() -> {}, 
         () -> {   
-                angle = -66;
-                distance = armHomeHeight;
+                angle = armHybrid;
+                if (container.currentMode == gamePiece.Cube) {
+                    distance = armHomeHeight - 0.075; angle = armHybrid;
+                } else {
+                    distance = armHomeHeight; angle = armHybrid;
+                }
         }, interrupted -> {}, ()-> {
-            if(angle == -66 && distance == armHomeHeight){
+            if(angle == armHybrid && distance == armHomeHeight){
                 return true;
             }else{
-                return false;
+                return true;
             }
         });
     }
 
-    public CommandBase setHybridPosition() {
-        return new FunctionalCommand(() -> {}, 
-        () -> {
-                angle = -66;
-                distance = armHomeHeight;
-        }, interrupted -> {}, ()-> {
-            if(angle == -66 && distance == armHomeHeight){
-                return true;
-            }else{
-                return false;
-            }
-        });
-    }
+    
 
-    public CommandBase setHomePosition() {
+    public CommandBase setHomePosition(RobotContainer4143 container) {
         return new FunctionalCommand(() -> {}, 
         () -> {
             //if( readRotateEncoder() > -45.) {
-                distance = armHomeHeight; angle = armHomeAngle;
+                if (container.currentMode == gamePiece.Cone) {
+                    distance = armHomeHeight - 0.075; angle = armHomeAngle;
+                } else {
+                    distance = armHomeHeight; angle = armHomeAngle;
+                }
+                
             //} else if(m_elevatorEncoder.getPosition() < -.35) {
             //    angle = armHomeAngle;
             //} else {

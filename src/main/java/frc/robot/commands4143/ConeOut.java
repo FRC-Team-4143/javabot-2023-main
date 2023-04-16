@@ -1,8 +1,10 @@
 package frc.robot.commands4143;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer4143;
 import frc.robot.subsystems4143.ConeSubsystem;
+import frc.robot.Constants;
 
 public class ConeOut extends CommandBase{
     private ConeSubsystem coneSubsystem;
@@ -11,6 +13,7 @@ public class ConeOut extends CommandBase{
     public ConeOut(ConeSubsystem coneSubsystem, RobotContainer4143 container){
         this.container = container;
         this.coneSubsystem = coneSubsystem;
+        
     }
 
     @Override
@@ -18,6 +21,8 @@ public class ConeOut extends CommandBase{
     
         //arm.elevatorPickup();
         addRequirements(coneSubsystem);
+        container.m_led.setData(container.m_ledBufferCone);
+        container.currentMode = Constants.gamePiece.Cone;
         //coneSubsystem.intermediatePickup();
     }
 
@@ -29,8 +34,9 @@ public class ConeOut extends CommandBase{
 
     @Override
     public void end(boolean interrupted){
-        coneSubsystem.setAngle(-107);
+        coneSubsystem.setAngle(-102);//-107 at tremont
         coneSubsystem.setPickupMotorSpeed(0);
+        container.getArm().setClawClosed(container).beforeStarting(new WaitCommand(0.4)).schedule();
     }
 
     @Override

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.RobotContainer4143;
 import frc.robot.container4143.CustomXboxController;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -27,6 +28,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class CubeSubsystem extends SubsystemBase {
 
+    public int state;
+    public boolean lastSensor;
     private CANSparkMax rackMotor;
     private VictorSPX rollerMotor;
     private VictorSPX beltMotor; 
@@ -36,12 +39,17 @@ public class CubeSubsystem extends SubsystemBase {
     private ProfiledPIDController rackMController;
     private double distance;
     private double count;
+    private int stuckCube;
+    private int setCube;
     DigitalInput input;
     double manualBeltPower;
     double autoBeltPower;
 
 
+
     public CubeSubsystem () {
+        state = 0;
+        lastSensor = false;
         beltMotor = new VictorSPX(12);
         rollerMotor = new VictorSPX(11);
         rackMotor = new CANSparkMax(4, MotorType.kBrushless);
@@ -60,6 +68,8 @@ public class CubeSubsystem extends SubsystemBase {
         manualBeltPower = 0;
         autoBeltPower = 0;
         count = 0;
+        stuckCube = 0;
+        setCube = 0;
         beltMotor.setNeutralMode(NeutralMode.Brake);
     }
 
@@ -68,8 +78,8 @@ public class CubeSubsystem extends SubsystemBase {
     }
 
     public void rackOut() {
-        distance = -5.5;
-        autoBeltPower = 1;
+        distance = -4.5;
+        autoBeltPower = 0.75;
     }
 
     public void rackIn() {
@@ -96,9 +106,36 @@ public class CubeSubsystem extends SubsystemBase {
         interrupted -> {manualBeltPower = ( 0.0);}, () -> false);
     }
 
+    public CommandBase cubeDetected() {
+        return new FunctionalCommand(() -> {stuckCube = 1;}, () -> {
+            if(stuckCube % 15 == 0) distance = -1.5; 
+            if(stuckCube % 30 == 0) distance = 0;
+            stuckCube++; },
+        interrupted -> {distance = 0; autoBeltPower = 0;}, () -> state >= 2);
+    }
+
+    public CommandBase shootCube(RobotContainer4143 container) {
+        return new FunctionalCommand(() -> {setCube = 0;}, () -> {
+            if(setCube == 0) { 
+                beltMotor.set(ControlMode.PercentOutput, -0.5); 
+                container.getArm().distance = -.25; 
+            }
+            if(setCube == 40 ) {
+                beltMotor.set(ControlMode.PercentOutput, 1);
+            }
+            if(setCube == 70) {
+                beltMotor.set(ControlMode.PercentOutput, 0);
+            }
+            setCube++;
+             },
+        interrupted -> {beltMotor.set(ControlMode.PercentOutput, 0); 
+                container.getArm().clawMotor.set(ControlMode.Current, 0);}, () -> setCube >= 50);
+    }
+
     public void beltStop() {
         beltMotor.set(ControlMode.PercentOutput, 0.0);
     }
+
 
     public CommandBase set0cube() {
         return runOnce(() -> {
@@ -124,8 +161,14 @@ public class CubeSubsystem extends SubsystemBase {
             //rackMotor.set(power);
             rackMotor.set(0);
             
+        if(lastSensor == false && input.get() == true) 
+            state++;
+        
+        if(lastSensor && input.get() == false)
+            state++;
             
-        }
+        lastSensor = input.get();
+        
         if(count > 0) 
             count--;
         
@@ -144,8 +187,9 @@ public class CubeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Rack Distance Commanded", distance);
         SmartDashboard.putNumber("Rack Power", rackMotor.get());
         SmartDashboard.putBoolean("cube sensor", input.get());
+        SmartDashboard.putNumber("Times Caught", state);
+        }
 
     }
-
 }
 

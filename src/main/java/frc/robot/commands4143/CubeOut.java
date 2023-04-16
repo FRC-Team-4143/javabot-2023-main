@@ -20,20 +20,24 @@ public class CubeOut extends CommandBase{
         this.cubeSubsystem = cubeSubsystem;
         this.arm =arm;
         count=0;
+        
     }
 
     @Override
     public void initialize() {
+        container.m_led.setData(container.m_ledBufferCube);
+        container.currentMode = Constants.gamePiece.Cube;
         count = 0;
         //arm.elevatorPickup();
         addRequirements(cubeSubsystem);
         cubeSubsystem.rackOut();
+        container.getArm().setHomePosition(container).schedule();
     }
 
     @Override
     public void execute() {
             cubeSubsystem.rollersSet(-1);
-        
+
         count+=1;
 
     }

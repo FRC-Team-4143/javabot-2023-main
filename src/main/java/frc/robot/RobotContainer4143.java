@@ -138,14 +138,14 @@ public class RobotContainer4143 {
         SmartDashboard.putData("Set Wheel Offset", swerveDriveSubsystem.setWheelOffsets());
         SmartDashboard.putData("Set High Position", arm.setHighPosition());
         SmartDashboard.putData("Set Middle Position", arm.setMidPosition());
-        SmartDashboard.putData("Set Home Position", arm.setHomePosition());
+        SmartDashboard.putData("Set Home Position", arm.setHomePosition(this));
         SmartDashboard.putData("0Arm", arm.set0Arm());
         SmartDashboard.putData("0ConePickup", coneSubsystem.set0cone());
         SmartDashboard.putData("0CubePickup", cubeSubsystem.set0cube());
 
 
         Supplier<Pose2d> testPoseSupplier = () -> {
-            if(blueAlliance) {
+            if(!blueAlliance) {
                 var targetPose = new Pose2d(15.5, 6.1, new Rotation2d(0));
                 return targetPose;
             } else {
@@ -180,11 +180,15 @@ public class RobotContainer4143 {
         operator.getRightXAxis().setInverted(true);
         
         //Joystick press buttons
-        driver.getLeftThumb().whileTrue(run(swerveDriveSubsystem::lock, swerveDriveSubsystem));
-        driver.nameLeftThumb("Lock Wheels");
-        driver.getRightThumb().toggleOnTrue(swerveDriveSubsystem.driveCommand(
+        //driver.getLeftThumb().whileTrue(run(swerveDriveSubsystem::lock, swerveDriveSubsystem));
+        //driver.nameLeftThumb("Lock Wheels");
+        driver.getLeftThumb().toggleOnTrue(swerveDriveSubsystem.driveCommand(
             getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis(), false, driver.getLeftBumper()));
-        driver.nameRightThumb("Field Centric Toggle");
+        driver.getRightThumb().onTrue(runOnce(() -> {
+            if(currentMode == Constants.gamePiece.Cube){currentMode = gamePiece.Cone; m_led.setData(m_ledBufferCone);}
+                else{currentMode = gamePiece.Cube; m_led.setData(m_ledBufferCube);}
+            }).ignoringDisable(true));
+       // driver.nameRightThumb("Field Centric Toggle");
         operator.getLeftThumb().whileTrue(run(swerveDriveSubsystem::lock, swerveDriveSubsystem));
         operator.nameLeftThumb("Lock Wheels");
         operator.getRightThumb().toggleOnTrue(swerveDriveSubsystem.driveCommand(
@@ -194,11 +198,11 @@ public class RobotContainer4143 {
         //Rhombus buttons
         driver.getLeftRhombus().toggleOnTrue(swerveDriveSubsystem.levelChargeStationCommand());
         driver.nameLeftRhombus("Level Charge Station");
-        driver.getRightRhombus().onTrue(runOnce(() -> {
-            if(currentMode == Constants.gamePiece.Cube){currentMode = gamePiece.Cone; m_led.setData(m_ledBufferCone);}
-                else{currentMode = gamePiece.Cube; m_led.setData(m_ledBufferCube);}
-            }).ignoringDisable(true));
-        driver.nameRightRhombus("Cone/cube mode");
+        // driver.getRightRhombus().onTrue(runOnce(() -> {
+        //     if(currentMode == Constants.gamePiece.Cube){currentMode = gamePiece.Cone; m_led.setData(m_ledBufferCone);}
+        //         else{currentMode = gamePiece.Cube; m_led.setData(m_ledBufferCube);}
+        //    }).ignoringDisable(true));
+        //driver.nameRightRhombus("Cone/cube mode");
         
         operator.getLeftRhombus().toggleOnTrue(swerveDriveSubsystem.levelChargeStationCommand());
         operator.nameLeftRhombus("Level Charge Station");
@@ -210,19 +214,16 @@ public class RobotContainer4143 {
 
 
         //Trigger buttons
-       // if(currentMode == Constants.gamePiece.Cube){ 
-            driveLT.whileTrue(cubeSubsystem.rollerReverse().unless(()-> currentMode != Constants.gamePiece.Cube));
-            driveRT.whileTrue(new CubeOut(cubeSubsystem,arm, this).unless(()-> currentMode != Constants.gamePiece.Cube));
-            operatorRT.whileTrue(new CubeOut(cubeSubsystem,arm, this).unless(()-> currentMode != Constants.gamePiece.Cube));
-            operatorLT.whileTrue(cubeSubsystem.rollerReverse().unless(()-> currentMode != Constants.gamePiece.Cube));
-            
-       // } 
-       // else {
-            driveLT.whileTrue(coneSubsystem.storePickup().unless(()-> currentMode != Constants.gamePiece.Cone));
-            driveRT.whileTrue(new ConeOut(coneSubsystem,this).alongWith(arm.setHybridPosition()).unless(()-> currentMode != Constants.gamePiece.Cone));
-            operatorRT.whileTrue(new ConeOut(coneSubsystem, this).alongWith(arm.setHybridPosition()).unless(()-> currentMode != Constants.gamePiece.Cone));
-            operatorLT.whileTrue(coneSubsystem.storePickup().unless(()-> currentMode != Constants.gamePiece.Cone));
-       // }
+        driveRT.whileTrue(new CubeOut(cubeSubsystem,arm, this));//.unless(()-> currentMode != Constants.gamePiece.Cube));
+        //driveRT.whileTrue(new CubeOut(cubeSubsystem,arm, this).unless(()-> currentMode != Constants.gamePiece.Cube));
+        operatorRT.whileTrue(new CubeOut(cubeSubsystem,arm, this).unless(()-> currentMode != Constants.gamePiece.Cube));
+        operatorLT.whileTrue(cubeSubsystem.rollerReverse().unless(()-> currentMode != Constants.gamePiece.Cube));
+        
+        //driveLT.whileTrue(coneSubsystem.storePickup().unless(()-> currentMode != Constants.gamePiece.Cone));
+        driveLT.whileTrue(new ConeOut(coneSubsystem,this).alongWith(arm.setHybridPosition(this)));//.unless(()-> currentMode != Constants.gamePiece.Cone));
+        operatorRT.whileTrue(new ConeOut(coneSubsystem, this).alongWith(arm.setHybridPosition(this)).unless(()-> currentMode != Constants.gamePiece.Cone));
+        operatorLT.whileTrue(coneSubsystem.storePickup().unless(()-> currentMode != Constants.gamePiece.Cone));
+
         operatorRSU.whileTrue(cubeSubsystem.beltForward(operator.getRightYAxis()));
         operatorRSD.whileTrue(cubeSubsystem.beltReverse(operator.getRightYAxis()));
         //operatorLT.whileTrue(new PickupOutRev(pickupSubsystem,arm, this));
@@ -263,13 +264,13 @@ public class RobotContainer4143 {
         operator.nameButtonB("Rotate Down");
 
         //Dpad buttons
-        driver.getDPadDown().onTrue(arm.setHomePosition());
+        driver.getDPadDown().onTrue(arm.setHomePosition(this));
         driver.getDPadRight().onTrue(arm.setMidPosition());
-        driver.getDPadLeft().onTrue(arm.setHybridPosition());
+        driver.getDPadLeft().onTrue(arm.setHybridPosition(this));
         driver.getDPadUp().onTrue(arm.setHighPosition());
-        operator.getDPadDown().onTrue(arm.setHomePosition());
+        operator.getDPadDown().onTrue(arm.setHomePosition(this));
         operator.getDPadRight().onTrue(arm.setMidPosition());
-        operator.getDPadLeft().onTrue(arm.setHybridPosition());
+        operator.getDPadLeft().onTrue(arm.setHybridPosition(this));
         operator.getDPadUp().onTrue(arm.setHighPosition());
 
         //Autodrive stuff

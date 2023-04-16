@@ -66,13 +66,33 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "openClaw"
+          "levelChargeStation",
+          "throwCube"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "after",
         "waitTime": 0
       }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 0.01,
+      "names": [
+        "goHome"
+      ]
+    },
+    {
+      "position": 0.6836363636363578,
+      "names": [
+        "PickupOut"
+      ]
+    },
+    {
+      "position": 1.4690909090908844,
+      "names": [
+        "pickupCancel"
+      ]
+    }
+  ]
 }

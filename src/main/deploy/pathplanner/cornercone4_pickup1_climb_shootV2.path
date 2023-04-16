@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.9097798879358443,
-        "y": 2.1696419461214993
+        "x": 1.9326182242108072,
+        "y": 2.203899450533944
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.3600142413960046,
-        "y": 2.1239652735715735
+        "x": 3.3600599173377512,
+        "y": 2.203899450533944
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -30,12 +30,12 @@
         "y": 2.1468036098465357
       },
       "prevControl": {
-        "x": 5.164242807118093,
-        "y": 2.1239652735715735
+        "x": 5.106993695909477,
+        "y": 2.1468036098465357
       },
       "nextControl": {
-        "x": 8.08467097450267,
-        "y": 2.164526775896358
+        "x": 8.084794046109803,
+        "y": 2.1468036098465357
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -66,9 +66,10 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "levelChargeStation"
+          "levelChargeStation",
+          "throwCube"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "after",
         "waitTime": 0
       }
@@ -76,15 +77,15 @@
   ],
   "markers": [
     {
-      "position": 0.08727272727272231,
+      "position": 0.01,
       "names": [
         "goHome"
       ]
     },
     {
-      "position": 0.8872727272726982,
+      "position": 0.7,
       "names": [
-        "PIckupOut"
+        "PickupOut"
       ]
     },
     {
