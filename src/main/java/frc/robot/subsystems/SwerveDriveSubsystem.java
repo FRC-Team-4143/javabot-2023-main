@@ -17,6 +17,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.controller.Axis;
@@ -54,6 +55,7 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
     private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(3);
     private ChassisSpeeds velocity = new ChassisSpeeds();
     private SwerveDriveSignal driveSignal = new SwerveDriveSignal();
+    public boolean bumpyAuto;
 
     private SwerveModule[] modules;
 
@@ -74,7 +76,7 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
             new SwerveModule(2, Constants.SwerveConstants.Mod2.constants),
             new SwerveModule(3, Constants.SwerveConstants.Mod3.constants)
         };
-
+        bumpyAuto = false;
         Timer.delay(.1);
         resetToAbsolute();
 
@@ -238,7 +240,7 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
         double dist = visionPose.getTranslation().getDistance(pose.getTranslation());
         Transform2d vector = pose.minus(visionPose);
         Logger.log("/SwerveDriveSubsystem/VisionError", dist);
-        if(/*dpadR && */ visionPose.getX() < 4.8 &&
+        if( (visionPose.getX() < 3.75 || !bumpyAuto) &&
         visionPose.getY() > 0 + 0.38 && 
         !(visionPose.getY() > 4 && visionPose.getY() < 4.02) && 
         visionPose.getY() < 7.9248 - 0.38 && 
@@ -251,6 +253,13 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
              //   swervePoseEstimator.addVisionMeasurement(pose.transformBy(vector.div(-dist)), timestamp);
             //}
         }
+    }
+
+    public CommandBase bumpyAuto() {
+        return new FunctionalCommand(() -> {bumpyAuto = true;}, 
+    () -> {}, interrupted -> {}, ()-> {
+            return true;   
+    });
     }
 
     /**

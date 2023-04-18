@@ -65,7 +65,7 @@ public class RobotContainer4143 {
 
    // private final SkiSubsystem skiSubsystem = new SkiSubsystem();
     //private final PickupSubsystem pickupSubsystem = new PickupSubsystem();
-    private final CubeSubsystem cubeSubsystem = new CubeSubsystem();
+    private final CubeSubsystem cubeSubsystem = new CubeSubsystem(this);
     public final ConeSubsystem coneSubsystem = new ConeSubsystem();
     private final FieldPositionSubsystem fieldPositionSubsystem = new FieldPositionSubsystem();
 
@@ -145,11 +145,18 @@ public class RobotContainer4143 {
 
 
         Supplier<Pose2d> testPoseSupplier = () -> {
-            if(!blueAlliance) {
-                var targetPose = new Pose2d(15.5, 6.1, new Rotation2d(0));
+            if(DriverStation.getAlliance() == Alliance.Blue) {
+                var targetPose = new Pose2d(15.25, 6.0, new Rotation2d(0));
+                // System.out.println(targetPose.getX());
+                // System.out.println(targetPose.getY());
+                // System.out.println("blue alliance");
                 return targetPose;
             } else {
-                var targetPose = new Pose2d(15.5,FieldConstants.fieldLength - 6.1, new Rotation2d(0));
+                var targetPose = new Pose2d(15.25,FieldConstants.fieldWidth - 6.0, new Rotation2d(0));
+                // System.out.println(targetPose.getX());
+                // System.out.println(targetPose.getY());
+                // System.out.println("red alliance");
+
                 return targetPose;
             }
         };
@@ -220,8 +227,8 @@ public class RobotContainer4143 {
         operatorLT.whileTrue(cubeSubsystem.rollerReverse().unless(()-> currentMode != Constants.gamePiece.Cube));
         
         //driveLT.whileTrue(coneSubsystem.storePickup().unless(()-> currentMode != Constants.gamePiece.Cone));
-        driveLT.whileTrue(new ConeOut(coneSubsystem,this).alongWith(arm.setHybridPosition(this)));//.unless(()-> currentMode != Constants.gamePiece.Cone));
-        operatorRT.whileTrue(new ConeOut(coneSubsystem, this).alongWith(arm.setHybridPosition(this)).unless(()-> currentMode != Constants.gamePiece.Cone));
+        driveLT.whileTrue(new ConeOut(coneSubsystem,this));//.unless(()-> currentMode != Constants.gamePiece.Cone));
+        operatorRT.whileTrue(new ConeOut(coneSubsystem, this).unless(()-> currentMode != Constants.gamePiece.Cone));
         operatorLT.whileTrue(coneSubsystem.storePickup().unless(()-> currentMode != Constants.gamePiece.Cone));
 
         operatorRSU.whileTrue(cubeSubsystem.beltForward(operator.getRightYAxis()));
@@ -240,7 +247,7 @@ public class RobotContainer4143 {
         operator.nameRightBumper("Toggle Claw");
 
         //driver.getLeftBumper().whileTrue(new ProxyCommand(()->autonomousManager.autoBuilder.followPathGroup(pathGroupOnTheFly())));
-        driver.getLeftBumper().whileTrue(new DriveToPositionCommand(swerveDriveSubsystem, testPoseSupplier));
+        driver.getLeftBumper().whileTrue(new AssistedDriveToPositionCommand(swerveDriveSubsystem, testPoseSupplier, getDriveForwardAxis()));
         driver.nameLeftBumper("Auto Drive");
 
 

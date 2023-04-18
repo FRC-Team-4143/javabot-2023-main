@@ -44,10 +44,11 @@ public class CubeSubsystem extends SubsystemBase {
     DigitalInput input;
     double manualBeltPower;
     double autoBeltPower;
+    RobotContainer4143 container;
 
 
 
-    public CubeSubsystem () {
+    public CubeSubsystem (RobotContainer4143 container) {
         state = 0;
         lastSensor = false;
         beltMotor = new VictorSPX(12);
@@ -71,6 +72,7 @@ public class CubeSubsystem extends SubsystemBase {
         stuckCube = 0;
         setCube = 0;
         beltMotor.setNeutralMode(NeutralMode.Brake);
+        this.container = container;
     }
 
     public void rollersSet(double speed) { 
@@ -173,8 +175,8 @@ public class CubeSubsystem extends SubsystemBase {
             count--;
         
         if(input.get()) count = 3;
-        if(count == 1) autoBeltPower = 0;
-        if(manualBeltPower > 0) {
+        if(count == 1) { autoBeltPower = 0; container.getArm().setClawClosed(container).schedule(); }
+        if(Math.abs(manualBeltPower) > 0) {
             autoBeltPower = 0;
         }
         if(autoBeltPower > 0)

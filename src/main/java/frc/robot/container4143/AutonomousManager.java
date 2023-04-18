@@ -74,19 +74,21 @@ public class AutonomousManager {
         autoChooser.addOption("middleCubeClimb", AutonomousOption.MIDDLE_CUBE_CLIMB);
         autoChooser.addOption("load_Cone4_Climb", AutonomousOption.LOAD_CONE4_CLIMB);
         //autoChooser.addOption("load_Cone4_Get_Climb", AutonomousOption.LOAD_CONE4_GET_CLIMB);
-        autoChooser.addOption("CORNERCONE1_CLIMB", AutonomousOption.CORNERCONE1_CLIMB);
-        autoChooser.addOption("CORNER_CUBE2_CLIMB", AutonomousOption.CORNERCUBE2_CLIMB);
-        autoChooser.addOption("LOAD_CONE3_CLIMB", AutonomousOption.LOADCONE3_CLIMB);
-        autoChooser.addOption("LOAD_CUBE2_CLIMB", AutonomousOption.LOADCUBE2_CLIMB);
+        //autoChooser.addOption("CORNERCONE1_CLIMB", AutonomousOption.CORNERCONE1_CLIMB);
+        //autoChooser.addOption("CORNER_CUBE2_CLIMB", AutonomousOption.CORNERCUBE2_CLIMB);
+        //autoChooser.addOption("LOAD_CONE3_CLIMB", AutonomousOption.LOADCONE3_CLIMB);
+        //autoChooser.addOption("LOAD_CUBE2_CLIMB", AutonomousOption.LOADCUBE2_CLIMB);
         autoChooser.addOption("CORNERCUBE2_MOBILITY", AutonomousOption.CORNERCUBE2_MOBILITY);
         autoChooser.addOption("CORNER_CUBE2_CLIMB_V2", AutonomousOption.CORNERCUBE2_CLIMBV2);
         //autoChooser.addOption("cornercone3_score1", AutonomousOption.CORNERCONE3_SCORE1);
         autoChooser.addOption("loadcone3_pickup2V2", AutonomousOption.LOADCONE3_PICKUP2V2);
+        autoChooser.addOption("loadcone1_pickup2V2", AutonomousOption.LOADCONE1_PICKUP2V2);
         autoChooser.addOption("cornercone1_pickup2V2", AutonomousOption.CORNERCONE1_PICKUP2V2);
         autoChooser.addOption(("cornercone4_pickup1_climbV2"), AutonomousOption.CORNERCONE4_PICKUP1_CLIMBV2);
         autoChooser.addOption(("loadcone4_pickup1_climbV2"), AutonomousOption.LOADCONE4_PICKUP1_CLIMBV2);
-        autoChooser.addOption(("cornercone4_pickup1_climb_shootV2"), AutonomousOption.CORNERCONE4_PICKUP1_CLIMB_SHOOTV2);
-        autoChooser.addOption(("loadcone4_pickup1_climb_shootV2"), AutonomousOption.LOADCONE4_PICKUP1_CLIMB_SHOOTV2);
+        //autoChooser.addOption(("cornercone4_pickup1_climb_shootV2"), AutonomousOption.CORNERCONE4_PICKUP1_CLIMB_SHOOTV2);
+        //autoChooser.addOption(("loadcone4_pickup1_climb_shootV2"), AutonomousOption.LOADCONE4_PICKUP1_CLIMB_SHOOTV2);
+        autoChooser.addOption(("loadcone3_pickup2_climbV2"), AutonomousOption.loadcone3_pickup2_climbV2);
         SmartDashboard.putData("Autonomous Mode", autoChooser);
         
         eventMap.put("stop", runOnce(swerveDriveSubsystem::stop, swerveDriveSubsystem));
@@ -124,9 +126,12 @@ public class AutonomousManager {
                     cubeSubsystem.cubeDetected());
         eventMap.put("shootCube", cubeSubsystem.shootCube(container)
                     );
+        eventMap.put("bumpyAuto", swerveDriveSubsystem.bumpyAuto());
         eventMap.put("throwCube", sequence(
                     arm.setClawClosed(container),
+                    Commands.waitSeconds(0.1),
                     arm.setMidPosition(),
+                    Commands.waitSeconds(0.1),
                     arm.setClawOpen(container)));
 
         eventMap.put(
@@ -141,9 +146,11 @@ public class AutonomousManager {
                     arm.setClawOpen(container),
                     runOnce(() -> {//autoBuilder.resetPose(chosenAuto.get(0));
                         Pose2d targetPose = chosenAuto.get(0).getInitialHolonomicPose();
+                        
                         if(!container.blueAlliance) {
-                            targetPose = new Pose2d(targetPose.getX(),FieldConstants.fieldLength - targetPose.getY(), targetPose.getRotation());
+                            targetPose = new Pose2d(targetPose.getX(),FieldConstants.fieldWidth - targetPose.getY(), targetPose.getRotation());
                         }
+                        System.out.println(targetPose);
                     //swerveDriveSubsystem.setPose(targetPose);
                     })));
         autoBuilder = new SwerveAutoBuilder(
@@ -244,8 +251,8 @@ public class AutonomousManager {
         //CORNERCUBE2_PICKUP1_CLIMB(StartingLocation.OPEN, 1, "cornercube2_pickup1_climb", new PathConstraints(2, 2)),
         //LOADCUBE2_PICKUP1_CLIMB(StartingLocation.OPEN, 1, "loadcube2_pickup1_climb", new PathConstraints(2, 2)),
         NOTHING(StartingLocation.OPEN, 1, "Nothing", new PathConstraints(0.1, 0.1)),
-        MIDDLE_CUBE_CLIMB(StartingLocation.OPEN, 1, "middleCubeClimb", new PathConstraints(2, 2)),
-        LOAD_CONE4_CLIMB(StartingLocation.OPEN, 1, "load4ConeClimb", new PathConstraints(2, 2)),
+        MIDDLE_CUBE_CLIMB(StartingLocation.OPEN, 1, "middleCubeClimb", new PathConstraints(1.5, 1.5)),
+        LOAD_CONE4_CLIMB(StartingLocation.OPEN, 1, "load4ConeClimb", new PathConstraints(1.5, 1.5)),
         //LOAD_CONE4_GET_CLIMB(StartingLocation.OPEN, 1, "load4ConeGetClimb", new PathConstraints(2, 2)), Needs to be changed
         CORNERCONE1_CLIMB(StartingLocation.OPEN, 1, "cornercone1_climb", new PathConstraints(2, 2)),
         CORNERCUBE2_CLIMB(StartingLocation.OPEN, 1, "cornercube2_climb", new PathConstraints(2, 2)),
@@ -255,11 +262,13 @@ public class AutonomousManager {
         CORNERCUBE2_CLIMBV2(StartingLocation.OPEN, 1, "cornercube2_climbV2", new PathConstraints(2, 2)),
         //CORNERCONE3_SCORE1(StartingLocation.OPEN, 1, "cornercone3_score1", new PathConstraints(2, 2)),
         LOADCONE3_PICKUP2V2(StartingLocation.OPEN, 1, "loadcone3_pickup2V2", new PathConstraints(3.5, 3.5)),
-        CORNERCONE1_PICKUP2V2(StartingLocation.OPEN, 1, "cornercone1_pickup2V2", new PathConstraints(2.75, 2.75)),
-        CORNERCONE4_PICKUP1_CLIMBV2(StartingLocation.OPEN, 1, "cornercone4_pickup1_climbV2", new PathConstraints(3.5, 3.5)),
-        LOADCONE4_PICKUP1_CLIMBV2(StartingLocation.OPEN, 1, "loadcone4_pickup1_climbV2", new PathConstraints(3.5, 3.5)),
+        CORNERCONE1_PICKUP2V2(StartingLocation.OPEN, 1, "cornercone1_pickup2V2", new PathConstraints(3.0, 3.0)),
+        CORNERCONE4_PICKUP1_CLIMBV2(StartingLocation.OPEN, 1, "cornercone4_pickup1_climbV2", new PathConstraints(1.5, 1.5)),
+        LOADCONE4_PICKUP1_CLIMBV2(StartingLocation.OPEN, 1, "loadcone4_pickup1_climbV2", new PathConstraints(1.5, 1.5)),
         CORNERCONE4_PICKUP1_CLIMB_SHOOTV2(StartingLocation.OPEN, 1, "cornercone4_pickup1_climb_shootV2", new PathConstraints(1.5, 1.5)),
-        LOADCONE4_PICKUP1_CLIMB_SHOOTV2(StartingLocation.OPEN, 1, "loadcone4_pickup1_climb_shootV2", new PathConstraints(1.5, 1.5))
+        LOADCONE4_PICKUP1_CLIMB_SHOOTV2(StartingLocation.OPEN, 1, "loadcone4_pickup1_climb_shootV2", new PathConstraints(1.5, 1.5)),
+        loadcone3_pickup2_climbV2(StartingLocation.OPEN, 1, "loadcone3_pickup2_climbV2", new PathConstraints(3.5, 3.5)),
+        LOADCONE1_PICKUP2V2(StartingLocation.OPEN, 1, "loadcone1_pickup2V2", new PathConstraints(3.5, 3.5))
         ;
 
 

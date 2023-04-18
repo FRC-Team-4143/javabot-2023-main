@@ -21,6 +21,7 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.GlobalConstants;
 import frc.robot.Constants.gamePiece;
 import frc.robot.subsystems.LightsSubsystem;
+import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.LightsSubsystem.LEDSegment;
 
 public class Robot extends TimedRobot {
@@ -104,6 +105,7 @@ public class Robot extends TimedRobot {
         //robotContainer.swerveDriveSubsystem.resetToAbsolute();
         robotContainer.blueAlliance = DriverStation.getAlliance() == Alliance.Blue;
         robotContainer.getCubeSubsystem().state = 0;
+        robotContainer.swerveDriveSubsystem.bumpyAuto = false;
 
         // Prevent any autonomous code from overrunning into teleop
         if (autonomousCommand != null) autonomousCommand.cancel();

@@ -68,7 +68,7 @@ public class Arm extends SubsystemBase {
     private ArmFeedforward m_rotatorFeedforward;
     private double armHomeHeight = -0.001;
     private double armHomeAngle = -14;
-    private double armHybrid = -67;
+    private double armHybrid = -68;
 
     public Arm(){ 
         clawMotor = new TalonSRX(3);
@@ -252,6 +252,10 @@ public class Arm extends SubsystemBase {
         });
     }
 
+    public void setHybrid() {
+        distance = armHomeHeight; angle = armHybrid;
+    }
+
     
 
     public CommandBase setHomePosition(RobotContainer4143 container) {
@@ -273,7 +277,7 @@ public class Arm extends SubsystemBase {
             if(angle == armHomeAngle && distance == armHomeHeight){
                 return true;
             }else{
-                return false;
+                return true;
             }
             
         });

@@ -63,7 +63,7 @@ public class ConeSubsystem extends SubsystemBase{
         this.angle = angle;
         if(angle == 0) {
             rollerMotor.setIdleMode(IdleMode.kCoast);
-            rollerMotor.set(.3);
+            rollerMotor.set(1); //previously at .3
         } else {
             rollerMotor.setIdleMode(IdleMode.kBrake);
         }

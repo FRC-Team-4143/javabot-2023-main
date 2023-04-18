@@ -10,8 +10,8 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 import java.util.function.Supplier;
 
 public class DriveToPositionCommand extends CommandBase {
-    private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(6, 4);
-    private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(6, 4);
+    private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(4, 4);
+    private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(4, 4);
     private static final TrapezoidProfile.Constraints omegaConstraints = new TrapezoidProfile.Constraints(8, 8);
 
     private final SwerveDriveSubsystem swerveDriveSubsystem;
@@ -49,9 +49,9 @@ public class DriveToPositionCommand extends CommandBase {
         var robotVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(
                 swerveDriveSubsystem.getDesiredVelocity(), swerveDriveSubsystem.getRotation());
 
-        omegaController.reset(robotPose.getRotation().getRadians(), -robotVelocity.omegaRadiansPerSecond);
-        xController.reset(robotPose.getX(), -robotVelocity.vxMetersPerSecond);
-        yController.reset(robotPose.getY(), -robotVelocity.vyMetersPerSecond);
+                omegaController.reset(robotPose.getRotation().getRadians() + robotVelocity.omegaRadiansPerSecond * 1, -robotVelocity.omegaRadiansPerSecond);
+                xController.reset(robotPose.getX() + robotVelocity.vxMetersPerSecond * 1, -robotVelocity.vxMetersPerSecond);
+                yController.reset(robotPose.getY() + robotVelocity.vyMetersPerSecond * 1, -robotVelocity.vyMetersPerSecond);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class DriveToPositionCommand extends CommandBase {
         if (yController.atGoal()) ySpeed = 0;
         if (omegaController.atGoal()) omegaSpeed = 0;
 
-        swerveDriveSubsystem.setVelocity(new ChassisSpeeds(xSpeed, ySpeed, omegaSpeed), false, true); // rjs test
+        swerveDriveSubsystem.setVelocity(new ChassisSpeeds(xSpeed, ySpeed, omegaSpeed), true, true); // rjs test
     }
 
     @Override

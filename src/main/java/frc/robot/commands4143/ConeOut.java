@@ -23,6 +23,7 @@ public class ConeOut extends CommandBase{
         addRequirements(coneSubsystem);
         container.m_led.setData(container.m_ledBufferCone);
         container.currentMode = Constants.gamePiece.Cone;
+        container.getArm().setHybrid();
         //coneSubsystem.intermediatePickup();
     }
 

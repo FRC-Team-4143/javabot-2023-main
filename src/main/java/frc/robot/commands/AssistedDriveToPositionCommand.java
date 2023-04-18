@@ -11,8 +11,8 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class AssistedDriveToPositionCommand extends CommandBase {
-    private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(6, 4);
-    private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(6, 4);
+    private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(4, 4);
+    private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(4, 4);
     private static final TrapezoidProfile.Constraints omegaConstraints = new TrapezoidProfile.Constraints(8, 8);
 
     private final SwerveDriveSubsystem swerveDriveSubsystem;
@@ -21,7 +21,7 @@ public class AssistedDriveToPositionCommand extends CommandBase {
 
     private final DoubleSupplier forwardAxis;
 
-    private final ProfiledPIDController xController = new ProfiledPIDController(1.5, 0, 0, xConstraints);
+    private final ProfiledPIDController xController = new ProfiledPIDController(3, 0, 0, xConstraints);
     private final ProfiledPIDController yController = new ProfiledPIDController(3, 0, 0, yConstraints);
     private final ProfiledPIDController omegaController = new ProfiledPIDController(5, 0, 0, omegaConstraints);
 
@@ -56,9 +56,9 @@ public class AssistedDriveToPositionCommand extends CommandBase {
         var robotVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(
                 swerveDriveSubsystem.getDesiredVelocity(), swerveDriveSubsystem.getRotation());
 
-        omegaController.reset(robotPose.getRotation().getRadians(), -robotVelocity.omegaRadiansPerSecond);
-        xController.reset(robotPose.getX(), -robotVelocity.vxMetersPerSecond);
-        yController.reset(robotPose.getY(), -robotVelocity.vyMetersPerSecond);
+        omegaController.reset(robotPose.getRotation().getRadians() + robotVelocity.omegaRadiansPerSecond * 1, -robotVelocity.omegaRadiansPerSecond);
+        xController.reset(robotPose.getX() + robotVelocity.vxMetersPerSecond * 1, -robotVelocity.vxMetersPerSecond);
+        yController.reset(robotPose.getY() + robotVelocity.vyMetersPerSecond * 1, -robotVelocity.vyMetersPerSecond);
     }
 
     @Override
