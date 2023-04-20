@@ -47,7 +47,7 @@ public class Arm extends SubsystemBase {
     public CANSparkMax elevatorMotor;
     public CANSparkMax rotatorMotor; 
     public CANSparkMax elevatorMotor2;
-    private WPI_CANCoder m_rotatorEncoder; 
+    //private WPI_CANCoder m_rotatorEncoder; 
     //private SparkMaxPIDController m_pidController;
     private RelativeEncoder m_elevatorEncoder;
     private RelativeEncoder m_rotatorEncoderMotor;
@@ -68,7 +68,7 @@ public class Arm extends SubsystemBase {
     private ArmFeedforward m_rotatorFeedforward;
     private double armHomeHeight = -0.001;
     private double armHomeAngle = -14;
-    private double armHybrid = -68;
+    private double armHybrid = -69;
 
     public Arm(){ 
         clawMotor = new TalonSRX(3);
@@ -83,8 +83,8 @@ public class Arm extends SubsystemBase {
         elevatorMotor.setSmartCurrentLimit(35);
         elevatorMotor2.setSmartCurrentLimit(35);
         rotatorMotor.setSmartCurrentLimit(35);
-        m_rotatorEncoder = new WPI_CANCoder(1);
-        m_rotatorEncoder.configFactoryDefault();
+        //m_rotatorEncoder = new WPI_CANCoder(1);
+        //m_rotatorEncoder.configFactoryDefault();
         elevatorMotor2.follow(elevatorMotor, true);
         count = 0;
         clamped = false;

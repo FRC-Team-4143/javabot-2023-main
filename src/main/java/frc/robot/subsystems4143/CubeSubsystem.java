@@ -80,8 +80,8 @@ public class CubeSubsystem extends SubsystemBase {
     }
 
     public void rackOut() {
-        distance = -4.5;
-        autoBeltPower = 0.75;
+        distance = -5.5;
+        autoBeltPower = 1;
     }
 
     public void rackIn() {

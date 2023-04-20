@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.logging.Logger;
 import frc.lib.swerve.CTREConfigs;
@@ -66,10 +67,11 @@ public class Robot extends TimedRobot {
         Logger.log("/Robot/Battery Voltage", RobotController.getBatteryVoltage());
         //Logger.log("/Robot/Pressure", compressor.getPressure());
         
+
         if(robotContainer.currentMode == gamePiece.Cone){
             SmartDashboard.putString("Current Mode ", "Cone");
         }
-        else{
+        else {
             SmartDashboard.putString("Current Mode ", "Cube");
         }
         //Logger.update();
@@ -110,6 +112,8 @@ public class Robot extends TimedRobot {
         // Prevent any autonomous code from overrunning into teleop
         if (autonomousCommand != null) autonomousCommand.cancel();
     }
+
+    
 
     @Override
     public void teleopPeriodic() {}

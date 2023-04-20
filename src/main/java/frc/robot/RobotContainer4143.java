@@ -133,7 +133,7 @@ public class RobotContainer4143 {
         arm.setPosition();
         blueAlliance = DriverStation.getAlliance() == Alliance.Blue;
     }
-
+                    
     private void configureBindings() {
         SmartDashboard.putData("Set Wheel Offset", swerveDriveSubsystem.setWheelOffsets());
         SmartDashboard.putData("Set High Position", arm.setHighPosition());
@@ -142,6 +142,7 @@ public class RobotContainer4143 {
         SmartDashboard.putData("0Arm", arm.set0Arm());
         SmartDashboard.putData("0ConePickup", coneSubsystem.set0cone());
         SmartDashboard.putData("0CubePickup", cubeSubsystem.set0cube());
+        
 
 
         Supplier<Pose2d> testPoseSupplier = () -> {

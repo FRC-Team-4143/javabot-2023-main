@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.logging.LoggedReceiver;
@@ -50,6 +51,7 @@ public class AutonomousManager {
 
     private List<PathPlannerTrajectory> chosenAuto = defaultAuto.getPath();
     private static final SendableChooser<AutonomousOption> autoChooser = new SendableChooser<>();
+    private Command autonomousCommand;
 
     SwerveDriveSubsystem swerveDriveSubsystem;
     CubeSubsystem cubeSubsystem;
@@ -60,7 +62,7 @@ public class AutonomousManager {
         cubeSubsystem = container.getCubeSubsystem();
         //PickupSubsystem pickup = container.getPickup();
         initializeNetworkTables();
-
+        SmartDashboard.putData("Verify Auto", verifyAuto());
 
         // Create an event map for use in all autos
         HashMap<String, Command> eventMap = new HashMap<>();
@@ -86,6 +88,7 @@ public class AutonomousManager {
         autoChooser.addOption("cornercone1_pickup2V2", AutonomousOption.CORNERCONE1_PICKUP2V2);
         autoChooser.addOption(("cornercone4_pickup1_climbV2"), AutonomousOption.CORNERCONE4_PICKUP1_CLIMBV2);
         autoChooser.addOption(("loadcone4_pickup1_climbV2"), AutonomousOption.LOADCONE4_PICKUP1_CLIMBV2);
+        autoChooser.addOption(("cornercone1_pickup2_climbV2"), AutonomousOption.CORNERCONE1_PICKUP2_CLIMBV2);
         //autoChooser.addOption(("cornercone4_pickup1_climb_shootV2"), AutonomousOption.CORNERCONE4_PICKUP1_CLIMB_SHOOTV2);
         //autoChooser.addOption(("loadcone4_pickup1_climb_shootV2"), AutonomousOption.LOADCONE4_PICKUP1_CLIMB_SHOOTV2);
         autoChooser.addOption(("loadcone3_pickup2_climbV2"), AutonomousOption.loadcone3_pickup2_climbV2);
@@ -183,8 +186,9 @@ public class AutonomousManager {
                             option.startPosition.name() == newStartPosition && option.gamePieces == newGamePieces)
                     .toList();
 
-            if (options.size() == 1) chosenAuto = options.get(0).getPath();
-            else chosenAuto = autoChooser.getSelected().getPath();
+            //if (options.size() == 1) chosenAuto = options.get(0).getPath();
+            //else 
+            chosenAuto = autoChooser.getSelected().getPath();
 
             // Determine all of the game piece options for this starting position
             long[] gamePieceOptions = Stream.of(AutonomousOption.values())
@@ -199,10 +203,19 @@ public class AutonomousManager {
         }
     }
 
-    public Command getAutonomousCommand() {
+    public CommandBase verifyAuto() {
+        return runOnce(() -> {
+            AutonomousOption nameOfSelectedAuto = autoChooser.getSelected();
+            nameOfSelectedAuto.getPath();
+            autonomousCommand = nameOfSelectedAuto.getCommand(autoBuilder);
+            
+        }).ignoringDisable(true);
+    }
 
+    public Command getAutonomousCommand() {
+        if(autonomousCommand != null) return autonomousCommand;
         AutonomousOption nameOfSelectedAuto = autoChooser.getSelected();
-        Command autonomousCommand;
+        
 
         System.out.println(nameOfSelectedAuto);
         System.out.println(nameOfSelectedAuto.pathName);
@@ -268,7 +281,8 @@ public class AutonomousManager {
         CORNERCONE4_PICKUP1_CLIMB_SHOOTV2(StartingLocation.OPEN, 1, "cornercone4_pickup1_climb_shootV2", new PathConstraints(1.5, 1.5)),
         LOADCONE4_PICKUP1_CLIMB_SHOOTV2(StartingLocation.OPEN, 1, "loadcone4_pickup1_climb_shootV2", new PathConstraints(1.5, 1.5)),
         loadcone3_pickup2_climbV2(StartingLocation.OPEN, 1, "loadcone3_pickup2_climbV2", new PathConstraints(3.5, 3.5)),
-        LOADCONE1_PICKUP2V2(StartingLocation.OPEN, 1, "loadcone1_pickup2V2", new PathConstraints(3.5, 3.5))
+        LOADCONE1_PICKUP2V2(StartingLocation.OPEN, 1, "loadcone1_pickup2V2", new PathConstraints(3.5, 3.5)),
+        CORNERCONE1_PICKUP2_CLIMBV2(StartingLocation.OPEN, 1, "cornercone1_pickup2_climbV2", new PathConstraints(3.0, 3.0))
         ;
 
 

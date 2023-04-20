@@ -35,9 +35,9 @@ public class ConeOut extends CommandBase{
 
     @Override
     public void end(boolean interrupted){
-        coneSubsystem.setAngle(-102);//-107 at tremont
+        coneSubsystem.setAngle(-100);//-107 at tremont
         coneSubsystem.setPickupMotorSpeed(0);
-        container.getArm().setClawClosed(container).beforeStarting(new WaitCommand(0.4)).schedule();
+        container.getArm().setClawClosed(container).beforeStarting(new WaitCommand(0.5)).schedule();
     }
 
     @Override
