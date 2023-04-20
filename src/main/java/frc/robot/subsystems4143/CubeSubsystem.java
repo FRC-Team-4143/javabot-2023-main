@@ -1,6 +1,7 @@
 package frc.robot.subsystems4143;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -41,6 +42,7 @@ public class CubeSubsystem extends SubsystemBase {
     private double count;
     private int stuckCube;
     private int setCube;
+    //private Counter counter; 
     DigitalInput input;
     double manualBeltPower;
     double autoBeltPower;
@@ -51,6 +53,7 @@ public class CubeSubsystem extends SubsystemBase {
     public CubeSubsystem (RobotContainer4143 container) {
         state = 0;
         lastSensor = false;
+        
         beltMotor = new VictorSPX(12);
         rollerMotor = new VictorSPX(11);
         rackMotor = new CANSparkMax(4, MotorType.kBrushless);
@@ -66,6 +69,11 @@ public class CubeSubsystem extends SubsystemBase {
         m_cubeEncoder.setPositionConversionFactor(1);
         distance = 0;
         input = new DigitalInput(9);
+        //counter = new Counter(Counter.Mode.kTwoPulse);
+        //counter.setUpSource(input);
+        //counter.setDownSource(input);
+        //counter.setUpSourceEdge(true, false);
+        //counter.setDownSourceEdge(false, false);
         manualBeltPower = 0;
         autoBeltPower = 0;
         count = 0;
@@ -81,7 +89,8 @@ public class CubeSubsystem extends SubsystemBase {
 
     public void rackOut() {
         distance = -5.5;
-        autoBeltPower = 1;
+        autoBeltPower = 0.85; //was 1 in qual 17
+        state = 0;
     }
 
     public void rackIn() {
@@ -173,12 +182,13 @@ public class CubeSubsystem extends SubsystemBase {
         
         if(count > 0) 
             count--;
-        
-        if(input.get()) count = 3;
+        //SmartDashboard.putNumber("Sensor Counter", counter.get());
+        if(input.get()) count = 2; //was 3 qual 17
         if(count == 1) { autoBeltPower = 0; container.getArm().setClawClosed(container).schedule(); }
         if(Math.abs(manualBeltPower) > 0) {
             autoBeltPower = 0;
         }
+        //counter.reset();
         if(autoBeltPower > 0)
             beltMotor.set(ControlMode.PercentOutput, autoBeltPower);
         else

@@ -30,12 +30,12 @@
         "y": 0.8450184421736366
       },
       "prevControl": {
-        "x": 4.550412089896447,
-        "y": 0.6308618901744882
+        "x": 4.547842181313801,
+        "y": 0.6594764977412013
       },
       "nextControl": {
-        "x": 8.315933213063007,
-        "y": 0.9934676279608965
+        "x": 7.733555638051447,
+        "y": 0.9249526191360088
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -146,9 +146,10 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "openClaw"
+          "openClaw",
+          "cubeDetected"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "after",
         "waitTime": 0
       }

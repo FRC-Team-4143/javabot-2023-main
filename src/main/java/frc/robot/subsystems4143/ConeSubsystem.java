@@ -21,7 +21,7 @@ public class ConeSubsystem extends SubsystemBase{
     public double conekP, conekI, conekD ;
     private RelativeEncoder extenderMotorEncoder;
     private ProfiledPIDController extenderMotorController;
-    private static final TrapezoidProfile.Constraints coneConstraints = new TrapezoidProfile.Constraints(720, 720);
+    private static final TrapezoidProfile.Constraints coneConstraints = new TrapezoidProfile.Constraints(1000, 1000); //was 720 in qual 6
 
     //private static final TrapezoidProfile.Constraints cubeConstraints = new TrapezoidProfile.Constraints(100, 100);
    

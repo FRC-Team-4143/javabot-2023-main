@@ -68,7 +68,7 @@ public class Arm extends SubsystemBase {
     private ArmFeedforward m_rotatorFeedforward;
     private double armHomeHeight = -0.001;
     private double armHomeAngle = -14;
-    private double armHybrid = -69;
+    private double armHybrid = -71;  // waa -69 first q6
 
     public Arm(){ 
         clawMotor = new TalonSRX(3);
