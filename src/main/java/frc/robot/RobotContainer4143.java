@@ -230,7 +230,7 @@ public class RobotContainer4143 {
         //driveLT.whileTrue(coneSubsystem.storePickup().unless(()-> currentMode != Constants.gamePiece.Cone));
         driveLT.whileTrue(new ConeOut(coneSubsystem,this));//.unless(()-> currentMode != Constants.gamePiece.Cone));
         operatorRT.whileTrue(new ConeOut(coneSubsystem, this).unless(()-> currentMode != Constants.gamePiece.Cone));
-        operatorLT.whileTrue(coneSubsystem.storePickup().unless(()-> currentMode != Constants.gamePiece.Cone));
+        operatorLT.whileTrue(coneSubsystem.rollerReverse().unless(()-> currentMode != Constants.gamePiece.Cone));
 
         operatorRSU.whileTrue(cubeSubsystem.beltForward(operator.getRightYAxis()));
         operatorRSD.whileTrue(cubeSubsystem.beltReverse(operator.getRightYAxis()));
@@ -250,7 +250,8 @@ public class RobotContainer4143 {
         //driver.getLeftBumper().whileTrue(new ProxyCommand(()->autonomousManager.autoBuilder.followPathGroup(pathGroupOnTheFly())));
         driver.getLeftBumper().whileTrue(new AssistedDriveToPositionCommand(swerveDriveSubsystem, testPoseSupplier, getDriveForwardAxis()));
         driver.nameLeftBumper("Auto Drive");
-
+        operator.getLeftBumper().whileTrue(coneSubsystem.home());
+        operator.nameLeftBumper("Cone Home");
 
 
         // X, Y, A, and B buttons

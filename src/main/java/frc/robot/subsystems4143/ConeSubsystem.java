@@ -97,8 +97,8 @@ public class ConeSubsystem extends SubsystemBase{
     // }
     
     public CommandBase rollerReverse() {
-        return runEnd(() -> {setPickupMotorSpeed(-0.5);}, 
-        () -> {setPickupMotorSpeed(0);});
+        return runEnd(() -> {setPickupMotorSpeed(0); angle = -168;}, 
+        () -> {setPickupMotorSpeed(0); angle = 0;});
     }
 
     public CommandBase set0cone() {
@@ -110,7 +110,10 @@ public class ConeSubsystem extends SubsystemBase{
         }).ignoringDisable(true);
     }
 
-  
+    public CommandBase home() {
+        return runEnd(() -> {extenderMotorEncoder.setPosition(0); extenderMotor.set(0.3); angle = 0;}, 
+        () -> {extenderMotorEncoder.setPosition(0); extenderMotor.set(0); angle = 0;});
+    }  
 
     @Override
     public void periodic() {

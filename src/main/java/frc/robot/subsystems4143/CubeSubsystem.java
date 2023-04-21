@@ -42,7 +42,7 @@ public class CubeSubsystem extends SubsystemBase {
     private double count;
     private int stuckCube;
     private int setCube;
-    //private Counter counter; 
+    private Counter counter; 
     DigitalInput input;
     double manualBeltPower;
     double autoBeltPower;
@@ -69,11 +69,11 @@ public class CubeSubsystem extends SubsystemBase {
         m_cubeEncoder.setPositionConversionFactor(1);
         distance = 0;
         input = new DigitalInput(9);
-        //counter = new Counter(Counter.Mode.kTwoPulse);
-        //counter.setUpSource(input);
-        //counter.setDownSource(input);
-        //counter.setUpSourceEdge(true, false);
-        //counter.setDownSourceEdge(false, false);
+        counter = new Counter(Counter.Mode.kTwoPulse);
+        counter.setUpSource(input);
+        counter.setDownSource(input);
+        counter.setUpSourceEdge(true, true);
+        counter.setDownSourceEdge(false, false);
         manualBeltPower = 0;
         autoBeltPower = 0;
         count = 0;
@@ -81,6 +81,7 @@ public class CubeSubsystem extends SubsystemBase {
         setCube = 0;
         beltMotor.setNeutralMode(NeutralMode.Brake);
         this.container = container;
+        counter.reset();
     }
 
     public void rollersSet(double speed) { 
@@ -91,6 +92,7 @@ public class CubeSubsystem extends SubsystemBase {
         distance = -5.5;
         autoBeltPower = 0.85; //was 1 in qual 17
         state = 0;
+        counter.reset();
     }
 
     public void rackIn() {
@@ -122,7 +124,7 @@ public class CubeSubsystem extends SubsystemBase {
             if(stuckCube % 15 == 0) distance = -1.5; 
             if(stuckCube % 30 == 0) distance = 0;
             stuckCube++; },
-        interrupted -> {distance = 0; autoBeltPower = 0;}, () -> state >= 2);
+        interrupted -> {distance = 0; autoBeltPower = 0;}, () -> counter.get() >= 2);
     }
 
     public CommandBase shootCube(RobotContainer4143 container) {
@@ -182,13 +184,14 @@ public class CubeSubsystem extends SubsystemBase {
         
         if(count > 0) 
             count--;
-        //SmartDashboard.putNumber("Sensor Counter", counter.get());
-        if(input.get()) count = 2; //was 3 qual 17
-        if(count == 1) { autoBeltPower = 0; container.getArm().setClawClosed(container).schedule(); }
+        SmartDashboard.putNumber("Sensor Counter", counter.get());
+        //if(input.get()) count = 2; //was 3 qual 17
+        //if(count == 1) { autoBeltPower = 0; container.getArm().setClawClosed(container).schedule(); }
+        if(autoBeltPower > 0 && counter.get() >= 2) { autoBeltPower = 0; container.getArm().setClawClosed(container).schedule(); }
         if(Math.abs(manualBeltPower) > 0) {
             autoBeltPower = 0;
         }
-        //counter.reset();
+        
         if(autoBeltPower > 0)
             beltMotor.set(ControlMode.PercentOutput, autoBeltPower);
         else

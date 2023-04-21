@@ -87,6 +87,7 @@ public class AutonomousManager {
         autoChooser.addOption("loadcone3_pickup2V2_Blue", AutonomousOption.LOADCONE3_PICKUP2V2_BLUE);
         autoChooser.addOption("loadcone1_pickup2V2", AutonomousOption.LOADCONE1_PICKUP2V2);
         autoChooser.addOption("cornercone1_pickup2V2", AutonomousOption.CORNERCONE1_PICKUP2V2);
+        autoChooser.addOption("cornercone1_pickup2V2_Blue", AutonomousOption.CORNERCONE1_PICKUP2V2_BLUE);
         autoChooser.addOption(("cornercone4_pickup1_climbV2"), AutonomousOption.CORNERCONE4_PICKUP1_CLIMBV2);
         autoChooser.addOption(("loadcone4_pickup1_climbV2"), AutonomousOption.LOADCONE4_PICKUP1_CLIMBV2);
         autoChooser.addOption(("cornercone1_pickup2_climbV2"), AutonomousOption.CORNERCONE1_PICKUP2_CLIMBV2);
@@ -278,13 +279,15 @@ public class AutonomousManager {
         LOADCONE3_PICKUP2V2(StartingLocation.OPEN, 1, "loadcone3_pickup2V2", new PathConstraints(3.5, 3.5)),
         LOADCONE3_PICKUP2V2_BLUE(StartingLocation.OPEN, 1, "loadcone3_pickup2V2_Blue", new PathConstraints(3.5, 3.5)),
         CORNERCONE1_PICKUP2V2(StartingLocation.OPEN, 1, "cornercone1_pickup2V2", new PathConstraints(3.0, 3.0)),
+        CORNERCONE1_PICKUP2V2_BLUE(StartingLocation.OPEN, 1, "cornercone1_pickup2V2_Blue", new PathConstraints(3.0, 3.0)),
         CORNERCONE4_PICKUP1_CLIMBV2(StartingLocation.OPEN, 1, "cornercone4_pickup1_climbV2", new PathConstraints(1.5, 1.5)),
         LOADCONE4_PICKUP1_CLIMBV2(StartingLocation.OPEN, 1, "loadcone4_pickup1_climbV2", new PathConstraints(1.5, 1.5)),
         CORNERCONE4_PICKUP1_CLIMB_SHOOTV2(StartingLocation.OPEN, 1, "cornercone4_pickup1_climb_shootV2", new PathConstraints(1.5, 1.5)),
         LOADCONE4_PICKUP1_CLIMB_SHOOTV2(StartingLocation.OPEN, 1, "loadcone4_pickup1_climb_shootV2", new PathConstraints(1.5, 1.5)),
         loadcone3_pickup2_climbV2(StartingLocation.OPEN, 1, "loadcone3_pickup2_climbV2", new PathConstraints(0, 3.5)),
         LOADCONE1_PICKUP2V2(StartingLocation.OPEN, 1, "loadcone1_pickup2V2", new PathConstraints(3.5, 3.5)),
-        CORNERCONE1_PICKUP2_CLIMBV2(StartingLocation.OPEN, 1, "cornercone1_pickup2_climbV2", new PathConstraints(0, 3.0))
+        CORNERCONE1_PICKUP2_CLIMBV2(StartingLocation.OPEN, 1, "cornercone1_pickup2_climbV2", new PathConstraints(0, 3.0)),
+        
         ;
 
 
