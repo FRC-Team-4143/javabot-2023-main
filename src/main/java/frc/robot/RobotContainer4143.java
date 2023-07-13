@@ -248,8 +248,8 @@ public class RobotContainer4143 {
         operator.nameRightBumper("Toggle Claw");
 
         //driver.getLeftBumper().whileTrue(new ProxyCommand(()->autonomousManager.autoBuilder.followPathGroup(pathGroupOnTheFly())));
-        driver.getLeftBumper().whileTrue(new AssistedDriveToPositionCommand(swerveDriveSubsystem, testPoseSupplier, getDriveForwardAxis()));
-        driver.nameLeftBumper("Auto Drive");
+        driver.getLeftBumper().whileTrue(arm.clawSenseColor(this));
+        driver.nameLeftBumper("Sense Cone");
         operator.getLeftBumper().whileTrue(coneSubsystem.home());
         operator.nameLeftBumper("Cone Home");
 
