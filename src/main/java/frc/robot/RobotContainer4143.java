@@ -72,6 +72,7 @@ public class RobotContainer4143 {
     public AddressableLED m_led = new AddressableLED(0);
     public AddressableLEDBuffer m_ledBufferCube = new AddressableLEDBuffer(15*3);
     public AddressableLEDBuffer m_ledBufferCone = new AddressableLEDBuffer(15*3);
+    public AddressableLEDBuffer m_ledBufferGreen = new AddressableLEDBuffer(15*3);
 
     public AutonomousManager autonomousManager;
     
@@ -120,7 +121,10 @@ public class RobotContainer4143 {
         }
         for (var i = 0; i < m_ledBufferCube.getLength(); i++) {
             m_ledBufferCube.setRGB(i, 160/2, 32/2, 240/2);
-      }
+        }
+        for (var i = 0; i < m_ledBufferCube.getLength(); i++) {
+            m_ledBufferGreen.setRGB(i, 0, 255, 0);
+        }
         m_led.setLength(m_ledBufferCube.getLength());
         m_led.setData(m_ledBufferCube);
         m_led.start();
@@ -143,7 +147,7 @@ public class RobotContainer4143 {
         SmartDashboard.putData("0ConePickup", coneSubsystem.set0cone());
         SmartDashboard.putData("0CubePickup", cubeSubsystem.set0cube());
         
-
+        SmartDashboard.putBoolean("Piece Sensor", arm.returnSensor());
 
         Supplier<Pose2d> testPoseSupplier = () -> {
             if(DriverStation.getAlliance() == Alliance.Blue) {
@@ -248,8 +252,8 @@ public class RobotContainer4143 {
         operator.nameRightBumper("Toggle Claw");
 
         //driver.getLeftBumper().whileTrue(new ProxyCommand(()->autonomousManager.autoBuilder.followPathGroup(pathGroupOnTheFly())));
-        driver.getLeftBumper().whileTrue(arm.clawSenseColor(this));
-        driver.nameLeftBumper("Sense Cone");
+        driver.getLeftBumper().whileTrue(arm.clawSensePiece(this));
+        driver.nameLeftBumper("Sense Piece");
         operator.getLeftBumper().whileTrue(coneSubsystem.home());
         operator.nameLeftBumper("Cone Home");
 

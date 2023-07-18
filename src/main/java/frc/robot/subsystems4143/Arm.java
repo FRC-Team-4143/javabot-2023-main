@@ -37,11 +37,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ColorMatch;
-import com.revrobotics.ColorMatchResult;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Arm extends SubsystemBase {
     // private SparkMaxPIDController m_pidController;
@@ -75,12 +71,7 @@ public class Arm extends SubsystemBase {
     private double armHomeAngle = -14;
     private double armHybrid = -71;  // waa -69 first q6
 
-    private final ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
-    private final ColorMatch colorMatcher = new ColorMatch();
-
-    private final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
-    private final Color kBlueTarget = new Color(0.143, 0.427, 0.429);
-    private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
+    DigitalInput pieceSensor;
 
     public Arm(){ 
         clawMotor = new TalonSRX(3);
@@ -139,9 +130,8 @@ public class Arm extends SubsystemBase {
     elevatorMotorController = new ProfiledPIDController(elevatorkP, elevatorkI, elevatorkD, elevatorConstraints);
     rotatorMotorController = new ProfiledPIDController(rotatorkP, rotatorkI, rotatorkD, rotatorConstraints);
 
-    colorMatcher.addColorMatch(kYellowTarget);
-    colorMatcher.addColorMatch(kRedTarget);
-    colorMatcher.addColorMatch(kBlueTarget);
+    pieceSensor = new DigitalInput(8);
+
     }
 
     
@@ -189,23 +179,16 @@ public class Arm extends SubsystemBase {
         return clamped;
     }
 
+    public boolean returnSensor(){
+        return !pieceSensor.get();
+    }
+
     public CommandBase clawToggle(RobotContainer4143 container) {
         return new ConditionalCommand(setClawOpen(container), setClawClosed(container), this::returnClamped);
     }
 
-    public CommandBase clawSenseColor(RobotContainer4143 container) {
-        Color detectedColor = colorSensor.getColor();
-        ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
-        SmartDashboard.putNumber("Red", detectedColor.red);
-        SmartDashboard.putNumber("Green", detectedColor.green);
-        SmartDashboard.putNumber("Blue", detectedColor.blue);
-
-        if (match.color == kYellowTarget){
-            return setClawClosed(container);
-        }
-        else{
-            return setClawOpen(container);
-        }
+    public CommandBase clawSensePiece(RobotContainer4143 container) {
+        return new ConditionalCommand(setClawOpen(container), setClawClosed(container), this::returnSensor);
     }
 
 
