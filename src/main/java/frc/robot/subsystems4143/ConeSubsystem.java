@@ -4,13 +4,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -69,7 +69,7 @@ public class ConeSubsystem extends SubsystemBase{
         }
     }
 
-    public CommandBase storePickup() { 
+    public Command storePickup() { 
     return new FunctionalCommand(() -> {}, 
     () -> {
             angle = 0;
@@ -79,7 +79,7 @@ public class ConeSubsystem extends SubsystemBase{
     });
     }
 
-    // public CommandBase intermediatePickup () { 
+    // public Command intermediatePickup () { 
     // return new FunctionalCommand(() -> {}, 
     // () -> {
     //         angle = -106;
@@ -87,7 +87,7 @@ public class ConeSubsystem extends SubsystemBase{
     //     return true;
     // });}
 
-    // public CommandBase extendPickup() {
+    // public Command extendPickup() {
     // return new FunctionalCommand(() -> {}, 
     // () -> {
     //         angle = -168;
@@ -96,12 +96,12 @@ public class ConeSubsystem extends SubsystemBase{
     // });
     // }
     
-    public CommandBase rollerReverse() {
+    public Command rollerReverse() {
         return runEnd(() -> {setPickupMotorSpeed(0); angle = -168;}, 
         () -> {setPickupMotorSpeed(0); angle = 0;});
     }
 
-    public CommandBase set0cone() {
+    public Command set0cone() {
         return runOnce(() -> {
             extenderMotorEncoder.setPosition(0);
             angle = 0;
@@ -110,7 +110,7 @@ public class ConeSubsystem extends SubsystemBase{
         }).ignoringDisable(true);
     }
 
-    public CommandBase home() {
+    public Command home() {
         return runEnd(() -> {extenderMotorEncoder.setPosition(0); extenderMotor.set(0.3); angle = 0;}, 
         () -> {extenderMotorEncoder.setPosition(0); extenderMotor.set(0); angle = 0;});
     }  

@@ -1,15 +1,15 @@
 package frc.robot.subsystems4143;
 
-import com.ctre.phoenixpro.Utils;
-import com.ctre.phoenixpro.configs.TalonFXConfiguration;
-import com.ctre.phoenixpro.controls.DutyCycleOut;
-import com.ctre.phoenixpro.controls.Follower;
-import com.ctre.phoenixpro.controls.VelocityDutyCycle;
-import com.ctre.phoenixpro.controls.VoltageOut;
-import com.ctre.phoenixpro.hardware.TalonFX;
-import com.ctre.phoenixpro.signals.InvertedValue;
-import com.ctre.phoenixpro.signals.NeutralModeValue;
-import com.ctre.phoenixpro.wpiutils.MotorSafetyImplem;
+import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.wpiutils.MotorSafetyImplem;
 
 import javax.naming.directory.DirContext;
 
@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.MotorSafety;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 
 public class SwerveModule {
     public int moduleNumber;
@@ -41,8 +41,8 @@ public class SwerveModule {
     private TalonFX driveMotor;
     private AnalogEncoder analogEncoder;
     private double lastAngle;
-    private final DutyCycleOut driveOut = new DutyCycleOut(0,false,false);
-    private final VelocityDutyCycle driveVelOut = new VelocityDutyCycle(0,true,0,0,false);
+    private final DutyCycleOut driveOut = new DutyCycleOut(0.0,false,false,false,false);
+    private final VelocityDutyCycle driveVelOut = new VelocityDutyCycle(0,0,true,0,0,false,false,false);
     
     SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(
             Constants.SwerveConstants.driveKS, Constants.SwerveConstants.driveKV, Constants.SwerveConstants.driveKA);
@@ -230,7 +230,7 @@ public class SwerveModule {
         driveConfiguration.CurrentLimits.SupplyCurrentLimitEnable = Constants.SwerveConstants.driveEnableCurrentLimit;
         
         driveMotor.getConfigurator().apply(driveConfiguration);
-        driveMotor.setRotorPosition(0);
+        driveMotor.setPosition(0);
         driveMotor.setSafetyEnabled(false);
         //driveOut.EnableFOC = true;
         
@@ -288,7 +288,7 @@ public class SwerveModule {
     }
 
     public double getDriveVoltage() {
-        return driveMotor.getBridgeOuput().getValue().value;
+        return driveMotor.getBridgeOutput().getValue().value;
         //return driveMotor.getMotorOutputVoltage();
     }
 

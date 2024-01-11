@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import frc.lib.controller.Axis;
@@ -131,7 +130,7 @@ public class RobotContainer4143 {
     
         configureBindings();
         arm.setPosition();
-        blueAlliance = DriverStation.getAlliance() == Alliance.Blue;
+        blueAlliance = DriverStation.getAlliance().get() == Alliance.Blue;
     }
                     
     private void configureBindings() {
@@ -146,7 +145,7 @@ public class RobotContainer4143 {
 
 
         Supplier<Pose2d> testPoseSupplier = () -> {
-            if(DriverStation.getAlliance() == Alliance.Blue) {
+            if(DriverStation.getAlliance().get() == Alliance.Blue) {
                 var targetPose = new Pose2d(15.25, 6.0, new Rotation2d(0));
                 // System.out.println(targetPose.getX());
                 // System.out.println(targetPose.getY());
@@ -475,11 +474,11 @@ public class RobotContainer4143 {
         return autonomousManager.getAutonomousCommand();
     }
 
-    public CommandBase coneMode() {
+    public Command coneMode() {
         return runOnce(() -> {currentMode = gamePiece.Cone; m_led.setData(m_ledBufferCone);}).ignoringDisable(true);    
     }
 
-    public CommandBase cubeMode() {
+    public Command cubeMode() {
         return runOnce(() -> {currentMode = gamePiece.Cube; m_led.setData(m_ledBufferCube);}).ignoringDisable(true);    
     }
 

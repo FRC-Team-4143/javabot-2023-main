@@ -1,9 +1,9 @@
 package frc.robot.commands4143;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems4143.Arm;
 
-public class ElevatorUp extends CommandBase{
+public class ElevatorUp extends Command{
     private Arm arm;
     
     public ElevatorUp(Arm arm){

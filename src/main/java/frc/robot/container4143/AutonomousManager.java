@@ -21,7 +21,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.logging.LoggedReceiver;
@@ -205,7 +205,7 @@ public class AutonomousManager {
         }
     }
 
-    public CommandBase verifyAuto() {
+    public Command verifyAuto() {
         return runOnce(() -> {
             AutonomousOption nameOfSelectedAuto = autoChooser.getSelected();
             nameOfSelectedAuto.getPath();

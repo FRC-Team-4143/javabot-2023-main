@@ -5,12 +5,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-public class AimAtPoseCommand extends CommandBase {
+public class AimAtPoseCommand extends Command {
     private static final TrapezoidProfile.Constraints omegaConstraints = new TrapezoidProfile.Constraints(8, 8);
     private final ProfiledPIDController omegaController = new ProfiledPIDController(5, 0, 0, omegaConstraints);
 

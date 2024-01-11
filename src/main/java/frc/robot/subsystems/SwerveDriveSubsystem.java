@@ -16,7 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -103,7 +103,7 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
     }
 
     //4143
-    public CommandBase setWheelOffsets() {
+    public Command setWheelOffsets() {
         return runOnce(() -> {
             for (SwerveModule module : modules) {
                 module.setWheelOffsets();
@@ -118,7 +118,7 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
             this.dpadR = dpadR.getAsBoolean();
            });
     }
-    public CommandBase driveForward(double forward, double strafe, double rotation, boolean isFieldOriented, double timeOut) {
+    public Command driveForward(double forward, double strafe, double rotation, boolean isFieldOriented, double timeOut) {
         return run(() -> {
             setVelocity(new ChassisSpeeds(forward, strafe, rotation), isFieldOriented);
            }).withTimeout(timeOut);
@@ -255,7 +255,7 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Updatable {
         }
     }
 
-    public CommandBase bumpyAuto() {
+    public Command bumpyAuto() {
         return new FunctionalCommand(() -> {bumpyAuto = true;}, 
     () -> {}, interrupted -> {}, ()-> {
             return true;   

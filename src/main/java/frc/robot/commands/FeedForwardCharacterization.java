@@ -3,7 +3,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.lib.math.PolynomialRegression;
 import java.util.LinkedList;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class FeedForwardCharacterization extends CommandBase {
+public class FeedForwardCharacterization extends Command {
     private static final double startDelaySecs = 1.0;
     private static final double rampRateVoltsPerSecSquared = 0.1;
     private static final boolean disableSquaring = true;

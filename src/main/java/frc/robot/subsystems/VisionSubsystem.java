@@ -154,7 +154,7 @@ public class VisionSubsystem extends SubsystemBase {
     private Optional<EstimatedRobotPose> calculateLLApriltagEstimate() {
         if (visionDisabled || getLimelightMode() != LimelightMode.APRILTAG) return Optional.empty();
         // gets the botpose array from the limelight and a timestamp
-        double[] botposeArray = DriverStation.getAlliance() == Alliance.Red
+        double[] botposeArray = DriverStation.getAlliance().get() == Alliance.Red
                 ? botposeRedReceiver.getDoubleArray()
                 : botposeBlueReceiver.getDoubleArray(); // double[] {x, y, z, roll, pitch, yaw}
         double timestamp = Timer.getFPGATimestamp() - limelightLatencyReceiver.getDouble() / 1000.0;
@@ -170,7 +170,7 @@ public class VisionSubsystem extends SubsystemBase {
                                     Math.toRadians(botposeArray[5])))
                     .transformBy(VisionConstants.limelightCameraToRobot);
                     timestamp = Timer.getFPGATimestamp() - botposeArray[6] / 1000.0; //test botpose
-            return Optional.of(new EstimatedRobotPose(botPose, timestamp, null));
+            return Optional.of(new EstimatedRobotPose(botPose, timestamp, null, null));
         } else {
             return Optional.empty();
         }

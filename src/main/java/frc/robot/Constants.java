@@ -201,7 +201,7 @@ public final class Constants {
 
         public static void setAprilTagOrigin() {
             APRIL_TAG_FIELD_LAYOUT.setOrigin(
-                    DriverStation.getAlliance() == Alliance.Red
+                    DriverStation.getAlliance().get() == Alliance.Red
                             ? OriginPosition.kRedAllianceWallRightSide
                             : OriginPosition.kBlueAllianceWallRightSide);
         }

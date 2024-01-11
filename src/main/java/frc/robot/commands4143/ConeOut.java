@@ -1,12 +1,12 @@
 package frc.robot.commands4143;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer4143;
 import frc.robot.subsystems4143.ConeSubsystem;
 import frc.robot.Constants;
 
-public class ConeOut extends CommandBase{
+public class ConeOut extends Command{
     private ConeSubsystem coneSubsystem;
     public RobotContainer4143 container;
 

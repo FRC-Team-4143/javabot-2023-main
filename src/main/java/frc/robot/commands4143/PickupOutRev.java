@@ -1,6 +1,6 @@
 package frc.robot.commands4143;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems4143.PickupSubsystem;
 import frc.robot.Constants;
 import frc.robot.RobotContainer4143;
@@ -8,7 +8,7 @@ import frc.robot.Constants.gamePiece;
 import frc.robot.subsystems4143.Arm;
 
 
-public class PickupOutRev extends CommandBase{
+public class PickupOutRev extends Command{
     private PickupSubsystem pickupSubsystem;
     private Arm arm;
     private int count;

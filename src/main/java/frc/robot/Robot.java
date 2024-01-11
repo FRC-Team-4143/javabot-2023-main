@@ -3,7 +3,7 @@ package frc.robot;
 import java.io.IOException;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.logging.Logger;
 import frc.lib.swerve.CTREConfigs;
@@ -84,7 +84,7 @@ public class Robot extends TimedRobot {
         // Set april tags to use the correct origin (red or blue corner)
         FieldConstants.setAprilTagOrigin();
         //robotContainer.swerveDriveSubsystem.resetToAbsolute();
-        robotContainer.blueAlliance = DriverStation.getAlliance() == Alliance.Blue;
+        robotContainer.blueAlliance = DriverStation.getAlliance().get() == Alliance.Blue;
         System.out.println(RobotController.getFPGATime());
         autonomousCommand = robotContainer.getAutonomousCommand();
         System.out.println(RobotController.getFPGATime());
@@ -105,7 +105,7 @@ public class Robot extends TimedRobot {
         FieldConstants.setAprilTagOrigin();
         //robotContainer.getPickup().solenoidStart();
         //robotContainer.swerveDriveSubsystem.resetToAbsolute();
-        robotContainer.blueAlliance = DriverStation.getAlliance() == Alliance.Blue;
+        robotContainer.blueAlliance = DriverStation.getAlliance().get() == Alliance.Blue;
         robotContainer.getCubeSubsystem().state = 0;
         robotContainer.swerveDriveSubsystem.bumpyAuto = false;
 

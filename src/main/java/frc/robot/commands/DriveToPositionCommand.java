@@ -5,11 +5,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import java.util.function.Supplier;
 
-public class DriveToPositionCommand extends CommandBase {
+public class DriveToPositionCommand extends Command {
     private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(4, 4);
     private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(4, 4);
     private static final TrapezoidProfile.Constraints omegaConstraints = new TrapezoidProfile.Constraints(8, 8);

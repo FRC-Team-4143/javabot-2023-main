@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import com.revrobotics.RelativeEncoder;
 // import com.revrobotics.SparkMaxPIDController;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
@@ -32,12 +32,12 @@ public class SkiSubsystem extends SubsystemBase {
         skiMotor.set(ControlMode.PercentOutput, clawSpeed);
     }
    
-    public CommandBase setSkiUp() {
+    public Command setSkiUp() {
             return runEnd(() -> {skiMotor.set(ControlMode.PercentOutput,-.75);}, 
             () -> skiMotor.set(ControlMode.PercentOutput, 0.0));
     }
     
-    public CommandBase setSkiDown() {
+    public Command setSkiDown() {
         return runEnd(() -> {skiMotor.set(ControlMode.PercentOutput,0.75);}, 
         () -> skiMotor.set(ControlMode.PercentOutput, 0.0));
     }

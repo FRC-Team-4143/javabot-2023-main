@@ -13,7 +13,7 @@ import frc.robot.container4143.CustomXboxController;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class CubeSubsystem extends SubsystemBase {
@@ -99,27 +99,27 @@ public class CubeSubsystem extends SubsystemBase {
         distance = 0;
     }
 
-    public CommandBase pickupcancel() { return runOnce(() -> {rackIn();
+    public Command pickupcancel() { return runOnce(() -> {rackIn();
         rollersSet(0);});}
 
-    public CommandBase rollercancel() { return runOnce(() -> {rollersSet(0);});}
+    public Command rollercancel() { return runOnce(() -> {rollersSet(0);});}
 
-    public CommandBase rollerReverse() {
+    public Command rollerReverse() {
         return runEnd(() -> {rollersSet(0.7);}, 
         () -> {rollersSet(0);});
     }
     
-    public CommandBase beltForward(Axis rightStick) {
+    public Command beltForward(Axis rightStick) {
         return new FunctionalCommand(() -> {}, () -> {manualBeltPower = ( -1* Math.abs(rightStick.get()));},
         interrupted -> {manualBeltPower = ( 0.0);}, () -> false);
     }
 
-    public CommandBase beltReverse(Axis rightStick) {
+    public Command beltReverse(Axis rightStick) {
         return new FunctionalCommand(() -> {}, () -> {manualBeltPower = (1* Math.abs(rightStick.get()));},
         interrupted -> {manualBeltPower = ( 0.0);}, () -> false);
     }
 
-    public CommandBase cubeDetected() {
+    public Command cubeDetected() {
         return new FunctionalCommand(() -> {stuckCube = 1;}, () -> {
             if(stuckCube % 15 == 0) distance = -1.5; 
             if(stuckCube % 30 == 0) distance = 0;
@@ -127,7 +127,7 @@ public class CubeSubsystem extends SubsystemBase {
         interrupted -> {distance = 0; autoBeltPower = 0;}, () -> counter.get() >= 2);
     }
 
-    public CommandBase shootCube(RobotContainer4143 container) {
+    public Command shootCube(RobotContainer4143 container) {
         return new FunctionalCommand(() -> {setCube = 0;}, () -> {
             if(setCube == 0) { 
                 beltMotor.set(ControlMode.PercentOutput, -0.5); 
@@ -150,7 +150,7 @@ public class CubeSubsystem extends SubsystemBase {
     }
 
 
-    public CommandBase set0cube() {
+    public Command set0cube() {
         return runOnce(() -> {
             m_cubeEncoder.setPosition(0);
             distance=0;

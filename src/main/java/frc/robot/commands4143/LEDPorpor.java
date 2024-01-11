@@ -1,10 +1,10 @@
 package frc.robot.commands4143;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
-public class LEDPorpor extends CommandBase{
+public class LEDPorpor extends Command{
     private AddressableLED m_led;
     private AddressableLEDBuffer m_ledBuffer;
     

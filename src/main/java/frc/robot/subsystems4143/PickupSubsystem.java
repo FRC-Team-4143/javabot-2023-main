@@ -7,7 +7,7 @@ import frc.robot.container4143.CustomXboxController;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.controller.Axis;
@@ -60,21 +60,21 @@ public class PickupSubsystem extends SubsystemBase {
             bottomroller.set(speed*.75);}
     //public void pickupOff() {m_doubleSolenoid.set(DoubleSolenoid.Value.kOff);}
 
-    // public CommandBase pickupExtend() {
+    // public Command pickupExtend() {
     //     return new FunctionalCommand (
     //         () -> {m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);}, () -> {},
     //         interrupted ->  {m_doubleSolenoid.set(DoubleSolenoid.Value.kOff);}, () -> false);
     // }
 
-    // public CommandBase pickupRetract() {
+    // public Command pickupRetract() {
     //     return new FunctionalCommand(() -> {m_doubleSolenoid.set(DoubleSolenoid.Value.kForward);}, () -> {},interrupted ->  {}, () -> false);
     // }
 
-    public CommandBase pickupcancel() { return runOnce(() -> {solenoidRetract();});}
+    public Command pickupcancel() { return runOnce(() -> {solenoidRetract();});}
 
-    public CommandBase rollercancel() { return runOnce(() -> {rollersSet(0);});}
+    public Command rollercancel() { return runOnce(() -> {rollersSet(0);});}
 
-    public CommandBase rollIn() {
+    public Command rollIn() {
         return new FunctionalCommand(() -> {toproller.set(-.40); 
                         bottomroller.set(-.40);}, () -> {},
                       interrupted -> {toproller.set(0); 
@@ -82,7 +82,7 @@ public class PickupSubsystem extends SubsystemBase {
         );
     }
 
-    public CommandBase rollOut() {
+    public Command rollOut() {
         return new FunctionalCommand(() -> {toproller.set(.40); 
                         bottomroller.set(.40);}, () -> {},
                       interrupted -> {toproller.set(0); 
@@ -90,7 +90,7 @@ public class PickupSubsystem extends SubsystemBase {
         );
     }
 
-    // public CommandBase pickupOut() {
+    // public Command pickupOut() {
     //     return new FunctionalCommand(() -> {toproller.set(ControlMode.PercentOutput,-.40); 
     //         bottomroller.set(ControlMode.PercentOutput,-.40);
     //         m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);}, () -> {},
@@ -99,10 +99,10 @@ public class PickupSubsystem extends SubsystemBase {
     //         m_doubleSolenoid.set(DoubleSolenoid.Value.kForward);}, null, null)
     // }
 
-    public CommandBase spindexterCW(Axis rightStick) {
+    public Command spindexterCW(Axis rightStick) {
         return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,-.50 * Math.abs(rightStick.get()));}, 
         () -> spindexter.set(ControlMode.PercentOutput, 0.0));}
-    public CommandBase spindexterCCW(Axis rightStick) {
+    public Command spindexterCCW(Axis rightStick) {
         return runEnd(() -> {spindexter.set(ControlMode.PercentOutput,.50 * Math.abs(rightStick.get()));},
         () -> spindexter.set(ControlMode.PercentOutput, 0.0));} 
     public void spindexterStop() {

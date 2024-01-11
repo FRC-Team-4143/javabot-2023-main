@@ -12,7 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 // import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.RobotContainer4143;
@@ -22,7 +22,7 @@ import edu.wpi.first.networktables.TimestampedInteger;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -133,7 +133,7 @@ public class Arm extends SubsystemBase {
         clawMotor.set(ControlMode.PercentOutput, clawSpeed);
     }
 
-    public CommandBase setClawOpen(RobotContainer4143 container){
+    public Command setClawOpen(RobotContainer4143 container){
         return new FunctionalCommand(
             () -> {clamped = false; clawMotor.set(ControlMode.Current, 5);
                 if(container.currentMode == gamePiece.Cube && distance <= -0.4) angle-=1;
@@ -143,12 +143,12 @@ public class Arm extends SubsystemBase {
             () -> (clawMotor.getSelectedSensorPosition() < 1000));
     }
 
-    public CommandBase manualClawOpen(RobotContainer4143 container) {
+    public Command manualClawOpen(RobotContainer4143 container) {
         return runEnd(() -> {clawMotor.set(ControlMode.Current, 4); clamped = false;}, 
             () -> clawMotor.set(ControlMode.PercentOutput, 0.0));
     }
 
-    public CommandBase setClawClosed(RobotContainer4143 container){
+    public Command setClawClosed(RobotContainer4143 container){
         return new FunctionalCommand(() -> {
                 //PickupSubsystem pickup = container.getPickup();
                 boolean driverLB = container.driver.getLeftBumper().getAsBoolean();
@@ -173,7 +173,7 @@ public class Arm extends SubsystemBase {
         return clamped;
     }
 
-    public CommandBase clawToggle(RobotContainer4143 container) {
+    public Command clawToggle(RobotContainer4143 container) {
         return new ConditionalCommand(setClawOpen(container), setClawClosed(container), this::returnClamped);
     }
 
@@ -195,7 +195,7 @@ public class Arm extends SubsystemBase {
 
 
 
-    public CommandBase setHighPosition() {
+    public Command setHighPosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
             // if(m_elevatorEncoder.getPosition() > -0.44 ){
@@ -215,7 +215,7 @@ public class Arm extends SubsystemBase {
     }
 
 
-    public CommandBase setMidPosition() {
+    public Command setMidPosition() {
         return new FunctionalCommand(() -> {}, 
         () -> {
             //if(m_elevatorEncoder.getPosition() > -0.4 ){
@@ -234,7 +234,7 @@ public class Arm extends SubsystemBase {
         });
     }
 
-    public CommandBase setHybridPosition(RobotContainer4143 container) {
+    public Command setHybridPosition(RobotContainer4143 container) {
         return new FunctionalCommand(() -> {}, 
         () -> {   
                 angle = armHybrid;
@@ -258,7 +258,7 @@ public class Arm extends SubsystemBase {
 
     
 
-    public CommandBase setHomePosition(RobotContainer4143 container) {
+    public Command setHomePosition(RobotContainer4143 container) {
         return new FunctionalCommand(() -> {}, 
         () -> {
             //if( readRotateEncoder() > -45.) {
@@ -283,7 +283,7 @@ public class Arm extends SubsystemBase {
         });
     }
 
-    public CommandBase set0Arm() {
+    public Command set0Arm() {
         return runOnce(() -> {
             m_elevatorEncoder.setPosition(0);
             m_rotatorEncoderMotor.setPosition(0);
